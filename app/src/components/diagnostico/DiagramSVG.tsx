@@ -1,4 +1,5 @@
 "use client";
+import type { JSX } from "react";
 import { CargoData } from "@/lib/diagnostico-mock-data";
 
 // ============================================

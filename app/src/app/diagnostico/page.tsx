@@ -19,7 +19,8 @@ export default function DiagnosticoLogin() {
 
     await new Promise((r) => setTimeout(r, 600));
 
-    if (login(email, senha)) {
+    const ok = await login(email, senha);
+    if (ok) {
       router.push("/diagnostico/dashboard");
     } else {
       setErro("E-mail ou senha inválidos");

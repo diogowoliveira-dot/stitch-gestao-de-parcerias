@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  nome         String
+  email        String   @unique
+  senha        String
+  role         String   @default("consultor") // admin | consultor
+  status       String   @default("ativo")     // ativo | inativo
+  avatar       String?
+  dataCriacao  DateTime @default(now())
+  ultimoAcesso DateTime?
+
+  diagnosticos Diagnostico[]
+}
+
+model Diagnostico {
+  id           String   @id @default(cuid())
+  empresaNome  String
+  empresaCidade String
+  empresaEstado String
+  status       String   @default("rascunho") // rascunho | completo
+  dataCriacao  DateTime @default(now())
+
+  criadoPorId  String
+  criadoPor    User     @relation(fields: [criadoPorId], references: [id])
+
+  cargos              Cargo[]
+  ferramentasGerais   FerramentaGeral[]
+  problemasIdentificados ProblemaIdentificado[]
+}
+
+model Cargo {
+  id              String  @id @default(cuid())
+  cargoKey        String  // e.g. cargo_diretor_comercial
+  nome            String
+  existe          Boolean @default(true)
+  acumulaFuncao   String?
+  personalizado   Boolean @default(false)
+  subordinadosDe  String? // cargoKey do superior
+
+  diagnosticoId   String
+  diagnostico     Diagnostico @relation(fields: [diagnosticoId], references: [id], onDelete: Cascade)
+
+  tarefas         Tarefa[]
+  metricas        Metrica[]
+  ferramentas     Ferramenta[]
+  subordinados    Subordinado[]
+}
+
+model Tarefa {
+  id      String @id @default(cuid())
+  nome    String
+  cargoId String
+  cargo   Cargo  @relation(fields: [cargoId], references: [id], onDelete: Cascade)
+}
+
+model Metrica {
+  id      String @id @default(cuid())
+  nome    String
+  cargoId String
+  cargo   Cargo  @relation(fields: [cargoId], references: [id], onDelete: Cascade)
+}
+
+model Ferramenta {
+  id      String @id @default(cuid())
+  nome    String
+  cargoId String
+  cargo   Cargo  @relation(fields: [cargoId], references: [id], onDelete: Cascade)
+}
+
+model Subordinado {
+  id        String @id @default(cuid())
+  cargoKey  String // cargoKey do subordinado
+  cargoId   String
+  cargo     Cargo  @relation(fields: [cargoId], references: [id], onDelete: Cascade)
+}
+
+model FerramentaGeral {
+  id              String @id @default(cuid())
+  nome            String
+  diagnosticoId   String
+  diagnostico     Diagnostico @relation(fields: [diagnosticoId], references: [id], onDelete: Cascade)
+}
+
+model ProblemaIdentificado {
+  id              String @id @default(cuid())
+  descricao       String
+  diagnosticoId   String
+  diagnostico     Diagnostico @relation(fields: [diagnosticoId], references: [id], onDelete: Cascade)
+}

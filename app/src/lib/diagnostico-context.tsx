@@ -1,81 +1,125 @@
 "use client";
-import { createContext, useContext, useState, useReducer, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, useReducer, useEffect, ReactNode, useCallback } from "react";
 import {
   DiagUser,
   DiagnosticoData,
   CargoData,
-  diagInitialUsers,
-  diagInitialDiagnosticos,
   PROBLEMAS_POR_FERRAMENTA,
 } from "./diagnostico-mock-data";
 
 // ============================================
 // AUTH CONTEXT
 // ============================================
+type DiagUserSafe = Omit<DiagUser, "senha">;
+
 interface DiagAuthContextType {
-  user: DiagUser | null;
+  user: DiagUserSafe | null;
   isAdmin: boolean;
-  login: (email: string, senha: string) => boolean;
+  login: (email: string, senha: string) => Promise<boolean>;
   logout: () => void;
-  users: DiagUser[];
-  addUser: (user: Omit<DiagUser, "id" | "dataCriacao">) => void;
-  updateUser: (id: string, data: Partial<DiagUser>) => void;
-  deleteUser: (id: string) => void;
+  users: DiagUserSafe[];
+  addUser: (user: { nome: string; email: string; senha: string; role: string; status: string }) => Promise<void>;
+  updateUser: (id: string, data: Partial<DiagUser>) => Promise<void>;
+  deleteUser: (id: string) => Promise<void>;
+  loadingUsers: boolean;
 }
 
 const DiagAuthContext = createContext<DiagAuthContextType>({
   user: null,
   isAdmin: false,
-  login: () => false,
+  login: async () => false,
   logout: () => {},
   users: [],
-  addUser: () => {},
-  updateUser: () => {},
-  deleteUser: () => {},
+  addUser: async () => {},
+  updateUser: async () => {},
+  deleteUser: async () => {},
+  loadingUsers: true,
 });
 
 export function DiagAuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<DiagUser | null>(null);
-  const [users, setUsers] = useState<DiagUser[]>(diagInitialUsers);
+  const [user, setUser] = useState<DiagUserSafe | null>(null);
+  const [users, setUsers] = useState<DiagUserSafe[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
 
   const isAdmin = user?.role === "admin";
 
-  const login = (email: string, senha: string): boolean => {
-    const found = users.find(
-      (u) => u.email === email && u.senha === senha && u.status === "ativo"
-    );
-    if (found) {
-      const updated = { ...found, ultimoAcesso: new Date().toISOString().split("T")[0] };
-      setUser(updated);
-      setUsers((prev) => prev.map((u) => (u.id === found.id ? updated : u)));
-      return true;
+  // Load users from DB
+  const fetchUsers = useCallback(async () => {
+    try {
+      const res = await fetch("/api/diagnostico/users");
+      if (res.ok) {
+        const data = await res.json();
+        setUsers(data);
+      }
+    } catch (e) {
+      console.error("Erro ao carregar usuários:", e);
+    } finally {
+      setLoadingUsers(false);
     }
-    return false;
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const login = async (email: string, senha: string): Promise<boolean> => {
+    try {
+      const res = await fetch("/api/diagnostico/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, senha }),
+      });
+      if (res.ok) {
+        const userData = await res.json();
+        setUser(userData);
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
   };
 
   const logout = () => setUser(null);
 
-  const addUser = (data: Omit<DiagUser, "id" | "dataCriacao">) => {
-    const newUser: DiagUser = {
-      ...data,
-      id: `du${Date.now()}`,
-      dataCriacao: new Date().toISOString().split("T")[0],
-    };
-    setUsers((prev) => [...prev, newUser]);
+  const addUser = async (data: { nome: string; email: string; senha: string; role: string; status: string }) => {
+    const res = await fetch("/api/diagnostico/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      await fetchUsers();
+    }
   };
 
-  const updateUser = (id: string, data: Partial<DiagUser>) => {
-    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, ...data } : u)));
-    if (user?.id === id) setUser((prev) => (prev ? { ...prev, ...data } : null));
+  const updateUser = async (id: string, data: Partial<DiagUser>) => {
+    const res = await fetch("/api/diagnostico/users", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, ...data }),
+    });
+    if (res.ok) {
+      const updated = await res.json();
+      setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)));
+      if (user?.id === id) setUser(updated);
+    }
   };
 
-  const deleteUser = (id: string) => {
-    setUsers((prev) => prev.filter((u) => u.id !== id));
+  const deleteUser = async (id: string) => {
+    const res = await fetch("/api/diagnostico/users", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    if (res.ok) {
+      setUsers((prev) => prev.filter((u) => u.id !== id));
+    }
   };
 
   return (
     <DiagAuthContext.Provider
-      value={{ user, isAdmin, login, logout, users, addUser, updateUser, deleteUser }}
+      value={{ user, isAdmin, login, logout, users, addUser, updateUser, deleteUser, loadingUsers }}
     >
       {children}
     </DiagAuthContext.Provider>
@@ -169,35 +213,79 @@ function diagReducer(state: DiagFormState, action: DiagAction): DiagFormState {
 // ============================================
 interface DiagDataContextType {
   diagnosticos: DiagnosticoData[];
-  addDiagnostico: (d: DiagnosticoData) => void;
-  deleteDiagnostico: (id: string) => void;
+  addDiagnostico: (d: DiagnosticoData) => Promise<void>;
+  deleteDiagnostico: (id: string) => Promise<void>;
   formState: DiagFormState;
   dispatch: React.Dispatch<DiagAction>;
+  loadingDiagnosticos: boolean;
 }
 
 const DiagDataContext = createContext<DiagDataContextType>({
   diagnosticos: [],
-  addDiagnostico: () => {},
-  deleteDiagnostico: () => {},
+  addDiagnostico: async () => {},
+  deleteDiagnostico: async () => {},
   formState: initialFormState,
   dispatch: () => {},
+  loadingDiagnosticos: true,
 });
 
 export function DiagDataProvider({ children }: { children: ReactNode }) {
-  const [diagnosticos, setDiagnosticos] = useState<DiagnosticoData[]>(diagInitialDiagnosticos);
+  const [diagnosticos, setDiagnosticos] = useState<DiagnosticoData[]>([]);
   const [formState, dispatch] = useReducer(diagReducer, initialFormState);
+  const [loadingDiagnosticos, setLoadingDiagnosticos] = useState(true);
 
-  const addDiagnostico = useCallback((d: DiagnosticoData) => {
-    setDiagnosticos((prev) => [...prev, d]);
+  // Load diagnosticos from DB
+  const fetchDiagnosticos = useCallback(async () => {
+    try {
+      const res = await fetch("/api/diagnostico/diagnosticos");
+      if (res.ok) {
+        const data = await res.json();
+        setDiagnosticos(data);
+      }
+    } catch (e) {
+      console.error("Erro ao carregar diagnósticos:", e);
+    } finally {
+      setLoadingDiagnosticos(false);
+    }
   }, []);
 
-  const deleteDiagnostico = useCallback((id: string) => {
-    setDiagnosticos((prev) => prev.filter((d) => d.id !== id));
+  useEffect(() => {
+    fetchDiagnosticos();
+  }, [fetchDiagnosticos]);
+
+  const addDiagnostico = useCallback(async (d: DiagnosticoData) => {
+    try {
+      const res = await fetch("/api/diagnostico/diagnosticos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(d),
+      });
+      if (res.ok) {
+        await fetchDiagnosticos();
+      }
+    } catch (e) {
+      console.error("Erro ao salvar diagnóstico:", e);
+    }
+  }, [fetchDiagnosticos]);
+
+  const deleteDiagnostico = useCallback(async (id: string) => {
+    try {
+      const res = await fetch("/api/diagnostico/diagnosticos", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        setDiagnosticos((prev) => prev.filter((d) => d.id !== id));
+      }
+    } catch (e) {
+      console.error("Erro ao deletar diagnóstico:", e);
+    }
   }, []);
 
   return (
     <DiagDataContext.Provider
-      value={{ diagnosticos, addDiagnostico, deleteDiagnostico, formState, dispatch }}
+      value={{ diagnosticos, addDiagnostico, deleteDiagnostico, formState, dispatch, loadingDiagnosticos }}
     >
       {children}
     </DiagDataContext.Provider>

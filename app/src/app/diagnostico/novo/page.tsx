@@ -64,7 +64,7 @@ function NovoDiagnostico() {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (etapaAtual === 3) {
       // Reset cargo index when moving to step 3
       dispatch({ type: "SET_CARGO_INDEX", index: 0 });
@@ -73,19 +73,29 @@ function NovoDiagnostico() {
       dispatch({ type: "GERAR_PROBLEMAS" });
       dispatch({ type: "GERAR_OUTPUT" });
 
-      // Save diagnostic
+      // Generate problems locally for saving
+      const todasFerramentas = new Set<string>();
+      cargosExistentes.forEach((c) => c.ferramentas.forEach((f) => todasFerramentas.add(f)));
+      const problemas: string[] = [];
+      const { PROBLEMAS_POR_FERRAMENTA } = await import("@/lib/diagnostico-mock-data");
+      todasFerramentas.forEach((f) => {
+        if (PROBLEMAS_POR_FERRAMENTA[f]) problemas.push(PROBLEMAS_POR_FERRAMENTA[f]);
+      });
+      if (todasFerramentas.size > 4) problemas.push("Estrutura com alto grau de fragmentação operacional");
+
+      // Save diagnostic to DB
       if (!verId && user) {
         const newDiag: DiagnosticoData = {
           id: `diag_${Date.now()}`,
           empresa: formState.empresa,
           cargos: formState.cargos,
-          ferramentasGerais: [...new Set(cargosExistentes.flatMap((c) => c.ferramentas))],
-          problemasIdentificados: formState.problemas,
+          ferramentasGerais: [...todasFerramentas],
+          problemasIdentificados: problemas,
           dataCriacao: new Date().toISOString().split("T")[0],
           criadoPor: user.id,
           status: "completo",
         };
-        addDiagnostico(newDiag);
+        await addDiagnostico(newDiag);
       }
     }
     dispatch({ type: "SET_ETAPA", etapa: etapaAtual + 1 });

@@ -2,12 +2,14 @@
 import { useState } from "react";
 import DiagShell from "@/components/diagnostico/DiagShell";
 import { useDiagAuth } from "@/lib/diagnostico-context";
-import type { DiagUser, DiagUserRole } from "@/lib/diagnostico-mock-data";
+import type { DiagUserRole } from "@/lib/diagnostico-mock-data";
+
+type UserInfo = { id: string; nome: string; email: string; role: string; status: string };
 
 export default function UsuariosPage() {
   const { users, isAdmin, addUser, updateUser, deleteUser, user: currentUser } = useDiagAuth();
   const [showModal, setShowModal] = useState(false);
-  const [editingUser, setEditingUser] = useState<DiagUser | null>(null);
+  const [editingUser, setEditingUser] = useState<UserInfo | null>(null);
   const [search, setSearch] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
@@ -28,30 +30,30 @@ export default function UsuariosPage() {
     setShowModal(true);
   };
 
-  const openEdit = (u: DiagUser) => {
+  const openEdit = (u: UserInfo) => {
     setEditingUser(u);
     setFormNome(u.nome);
     setFormEmail(u.email);
-    setFormRole(u.role);
+    setFormRole(u.role as DiagUserRole);
     setFormSenha("");
-    setFormStatus(u.status);
+    setFormStatus(u.status as "ativo" | "inativo");
     setShowModal(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formNome.trim() || !formEmail.trim()) return;
 
     if (editingUser) {
-      const data: Partial<DiagUser> = {
+      const data: Record<string, string> = {
         nome: formNome,
         email: formEmail,
         role: formRole,
         status: formStatus,
       };
       if (formSenha.trim()) data.senha = formSenha;
-      updateUser(editingUser.id, data);
+      await updateUser(editingUser.id, data);
     } else {
-      addUser({
+      await addUser({
         nome: formNome,
         email: formEmail,
         role: formRole,
