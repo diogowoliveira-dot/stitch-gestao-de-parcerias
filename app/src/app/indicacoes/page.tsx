@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useData } from "@/lib/data-context";
@@ -7,7 +7,15 @@ import AppShell from "@/components/AppShell";
 import StatusBadge from "@/components/StatusBadge";
 import { ReferralStatus, COMISSAO_POR_INDICACAO } from "@/lib/mock-data";
 
-export default function IndicacoesPage() {
+export default function IndicacoesPageWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black"><p className="text-sm text-slate-500">Carregando...</p></div>}>
+      <IndicacoesPage />
+    </Suspense>
+  );
+}
+
+function IndicacoesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isAdmin, vendedor } = useAuth();

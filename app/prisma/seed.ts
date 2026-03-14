@@ -4,6 +4,13 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
+  // Skip if already seeded
+  const existingUsers = await prisma.user.count();
+  if (existingUsers > 0) {
+    console.log("✅ Banco já possui dados, seed ignorado.");
+    return;
+  }
+
   // ── Users ──
   const admin = await prisma.user.create({
     data: {

@@ -4,6 +4,8 @@ import {
   DiagUser,
   DiagnosticoData,
   CargoData,
+  diagInitialUsers,
+  diagInitialDiagnosticos,
   PROBLEMAS_POR_FERRAMENTA,
 } from "./diagnostico-mock-data";
 
@@ -40,19 +42,26 @@ export function DiagAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<DiagUserSafe | null>(null);
   const [users, setUsers] = useState<DiagUserSafe[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
+  const [useApi, setUseApi] = useState(true); // false = fallback to mock data
 
   const isAdmin = user?.role === "admin";
 
-  // Load users from DB
+  // Load users — try API first, fallback to mock
   const fetchUsers = useCallback(async () => {
     try {
       const res = await fetch("/api/diagnostico/users");
       if (res.ok) {
         const data = await res.json();
         setUsers(data);
+        setUseApi(true);
+      } else {
+        throw new Error("API error");
       }
-    } catch (e) {
-      console.error("Erro ao carregar usuários:", e);
+    } catch {
+      // Fallback to mock data (Vercel serverless without DB)
+      console.warn("API indisponível, usando dados mock");
+      setUseApi(false);
+      setUsers(diagInitialUsers.map(({ senha, ...u }) => u));
     } finally {
       setLoadingUsers(false);
     }
@@ -63,58 +72,94 @@ export function DiagAuthProvider({ children }: { children: ReactNode }) {
   }, [fetchUsers]);
 
   const login = async (email: string, senha: string): Promise<boolean> => {
-    try {
-      const res = await fetch("/api/diagnostico/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, senha }),
-      });
-      if (res.ok) {
-        const userData = await res.json();
-        setUser(userData);
-        return true;
+    if (useApi) {
+      try {
+        const res = await fetch("/api/diagnostico/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, senha }),
+        });
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData);
+          return true;
+        }
+        return false;
+      } catch {
+        // Fall through to mock login
       }
-      return false;
-    } catch {
-      return false;
     }
+    // Mock login fallback
+    const found = diagInitialUsers.find(
+      (u) => u.email === email && u.senha === senha && u.status === "ativo"
+    );
+    if (found) {
+      const { senha: _, ...safe } = found;
+      setUser({ ...safe, ultimoAcesso: new Date().toISOString().split("T")[0] });
+      return true;
+    }
+    return false;
   };
 
   const logout = () => setUser(null);
 
   const addUser = async (data: { nome: string; email: string; senha: string; role: string; status: string }) => {
-    const res = await fetch("/api/diagnostico/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (res.ok) {
-      await fetchUsers();
+    if (useApi) {
+      const res = await fetch("/api/diagnostico/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        await fetchUsers();
+        return;
+      }
     }
+    // Mock fallback
+    const newUser: DiagUserSafe = {
+      id: `du${Date.now()}`,
+      nome: data.nome,
+      email: data.email,
+      role: data.role as "admin" | "consultor",
+      status: data.status as "ativo" | "inativo",
+      dataCriacao: new Date().toISOString().split("T")[0],
+    };
+    setUsers((prev) => [...prev, newUser]);
   };
 
   const updateUser = async (id: string, data: Partial<DiagUser>) => {
-    const res = await fetch("/api/diagnostico/users", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, ...data }),
-    });
-    if (res.ok) {
-      const updated = await res.json();
-      setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)));
-      if (user?.id === id) setUser(updated);
+    if (useApi) {
+      const res = await fetch("/api/diagnostico/users", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...data }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)));
+        if (user?.id === id) setUser(updated);
+        return;
+      }
     }
+    // Mock fallback
+    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, ...data } as DiagUserSafe : u)));
+    if (user?.id === id) setUser((prev) => (prev ? { ...prev, ...data } as DiagUserSafe : null));
   };
 
   const deleteUser = async (id: string) => {
-    const res = await fetch("/api/diagnostico/users", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    if (res.ok) {
-      setUsers((prev) => prev.filter((u) => u.id !== id));
+    if (useApi) {
+      const res = await fetch("/api/diagnostico/users", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        setUsers((prev) => prev.filter((u) => u.id !== id));
+        return;
+      }
     }
+    // Mock fallback
+    setUsers((prev) => prev.filter((u) => u.id !== id));
   };
 
   return (
@@ -233,17 +278,23 @@ export function DiagDataProvider({ children }: { children: ReactNode }) {
   const [diagnosticos, setDiagnosticos] = useState<DiagnosticoData[]>([]);
   const [formState, dispatch] = useReducer(diagReducer, initialFormState);
   const [loadingDiagnosticos, setLoadingDiagnosticos] = useState(true);
+  const [useApi, setUseApi] = useState(true);
 
-  // Load diagnosticos from DB
+  // Load diagnosticos — try API first, fallback to mock
   const fetchDiagnosticos = useCallback(async () => {
     try {
       const res = await fetch("/api/diagnostico/diagnosticos");
       if (res.ok) {
         const data = await res.json();
         setDiagnosticos(data);
+        setUseApi(true);
+      } else {
+        throw new Error("API error");
       }
-    } catch (e) {
-      console.error("Erro ao carregar diagnósticos:", e);
+    } catch {
+      console.warn("API indisponível, usando dados mock");
+      setUseApi(false);
+      setDiagnosticos(diagInitialDiagnosticos);
     } finally {
       setLoadingDiagnosticos(false);
     }
@@ -254,34 +305,44 @@ export function DiagDataProvider({ children }: { children: ReactNode }) {
   }, [fetchDiagnosticos]);
 
   const addDiagnostico = useCallback(async (d: DiagnosticoData) => {
-    try {
-      const res = await fetch("/api/diagnostico/diagnosticos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(d),
-      });
-      if (res.ok) {
-        await fetchDiagnosticos();
+    if (useApi) {
+      try {
+        const res = await fetch("/api/diagnostico/diagnosticos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(d),
+        });
+        if (res.ok) {
+          await fetchDiagnosticos();
+          return;
+        }
+      } catch {
+        // fallback
       }
-    } catch (e) {
-      console.error("Erro ao salvar diagnóstico:", e);
     }
-  }, [fetchDiagnosticos]);
+    // Mock fallback
+    setDiagnosticos((prev) => [...prev, d]);
+  }, [useApi, fetchDiagnosticos]);
 
   const deleteDiagnostico = useCallback(async (id: string) => {
-    try {
-      const res = await fetch("/api/diagnostico/diagnosticos", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-      if (res.ok) {
-        setDiagnosticos((prev) => prev.filter((d) => d.id !== id));
+    if (useApi) {
+      try {
+        const res = await fetch("/api/diagnostico/diagnosticos", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id }),
+        });
+        if (res.ok) {
+          setDiagnosticos((prev) => prev.filter((d) => d.id !== id));
+          return;
+        }
+      } catch {
+        // fallback
       }
-    } catch (e) {
-      console.error("Erro ao deletar diagnóstico:", e);
     }
-  }, []);
+    // Mock fallback
+    setDiagnosticos((prev) => prev.filter((d) => d.id !== id));
+  }, [useApi]);
 
   return (
     <DiagDataContext.Provider
