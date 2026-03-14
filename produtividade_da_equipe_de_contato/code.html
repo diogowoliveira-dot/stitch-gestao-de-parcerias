@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Produtividade da Equipe</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#0d7fa5",
+              "primary-dark": "#0a617d",
+              "background-light": "#ffffff",
+              "background-dark": "#000000",
+              "surface-dark": "#121212", 
+              "surface-card": "#1A1A1A",
+              "accent-green": "#1FAD1F",
+              "accent-red": "#D92626",
+              "accent-yellow": "#EAB308",
+              "text-secondary": "#9ca3af",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"],
+              "body": ["Noto Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+            background-color: #000000;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-black font-display h-screen flex flex-col overflow-hidden text-white">
+<header class="flex-none px-5 pt-8 pb-4 bg-black border-b border-gray-800 z-10">
+<div class="flex items-center justify-between mb-6">
+<div class="flex flex-col">
+<h1 class="text-2xl font-bold leading-tight tracking-tight text-white">Produtividade da Equipe</h1>
+<p class="text-sm text-text-secondary mt-1">Gestão de Indicações B2B</p>
+</div>
+<button class="p-2 rounded-full hover:bg-surface-card transition-colors border border-gray-800">
+<span class="material-symbols-outlined text-gray-400">notifications</span>
+</button>
+</div>
+<div class="flex p-1 bg-surface-card rounded-lg border border-gray-800">
+<label class="flex-1 cursor-pointer">
+<input checked="" class="peer sr-only" name="period" type="radio" value="mes"/>
+<div class="py-2 text-center text-sm font-semibold rounded-md text-gray-500 peer-checked:bg-[#2C2C2C] peer-checked:text-white transition-all">
+                Mês
+            </div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="peer sr-only" name="period" type="radio" value="semana"/>
+<div class="py-2 text-center text-sm font-semibold rounded-md text-gray-500 peer-checked:bg-[#2C2C2C] peer-checked:text-white transition-all">
+                Semana
+            </div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="peer sr-only" name="period" type="radio" value="dia"/>
+<div class="py-2 text-center text-sm font-semibold rounded-md text-gray-500 peer-checked:bg-[#2C2C2C] peer-checked:text-white transition-all">
+                Dia
+            </div>
+</label>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-black">
+<div class="px-5 py-6 grid grid-cols-3 gap-3">
+<div class="flex flex-col p-3 bg-surface-card rounded-xl border border-gray-800">
+<div class="text-text-secondary mb-1">
+<span class="material-symbols-outlined text-2xl text-primary">groups</span>
+</div>
+<p class="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-2">Indicações</p>
+<p class="text-xl font-bold text-white">1,240</p>
+</div>
+<div class="flex flex-col p-3 bg-surface-card rounded-xl border border-gray-800">
+<div class="text-text-secondary mb-1">
+<span class="material-symbols-outlined text-2xl text-purple-500">handshake</span>
+</div>
+<p class="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-2">Conversão</p>
+<p class="text-xl font-bold text-white">14.8%</p>
+</div>
+<div class="flex flex-col p-3 bg-surface-card rounded-xl border border-gray-800">
+<div class="text-text-secondary mb-1">
+<span class="material-symbols-outlined text-2xl text-orange-500">call_made</span>
+</div>
+<p class="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-2">Contatos</p>
+<p class="text-xl font-bold text-white">892</p>
+</div>
+</div>
+<div class="px-5 mb-4 flex items-center justify-between">
+<h2 class="text-lg font-bold text-white">Performance Individual</h2>
+<div class="flex items-center gap-1 text-xs text-text-secondary">
+<span class="w-2 h-2 rounded-full bg-accent-green"></span> Alta
+            <span class="w-2 h-2 rounded-full bg-accent-yellow ml-2"></span> Média
+            <span class="w-2 h-2 rounded-full bg-accent-red ml-2"></span> Atenção
+        </div>
+</div>
+<div class="flex flex-col gap-4 px-5">
+<div class="bg-surface-card rounded-lg p-5 border-l-[6px] border-accent-green relative shadow-lg">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="text-lg font-bold text-white tracking-tight">Ana Souza</h3>
+<p class="text-xs text-text-secondary mt-0.5 font-medium">Squad Alpha</p>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="text-3xl font-bold text-accent-green tracking-tighter">18.5%</span>
+<p class="text-[10px] uppercase text-gray-500 font-bold tracking-wide mt-1">Conversão</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-20 shrink-0">
+<p class="text-xs text-gray-400 font-medium">Indicações</p>
+<p class="text-sm font-bold text-white">45</p>
+</div>
+<div class="flex-1 h-2 bg-[#2C2C2C] rounded-full overflow-hidden">
+<div class="h-full bg-gray-300 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-20 shrink-0">
+<p class="text-xs text-gray-400 font-medium">Contatos</p>
+<p class="text-sm font-bold text-white">40</p>
+</div>
+<div class="flex-1 h-2 bg-[#2C2C2C] rounded-full overflow-hidden">
+<div class="h-full bg-gray-500 rounded-full" style="width: 88%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-card rounded-lg p-5 border-l-[6px] border-accent-yellow relative shadow-lg">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="text-lg font-bold text-white tracking-tight">Carlos Lima</h3>
+<p class="text-xs text-text-secondary mt-0.5 font-medium">Squad Beta</p>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="text-3xl font-bold text-accent-yellow tracking-tighter">12.0%</span>
+<p class="text-[10px] uppercase text-gray-500 font-bold tracking-wide mt-1">Conversão</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-20 shrink-0">
+<p class="text-xs text-gray-400 font-medium">Indicações</p>
+<p class="text-sm font-bold text-white">30</p>
+</div>
+<div class="flex-1 h-2 bg-[#2C2C2C] rounded-full overflow-hidden">
+<div class="h-full bg-gray-300 rounded-full" style="width: 66%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-20 shrink-0">
+<p class="text-xs text-gray-400 font-medium">Contatos</p>
+<p class="text-sm font-bold text-white">20</p>
+</div>
+<div class="flex-1 h-2 bg-[#2C2C2C] rounded-full overflow-hidden">
+<div class="h-full bg-gray-500 rounded-full" style="width: 44%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-card rounded-lg p-5 border-l-[6px] border-accent-red relative shadow-lg">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="text-lg font-bold text-white tracking-tight">Beatriz Silva</h3>
+<p class="text-xs text-text-secondary mt-0.5 font-medium">Squad Alpha</p>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="text-3xl font-bold text-accent-red tracking-tighter">4.2%</span>
+<p class="text-[10px] uppercase text-gray-500 font-bold tracking-wide mt-1">Conversão</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-20 shrink-0">
+<p class="text-xs text-gray-400 font-medium">Indicações</p>
+<p class="text-sm font-bold text-white">25</p>
+</div>
+<div class="flex-1 h-2 bg-[#2C2C2C] rounded-full overflow-hidden">
+<div class="h-full bg-gray-300 rounded-full" style="width: 55%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-20 shrink-0">
+<p class="text-xs text-gray-400 font-medium">Contatos</p>
+<p class="text-sm font-bold text-white">5</p>
+</div>
+<div class="flex-1 h-2 bg-[#2C2C2C] rounded-full overflow-hidden">
+<div class="h-full bg-gray-500 rounded-full" style="width: 10%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-card rounded-lg p-5 border-l-[6px] border-accent-yellow relative shadow-lg">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="text-lg font-bold text-white tracking-tight">Ricardo Mendes</h3>
+<p class="text-xs text-text-secondary mt-0.5 font-medium">Squad Gama</p>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="text-3xl font-bold text-accent-yellow tracking-tighter">11.4%</span>
+<p class="text-[10px] uppercase text-gray-500 font-bold tracking-wide mt-1">Conversão</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-20 shrink-0">
+<p class="text-xs text-gray-400 font-medium">Indicações</p>
+<p class="text-sm font-bold text-white">28</p>
+</div>
+<div class="flex-1 h-2 bg-[#2C2C2C] rounded-full overflow-hidden">
+<div class="h-full bg-gray-300 rounded-full" style="width: 62%"></div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-20 shrink-0">
+<p class="text-xs text-gray-400 font-medium">Contatos</p>
+<p class="text-sm font-bold text-white">18</p>
+</div>
+<div class="flex-1 h-2 bg-[#2C2C2C] rounded-full overflow-hidden">
+<div class="h-full bg-gray-500 rounded-full" style="width: 40%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="h-8 w-full"></div>
+</main>
+<nav class="fixed bottom-0 w-full bg-black border-t border-gray-800 pb-safe z-50">
+<div class="flex justify-around items-center h-16 px-2">
+<button class="flex flex-col items-center justify-center w-full h-full space-y-1 text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-medium">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center w-full h-full space-y-1 text-primary">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-[10px] font-medium">Equipe</span>
+</button>
+<button class="flex flex-col items-center justify-center w-full h-full space-y-1 text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-[10px] font-medium">Relatórios</span>
+</button>
+<button class="flex flex-col items-center justify-center w-full h-full space-y-1 text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-medium">Configurações</span>
+</button>
+</div>
+</nav>
+
+</body></html>

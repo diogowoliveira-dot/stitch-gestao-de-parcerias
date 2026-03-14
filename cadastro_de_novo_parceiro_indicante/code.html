@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec1313",
+                        "background-light": "#f1f2f4",
+                        "background-dark": "#121416",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        input::placeholder {
+            color: #4b5563 !important;
+            opacity: 0.7;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 pt-12 pb-4">
+<div class="flex items-center justify-between max-w-md mx-auto">
+<button class="w-10 h-10 flex items-center justify-start text-slate-400">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios</span>
+</button>
+<h1 class="text-sm font-bold tracking-widest uppercase text-slate-400 dark:text-slate-500">Novo Parceiro</h1>
+<div class="w-10"></div> <!-- Spacer for balance -->
+</div>
+</header>
+<main class="flex-1 overflow-y-auto px-6 pb-32">
+<div class="max-w-md mx-auto pt-4">
+<!-- Headline Section -->
+<div class="mb-8">
+<h2 class="text-3xl font-extrabold leading-tight tracking-tight dark:text-white">
+                    Cadastro de <br/>
+<span class="text-primary">Incorporadora</span>
+</h2>
+<p class="text-slate-500 mt-2 text-sm">Preencha os dados da nova parceria estratégica para gestão de indicações B2B.</p>
+</div>
+<!-- Form Fields -->
+<div class="space-y-6">
+<!-- Nome da Incorporadora -->
+<div class="group">
+<label class="block mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 group-focus-within:text-primary transition-colors">
+                        Nome da Incorporadora
+                    </label>
+<input class="w-full bg-slate-200/50 dark:bg-[#1c1f24] border-transparent dark:border-[#2a2f36] rounded-xl h-14 px-4 text-base focus:border-primary focus:ring-0 transition-all outline-none text-slate-900 dark:text-white" placeholder="Ex: Incorporadora Premium S/A" type="text"/>
+</div>
+<!-- Nome do Responsável -->
+<div class="group">
+<label class="block mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 group-focus-within:text-primary transition-colors">
+                        Nome do Responsável
+                    </label>
+<input class="w-full bg-slate-200/50 dark:bg-[#1c1f24] border-transparent dark:border-[#2a2f36] rounded-xl h-14 px-4 text-base focus:border-primary focus:ring-0 transition-all outline-none text-slate-900 dark:text-white" placeholder="Ex: João Silva" type="text"/>
+</div>
+<!-- Row: Cargo and Cidade Sede -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div class="group">
+<label class="block mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 group-focus-within:text-primary transition-colors">
+                            Cargo
+                        </label>
+<input class="w-full bg-slate-200/50 dark:bg-[#1c1f24] border-transparent dark:border-[#2a2f36] rounded-xl h-14 px-4 text-base focus:border-primary focus:ring-0 transition-all outline-none text-slate-900 dark:text-white" placeholder="Ex: Diretor Comercial" type="text"/>
+</div>
+<div class="group">
+<label class="block mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 group-focus-within:text-primary transition-colors">
+                            Cidade Sede
+                        </label>
+<input class="w-full bg-slate-200/50 dark:bg-[#1c1f24] border-transparent dark:border-[#2a2f36] rounded-xl h-14 px-4 text-base focus:border-primary focus:ring-0 transition-all outline-none text-slate-900 dark:text-white" placeholder="Ex: São Paulo - SP" type="text"/>
+</div>
+</div>
+<!-- E-mail Corporativo -->
+<div class="group">
+<label class="block mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 group-focus-within:text-primary transition-colors">
+                        E-mail Corporativo
+                    </label>
+<input class="w-full bg-slate-200/50 dark:bg-[#1c1f24] border-transparent dark:border-[#2a2f36] rounded-xl h-14 px-4 text-base focus:border-primary focus:ring-0 transition-all outline-none text-slate-900 dark:text-white" placeholder="nome@empresa.com.br" type="email"/>
+</div>
+<!-- Celular/WhatsApp -->
+<div class="group">
+<label class="block mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500 group-focus-within:text-primary transition-colors">
+                        Celular / WhatsApp
+                    </label>
+<input class="w-full bg-slate-200/50 dark:bg-[#1c1f24] border-transparent dark:border-[#2a2f36] rounded-xl h-14 px-4 text-base focus:border-primary focus:ring-0 transition-all outline-none text-slate-900 dark:text-white" placeholder="(00) 00000-0000" type="tel"/>
+</div>
+</div>
+<!-- Prominent Action Button -->
+<div class="mt-12 mb-8">
+<button class="w-full bg-primary text-white font-bold py-5 rounded-xl text-xs uppercase tracking-[0.2em] shadow-lg shadow-primary/20 hover:bg-red-600 transition-colors">
+                    Finalizar Cadastro de Parceiro
+                </button>
+</div>
+</div>
+</main>
+<!-- Fixed Bottom Navigation (iOS Style) -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-[#121416]/90 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 pb-8 pt-3 px-6">
+<div class="max-w-md mx-auto flex justify-between items-center">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-2xl font-bold">add_circle</span>
+<span class="text-[10px] font-medium">Novo</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined text-2xl">group</span>
+<span class="text-[10px] font-medium">Parceiros</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+<span class="text-[10px] font-medium">Relatórios</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined text-2xl">settings</span>
+<span class="text-[10px] font-medium">Ajustes</span>
+</button>
+</div>
+</nav>
+</body></html>

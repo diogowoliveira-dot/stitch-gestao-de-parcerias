@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nova Indicação para Zenith</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#ec1313",
+                    "status-green": "#22c55e",
+                    "status-yellow": "#eab308",
+                    "status-bronze": "#f97316", 
+                    "status-silver": "#94a3b8",
+                    "status-diamond": "#22d3ee",
+                    "background-dark": "#000000",
+                    "surface-dark": "#1C1C1E",
+                    "surface-secondary": "#2C2C2E",
+                    "border-dark": "rgba(255, 255, 255, 0.1)"
+                },
+                fontFamily: {
+                    "display": ["Manrope", "sans-serif"]
+                },
+                borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+                },
+            },
+        },
+    }
+</script>
+<style>
+    body {
+        font-family: 'Manrope', sans-serif;
+    }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      min-height: max(884px, 100dvh);
+    }.no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white overflow-x-hidden pb-32">
+<div class="sticky top-0 z-50 bg-background-dark/95 backdrop-blur-md border-b border-border-dark">
+<div class="flex items-center px-4 pt-4 pb-4 justify-between">
+<button class="p-2 -ml-2 text-gray-400 hover:text-white transition-colors rounded-full active:bg-white/10">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<h2 class="text-white text-base font-bold leading-tight">Nova Indicação</h2>
+<button class="p-2 -mr-2 text-gray-400 hover:text-white transition-colors rounded-full active:bg-white/10">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col p-6 gap-8">
+<div>
+<h1 class="text-2xl font-bold text-white tracking-tight mb-2">Nova Indicação para Zenith</h1>
+<p class="text-sm text-gray-400 leading-relaxed">Preencha os dados do prospect para vincular à incorporadora.</p>
+</div>
+<form class="flex flex-col gap-6" onsubmit="event.preventDefault()">
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Nome da Empresa Indicada</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-600 group-focus-within:text-white transition-colors text-[20px]">domain</span>
+</div>
+<input class="w-full bg-surface-dark border border-border-dark rounded-xl pl-11 pr-4 py-4 text-white placeholder-gray-600 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-medium" placeholder="Ex: Construtora Alpha" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Nome do Responsável</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-600 group-focus-within:text-white transition-colors text-[20px]">person</span>
+</div>
+<input class="w-full bg-surface-dark border border-border-dark rounded-xl pl-11 pr-4 py-4 text-white placeholder-gray-600 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-medium" placeholder="Nome completo do contato" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Celular de Contato</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-600 group-focus-within:text-white transition-colors text-[20px]">smartphone</span>
+</div>
+<input class="w-full bg-surface-dark border border-border-dark rounded-xl pl-11 pr-4 py-4 text-white placeholder-gray-600 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-medium" placeholder="(00) 00000-0000" type="tel"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">E-mail Corporativo</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-600 group-focus-within:text-white transition-colors text-[20px]">mail</span>
+</div>
+<input class="w-full bg-surface-dark border border-border-dark rounded-xl pl-11 pr-4 py-4 text-white placeholder-gray-600 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-medium" placeholder="contato@empresa.com" type="email"/>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Cidade</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-600 group-focus-within:text-white transition-colors text-[20px]">location_on</span>
+</div>
+<input class="w-full bg-surface-dark border border-border-dark rounded-xl pl-11 pr-4 py-4 text-white placeholder-gray-600 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-medium" placeholder="Cidade - UF" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Observações Iniciais</label>
+<textarea class="w-full bg-surface-dark border border-border-dark rounded-xl p-4 text-white placeholder-gray-600 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-medium resize-none" placeholder="Descreva brevemente o perfil do cliente ou detalhes importantes para a negociação..." rows="4"></textarea>
+</div>
+</form>
+<button class="w-full py-4 rounded-xl bg-primary hover:bg-red-600 active:scale-[0.98] transition-all shadow-lg shadow-red-900/30 flex items-center justify-center gap-2 group mt-4 mb-2">
+<span class="font-bold text-white uppercase tracking-wider text-sm">FINALIZAR INDICAÇÃO</span>
+<span class="material-symbols-outlined text-white text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<div class="fixed bottom-0 left-0 w-full bg-[#121212]/95 backdrop-blur-lg border-t border-white/10 pb-6 pt-3 px-6 z-50 shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+<div class="flex justify-between items-end">
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">groups</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Clientes</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-white transition-colors" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-bold text-white transition-colors">Indicações</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">bar_chart</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Relatórios</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Config</span>
+</button>
+</div>
+</div>
+
+</body></html>

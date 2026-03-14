@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Perfil Parceiro - DWV</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d99726", // Gold
+                        "primary-light": "#eebc5e",
+                        "background-light": "#fafafa",
+                        "background-dark": "#121416",
+                        "surface-dark": "#1c1f24",
+                        "surface-darker": "#17191c",
+                        "success": "#10b981",
+                        "warning": "#fbbf24",
+                        "error": "#ef4444",
+                    },
+                    fontFamily: {
+                        "display": ["Epilogue", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "2rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for cleaner look */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121416;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white font-display antialiased overflow-x-hidden selection:bg-primary selection:text-black pb-24">
+<!-- Top App Bar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-white/5">
+<div class="flex items-center justify-between px-4 h-16 max-w-lg mx-auto w-full">
+<button class="p-2 rounded-full hover:bg-white/5 transition-colors text-white/80">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="text-sm font-bold tracking-widest uppercase text-white/50">Perfil Profissional</h1>
+<button class="p-2 rounded-full hover:bg-white/5 transition-colors text-white/80">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</header>
+<!-- Spacer for fixed header -->
+<div class="h-20"></div>
+<main class="max-w-lg mx-auto w-full px-5 flex flex-col gap-6">
+<!-- Profile Header -->
+<section class="flex flex-col items-center gap-4 pt-2">
+<div class="relative group cursor-pointer">
+<div class="w-28 h-28 rounded-full border-2 border-primary/30 p-1">
+<div class="w-full h-full rounded-full bg-cover bg-center overflow-hidden relative" data-alt="Portrait of a professional man in a dark suit with a confident expression" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCF5whnJpTxwRr0sfvDOIY28ykfB72aJZoOxqER5VLjvfr6mQJY3sUG80aXYP3frWaGwtaiA4b3bX-eDr1Su6C50IewlqHeANVmIAwW793GepSoqnXB5oLtYNssmqUU1ZfUIK5Cu3xRIqPdy-Pje1tyZ0bcNU4Ngwf1zXAZ8aPN8MVzLM-dCLb9Rb7OjGwbTlOJYBaBHzdHoFqtRHcB-L3oZaUJflyKbsEFk7uMYASB-B1MZeh8CSP7sVDnY7xWCzPGuTQ1epCqQS-s');">
+</div>
+</div>
+<div class="absolute bottom-0 right-1 bg-surface-dark border border-primary/20 p-1.5 rounded-full flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-primary text-[16px]">verified</span>
+</div>
+</div>
+<div class="text-center space-y-1">
+<h2 class="text-2xl font-bold text-white tracking-tight">Roberto Farias</h2>
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="text-xs font-bold text-primary uppercase tracking-wider">Consultor Premium</span>
+</div>
+</div>
+</section>
+<!-- Contact Data Card -->
+<section class="bg-surface-dark rounded-2xl p-5 border border-white/5 shadow-sm">
+<div class="flex flex-col divide-y divide-white/5">
+<div class="flex items-center gap-4 pb-4">
+<div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 shrink-0">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-xs text-white/40 font-medium">E-mail Corporativo</span>
+<span class="text-sm text-white font-medium truncate">roberto@email.com</span>
+</div>
+</div>
+<div class="flex items-center gap-4 py-4">
+<div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 shrink-0">
+<span class="material-symbols-outlined text-[20px]">chat</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs text-white/40 font-medium">WhatsApp</span>
+<span class="text-sm text-white font-medium">(11) 99999-9999</span>
+</div>
+<button class="ml-auto text-primary text-xs font-bold uppercase tracking-wider hover:underline">Editar</button>
+</div>
+<div class="flex items-center gap-4 pt-4">
+<div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 shrink-0">
+<span class="material-symbols-outlined text-[20px]">location_on</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs text-white/40 font-medium">Base de Atuação</span>
+<span class="text-sm text-white font-medium">São Paulo, SP</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Financial Hero Card (Cashback) -->
+<section class="relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#2a2e35] to-[#1c1f24] p-6 border border-white/10 shadow-xl group">
+<!-- Decorative background elements -->
+<div class="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col items-center text-center gap-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary/80">account_balance_wallet</span>
+<span class="text-sm font-medium text-white/60 tracking-wide uppercase">Saldo de Cashback</span>
+</div>
+<h3 class="text-4xl font-extrabold text-primary tracking-tighter tabular-nums drop-shadow-sm">
+                    R$ 14.000,00
+                </h3>
+<div class="mt-4 flex flex-col gap-2 w-full">
+<div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+<p class="text-xs text-white/40 flex items-center justify-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px] text-primary">info</span>
+                        Valor fixo de R$ 2.000,00 por indicação fechada
+                    </p>
+</div>
+</div>
+</section>
+<!-- Primary Action -->
+<button class="w-full bg-primary hover:bg-primary-light text-surface-darker font-bold text-base py-4 px-6 rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-[0.98] flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined group-hover:rotate-90 transition-transform duration-300">add</span>
+            Adicionar Nova Indicação
+        </button>
+<!-- Referral List -->
+<section class="flex flex-col gap-4 mt-2">
+<div class="flex items-center justify-between px-1">
+<h3 class="text-lg font-bold text-white">Histórico Recente</h3>
+<button class="text-xs text-primary font-bold uppercase tracking-wider hover:opacity-80">Ver tudo</button>
+</div>
+<!-- List Items -->
+<div class="flex flex-col gap-3">
+<!-- Card 1: Success (Green) -->
+<article class="bg-surface-dark hover:bg-[#23262b] transition-colors rounded-xl p-4 border-l-[3px] border-emerald-500 shadow-sm flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-white font-bold leading-tight mb-1">Residencial Alphaville</h4>
+<p class="text-xs text-white/40">Indicação #4092 • 12 Out 2023</p>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                            Vendido
+                        </span>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-white/5">
+<div class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px] text-emerald-500">check</span>
+</div>
+<span class="text-xs text-white/60 font-medium">+ R$ 2.000,00 creditado</span>
+</div>
+</article>
+<!-- Card 2: Warning (Yellow) -->
+<article class="bg-surface-dark hover:bg-[#23262b] transition-colors rounded-xl p-4 border-l-[3px] border-yellow-500 shadow-sm flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-white font-bold leading-tight mb-1">Loteamento Jardins</h4>
+<p class="text-xs text-white/40">Indicação #4105 • 03 Nov 2023</p>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+                            Em Análise
+                        </span>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-white/5">
+<div class="w-5 h-5 rounded-full bg-yellow-500/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px] text-yellow-500">schedule</span>
+</div>
+<span class="text-xs text-white/60 font-medium">Aguardando validação do contrato</span>
+</div>
+</article>
+<!-- Card 3: Alert (Red) -->
+<article class="bg-surface-dark hover:bg-[#23262b] transition-colors rounded-xl p-4 border-l-[3px] border-red-500 shadow-sm flex flex-col gap-3 opacity-80">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-white font-bold leading-tight mb-1">Edifício Horizon</h4>
+<p class="text-xs text-white/40">Indicação #3998 • 20 Set 2023</p>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-red-500/10 text-red-500 border border-red-500/20">
+                            Cancelado
+                        </span>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-white/5">
+<div class="w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px] text-red-500">close</span>
+</div>
+<span class="text-xs text-white/60 font-medium">Cliente desistiu da compra</span>
+</div>
+</article>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 right-0 bg-[#17191c]/95 backdrop-blur-lg border-t border-white/5 z-50 safe-area-bottom">
+<div class="flex justify-around items-center h-16 max-w-lg mx-auto">
+<button class="flex flex-col items-center justify-center w-full h-full gap-1 group">
+<span class="material-symbols-outlined text-white/40 group-hover:text-white transition-colors" data-icon="home">home</span>
+<span class="text-[10px] font-medium text-white/40 group-hover:text-white transition-colors">Início</span>
+</button>
+<button class="flex flex-col items-center justify-center w-full h-full gap-1 group">
+<div class="relative">
+<span class="material-symbols-outlined text-primary fill-1" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
+</div>
+<span class="text-[10px] font-bold text-primary">Perfil</span>
+</button>
+<button class="flex flex-col items-center justify-center w-full h-full gap-1 group">
+<span class="material-symbols-outlined text-white/40 group-hover:text-white transition-colors" data-icon="grid_view">grid_view</span>
+<span class="text-[10px] font-medium text-white/40 group-hover:text-white transition-colors">Menu</span>
+</button>
+</div>
+</nav>
+<!-- Safe area spacing for bottom nav -->
+<div class="h-6 w-full bg-background-dark"></div>
+</body></html>

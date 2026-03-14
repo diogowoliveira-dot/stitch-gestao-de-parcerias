@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Indicações em Negociação</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec1313",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#000000",
+                        "surface-dark": "#1C1C1E",
+                        "negotiation": "#EAB308", // Yellow for negotiation status
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white overflow-x-hidden pb-24">
+<div class="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md border-b border-white/5">
+<div class="flex items-center p-4 gap-4">
+<button class="flex items-center justify-center rounded-full bg-surface-dark border border-white/5 size-10 text-white hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">arrow_back</span>
+</button>
+<div class="flex-1">
+<h2 class="text-white text-lg font-bold leading-tight">Em Negociação</h2>
+<p class="text-xs text-negotiation font-medium flex items-center gap-1">
+<span class="size-1.5 rounded-full bg-negotiation animate-pulse"></span>
+                    8 indicações ativas
+                </p>
+</div>
+<button class="flex size-10 items-center justify-center rounded-full bg-surface-dark border border-white/5 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-gray-300" style="font-size: 20px;">filter_list</span>
+</button>
+</div>
+</div>
+<div class="px-4 py-4 sticky top-[73px] z-40 bg-background-dark/95 backdrop-blur-sm">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-500 group-focus-within:text-negotiation transition-colors">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl leading-5 bg-surface-dark text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-surface-dark focus:border-negotiation focus:ring-1 focus:ring-negotiation sm:text-sm transition-all shadow-lg shadow-black/50" placeholder="Buscar por empresa ou consultor" type="text"/>
+</div>
+</div>
+<div class="flex flex-col px-4 gap-3">
+<div class="flex items-center gap-4 bg-surface-dark rounded-xl p-0 border border-white/5 active:bg-white/5 transition-colors cursor-pointer group hover:border-negotiation/30 overflow-hidden relative">
+<div class="w-1.5 self-stretch bg-negotiation"></div>
+<div class="flex flex-col flex-1 min-w-0 py-4 pr-4">
+<div class="flex justify-between items-start mb-1">
+<p class="text-white text-base font-bold truncate group-hover:text-negotiation transition-colors">Construtora Horizonte</p>
+<div class="flex items-center gap-1 bg-yellow-900/30 px-2 py-0.5 rounded text-[10px] font-bold text-yellow-500 border border-yellow-500/20">
+<span>3 dias</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[16px]">person</span>
+<p class="text-gray-400 text-xs font-medium truncate">Consultor: <span class="text-gray-300">Roberto Silva</span></p>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="size-1.5 rounded-full bg-negotiation"></span>
+<p class="text-xs text-gray-500 truncate">Aguardando resposta da proposta</p>
+</div>
+</div>
+</div>
+<div class="shrink-0 text-gray-600 group-hover:translate-x-1 transition-transform pr-4">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-dark rounded-xl p-0 border border-white/5 active:bg-white/5 transition-colors cursor-pointer group hover:border-negotiation/30 overflow-hidden relative">
+<div class="w-1.5 self-stretch bg-negotiation"></div>
+<div class="flex flex-col flex-1 min-w-0 py-4 pr-4">
+<div class="flex justify-between items-start mb-1">
+<p class="text-white text-base font-bold truncate group-hover:text-negotiation transition-colors">Incorporadora Viva</p>
+<div class="flex items-center gap-1 bg-yellow-900/30 px-2 py-0.5 rounded text-[10px] font-bold text-yellow-500 border border-yellow-500/20">
+<span>5 dias</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[16px]">person</span>
+<p class="text-gray-400 text-xs font-medium truncate">Consultor: <span class="text-gray-300">Ana Paula Souza</span></p>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="size-1.5 rounded-full bg-negotiation"></span>
+<p class="text-xs text-gray-500 truncate">Reunião de apresentação realizada</p>
+</div>
+</div>
+</div>
+<div class="shrink-0 text-gray-600 group-hover:translate-x-1 transition-transform pr-4">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-dark rounded-xl p-0 border border-white/5 active:bg-white/5 transition-colors cursor-pointer group hover:border-negotiation/30 overflow-hidden relative">
+<div class="w-1.5 self-stretch bg-negotiation"></div>
+<div class="flex flex-col flex-1 min-w-0 py-4 pr-4">
+<div class="flex justify-between items-start mb-1">
+<p class="text-white text-base font-bold truncate group-hover:text-negotiation transition-colors">Residencial Green Park</p>
+<div class="flex items-center gap-1 bg-yellow-900/30 px-2 py-0.5 rounded text-[10px] font-bold text-yellow-500 border border-yellow-500/20">
+<span>1 sem</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[16px]">person</span>
+<p class="text-gray-400 text-xs font-medium truncate">Consultor: <span class="text-gray-300">Carlos Mendes</span></p>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="size-1.5 rounded-full bg-negotiation"></span>
+<p class="text-xs text-gray-500 truncate">Análise de documentos</p>
+</div>
+</div>
+</div>
+<div class="shrink-0 text-gray-600 group-hover:translate-x-1 transition-transform pr-4">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-dark rounded-xl p-0 border border-white/5 active:bg-white/5 transition-colors cursor-pointer group hover:border-negotiation/30 overflow-hidden relative">
+<div class="w-1.5 self-stretch bg-negotiation"></div>
+<div class="flex flex-col flex-1 min-w-0 py-4 pr-4">
+<div class="flex justify-between items-start mb-1">
+<p class="text-white text-base font-bold truncate group-hover:text-negotiation transition-colors">Torres do Sol Empreend.</p>
+<div class="flex items-center gap-1 bg-yellow-900/30 px-2 py-0.5 rounded text-[10px] font-bold text-yellow-500 border border-yellow-500/20">
+<span>12 dias</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[16px]">person</span>
+<p class="text-gray-400 text-xs font-medium truncate">Consultor: <span class="text-gray-300">Mariana Costa</span></p>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="size-1.5 rounded-full bg-negotiation"></span>
+<p class="text-xs text-gray-500 truncate">Em negociação de valores</p>
+</div>
+</div>
+</div>
+<div class="shrink-0 text-gray-600 group-hover:translate-x-1 transition-transform pr-4">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-dark rounded-xl p-0 border border-white/5 active:bg-white/5 transition-colors cursor-pointer group hover:border-negotiation/30 overflow-hidden relative">
+<div class="w-1.5 self-stretch bg-negotiation"></div>
+<div class="flex flex-col flex-1 min-w-0 py-4 pr-4">
+<div class="flex justify-between items-start mb-1">
+<p class="text-white text-base font-bold truncate group-hover:text-negotiation transition-colors">Grupo Aliança</p>
+<div class="flex items-center gap-1 bg-yellow-900/30 px-2 py-0.5 rounded text-[10px] font-bold text-yellow-500 border border-yellow-500/20">
+<span>15 dias</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[16px]">person</span>
+<p class="text-gray-400 text-xs font-medium truncate">Consultor: <span class="text-gray-300">Roberto Silva</span></p>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="size-1.5 rounded-full bg-negotiation"></span>
+<p class="text-xs text-gray-500 truncate">Aguardando jurídico</p>
+</div>
+</div>
+</div>
+<div class="shrink-0 text-gray-600 group-hover:translate-x-1 transition-transform pr-4">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-dark rounded-xl p-0 border border-white/5 active:bg-white/5 transition-colors cursor-pointer group hover:border-negotiation/30 overflow-hidden relative">
+<div class="w-1.5 self-stretch bg-negotiation"></div>
+<div class="flex flex-col flex-1 min-w-0 py-4 pr-4">
+<div class="flex justify-between items-start mb-1">
+<p class="text-white text-base font-bold truncate group-hover:text-negotiation transition-colors">Comercial Norte Sul</p>
+<div class="flex items-center gap-1 bg-yellow-900/30 px-2 py-0.5 rounded text-[10px] font-bold text-yellow-500 border border-yellow-500/20">
+<span>18 dias</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[16px]">person</span>
+<p class="text-gray-400 text-xs font-medium truncate">Consultor: <span class="text-gray-300">Fernanda Lima</span></p>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="size-1.5 rounded-full bg-negotiation"></span>
+<p class="text-xs text-gray-500 truncate">Visita técnica agendada</p>
+</div>
+</div>
+</div>
+<div class="shrink-0 text-gray-600 group-hover:translate-x-1 transition-transform pr-4">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<div class="py-4 text-center">
+<p class="text-xs text-gray-600 uppercase tracking-widest font-medium">Fim da lista</p>
+</div>
+</div>
+<div class="fixed bottom-0 w-full bg-[#121212]/95 backdrop-blur-lg border-t border-white/10 pb-5 pt-3 px-6 z-50">
+<div class="flex justify-between items-end">
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">groups</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Clientes</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-primary transition-colors" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-bold text-primary transition-colors">Indicações</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">bar_chart</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Relatórios</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Config</span>
+</button>
+</div>
+</div>
+</body></html>

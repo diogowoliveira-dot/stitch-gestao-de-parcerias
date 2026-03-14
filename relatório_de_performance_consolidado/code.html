@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Relatório de Performance Consolidado</title>
+<!-- Fonts and Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d1002a",
+                        "background-light": "#f9f9fa",
+                        "background-dark": "#0f0f10",
+                        "surface-dark": "#1f1f21",
+                        "surface-dark-light": "#2a2a2d",
+                        "text-secondary": "#7f7f82",
+                        "border-dark": "#333335",
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Scrollbar for cleaner look */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0f10;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333335;
+            border-radius: 4px;
+        }
+        /* Hide scrollbar for select elements */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            text-indent: 1px;
+            text-overflow: '';
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-black dark:text-white font-display antialiased overflow-x-hidden pb-20">
+<!-- Header Section -->
+<div class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-gray-200 dark:border-border-dark">
+<div class="flex items-center p-4 justify-between">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-black dark:text-white" style="font-size: 24px;">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">Relatório Consolidado</h1>
+</div>
+<!-- Filters -->
+<div class="px-4 pb-4 flex gap-3">
+<div class="relative flex-1">
+<select class="w-full appearance-none bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark text-sm font-medium text-black dark:text-white rounded-lg pl-3 pr-8 py-2.5 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all cursor-pointer">
+<option value="oct-2023">Outubro 2023</option>
+<option value="sep-2023">Setembro 2023</option>
+<option value="aug-2023">Agosto 2023</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-secondary">
+<span class="material-symbols-outlined" style="font-size: 20px;">calendar_month</span>
+</div>
+</div>
+<div class="relative flex-1">
+<select class="w-full appearance-none bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark text-sm font-medium text-black dark:text-white rounded-lg pl-3 pr-8 py-2.5 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all cursor-pointer">
+<option value="general">Visão Geral</option>
+<option value="sales">Equipe de Vendas</option>
+<option value="partners">Parceiros</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-secondary">
+<span class="material-symbols-outlined" style="font-size: 20px;">group</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Content -->
+<main class="flex flex-col gap-6 p-4">
+<!-- KPI Grid -->
+<div class="grid grid-cols-2 gap-4">
+<!-- Card 1 -->
+<div class="bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl p-4 flex flex-col justify-between h-32 shadow-sm">
+<div class="flex items-start justify-between">
+<span class="text-xs font-semibold text-text-secondary uppercase tracking-wider">Indicações</span>
+<span class="material-symbols-outlined text-primary/80" style="font-size: 20px;">assignment_ind</span>
+</div>
+<div>
+<span class="text-2xl font-bold text-black dark:text-white block">142</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-emerald-500 text-[14px]">trending_up</span>
+<span class="text-xs font-medium text-text-secondary"><span class="text-emerald-500">+12%</span> vs mês ant.</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl p-4 flex flex-col justify-between h-32 shadow-sm">
+<div class="flex items-start justify-between">
+<span class="text-xs font-semibold text-text-secondary uppercase tracking-wider">Conversão</span>
+<span class="material-symbols-outlined text-primary/80" style="font-size: 20px;">percent</span>
+</div>
+<div>
+<span class="text-2xl font-bold text-black dark:text-white block">28.5%</span>
+<div class="w-full bg-surface-dark-light rounded-full h-1 mt-2">
+<div class="bg-primary h-1 rounded-full" style="width: 28.5%"></div>
+</div>
+<span class="text-xs font-medium text-text-secondary mt-1 block">Meta: 25%</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl p-4 flex flex-col justify-between h-32 shadow-sm">
+<div class="flex items-start justify-between">
+<span class="text-xs font-semibold text-text-secondary uppercase tracking-wider">Contratos</span>
+<span class="material-symbols-outlined text-primary/80" style="font-size: 20px;">handshake</span>
+</div>
+<div>
+<span class="text-2xl font-bold text-black dark:text-white block">41</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-emerald-500 text-[14px]">trending_up</span>
+<span class="text-xs font-medium text-text-secondary"><span class="text-emerald-500">+5%</span> vs mês ant.</span>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl p-4 flex flex-col justify-between h-32 shadow-sm relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-16 bg-primary/5 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none"></div>
+<div class="flex items-start justify-between relative z-10">
+<span class="text-xs font-semibold text-text-secondary uppercase tracking-wider">Cashback</span>
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">payments</span>
+</div>
+<div class="relative z-10">
+<span class="text-2xl font-bold text-primary block tracking-tight">R$ 142k</span>
+<span class="text-xs font-medium text-text-secondary mt-1 block">Total gerado</span>
+</div>
+</div>
+</div>
+<!-- Trend Chart -->
+<div class="bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl p-5 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-sm font-bold text-black dark:text-white uppercase tracking-wide">Tendência Mensal</h3>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-white border border-gray-400"></div>
+<span class="text-[10px] text-text-secondary uppercase">Indic.</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-[10px] text-text-secondary uppercase">Fech.</span>
+</div>
+</div>
+</div>
+<!-- Simplified Line Chart Visualization -->
+<div class="relative h-40 w-full">
+<!-- Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+<div class="w-full h-px bg-gray-100 dark:bg-white/5"></div>
+<div class="w-full h-px bg-gray-100 dark:bg-white/5"></div>
+<div class="w-full h-px bg-gray-100 dark:bg-white/5"></div>
+<div class="w-full h-px bg-gray-100 dark:bg-white/5"></div>
+<div class="w-full h-px bg-gray-100 dark:bg-white/5"></div>
+</div>
+<!-- Lines (simulated with CSS gradients/clip-path for simplicity without JS libraries) -->
+<!-- White Line (Indications) -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none">
+<polyline fill="none" points="0,120 40,90 80,100 120,60 160,80 200,40 240,50 320,20" stroke="#7f7f82" stroke-opacity="0.5" stroke-width="2" vector-effect="non-scaling-stroke"></polyline>
+<!-- Red Line (Closings) -->
+<polyline fill="none" points="0,140 40,130 80,110 120,90 160,100 200,60 240,40 320,10" stroke="#d1002a" stroke-width="2" vector-effect="non-scaling-stroke"></polyline>
+</svg>
+<!-- X Axis Labels -->
+<div class="absolute -bottom-6 left-0 right-0 flex justify-between text-[10px] text-text-secondary font-medium px-1">
+<span>01</span>
+<span>07</span>
+<span>14</span>
+<span>21</span>
+<span>30</span>
+</div>
+</div>
+<div class="h-4"></div> <!-- Spacer for axis labels -->
+</div>
+<!-- Ranking List -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between px-1">
+<h3 class="text-sm font-bold text-black dark:text-white uppercase tracking-wide">Top 5 Performance</h3>
+<button class="text-xs text-primary font-semibold hover:text-primary/80">Ver Todos</button>
+</div>
+<div class="bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl overflow-hidden shadow-sm">
+<!-- Rank Item 1 -->
+<div class="flex items-center p-4 border-b border-gray-100 dark:border-border-dark/50">
+<div class="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm mr-4">
+                        1
+                    </div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold text-black dark:text-white truncate">Mariana Costa</p>
+<p class="text-xs text-text-secondary truncate">Executiva Comercial</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-black dark:text-white">R$ 42.5k</p>
+<p class="text-[10px] text-emerald-500 font-medium">+8.2%</p>
+</div>
+</div>
+<!-- Rank Item 2 -->
+<div class="flex items-center p-4 border-b border-gray-100 dark:border-border-dark/50">
+<div class="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm mr-4">
+                        2
+                    </div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold text-black dark:text-white truncate">Carlos Mendes</p>
+<p class="text-xs text-text-secondary truncate">Gerente Regional</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-black dark:text-white">R$ 38.1k</p>
+<p class="text-[10px] text-emerald-500 font-medium">+4.1%</p>
+</div>
+</div>
+<!-- Rank Item 3 -->
+<div class="flex items-center p-4 border-b border-gray-100 dark:border-border-dark/50">
+<div class="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm mr-4">
+                        3
+                    </div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold text-black dark:text-white truncate">Fernanda Lima</p>
+<p class="text-xs text-text-secondary truncate">Consultora DWV</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-black dark:text-white">R$ 31.0k</p>
+<p class="text-[10px] text-text-secondary font-medium">0.0%</p>
+</div>
+</div>
+<!-- Rank Item 4 -->
+<div class="flex items-center p-4 border-b border-gray-100 dark:border-border-dark/50">
+<div class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-white/5 text-text-secondary font-bold text-sm mr-4">
+                        4
+                    </div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-medium text-black dark:text-white truncate">Roberto Santos</p>
+<p class="text-xs text-text-secondary truncate">Executivo Sênior</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-text-secondary">R$ 28.4k</p>
+<p class="text-[10px] text-red-500 font-medium">-2.1%</p>
+</div>
+</div>
+<!-- Rank Item 5 -->
+<div class="flex items-center p-4">
+<div class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-white/5 text-text-secondary font-bold text-sm mr-4">
+                        5
+                    </div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-medium text-black dark:text-white truncate">Ana Paula Rocha</p>
+<p class="text-xs text-text-secondary truncate">Consultora Júnior</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-text-secondary">R$ 22.1k</p>
+<p class="text-[10px] text-emerald-500 font-medium">+1.5%</p>
+</div>
+</div>
+</div>
+</div>
+<div class="h-20"></div> <!-- Spacer for Bottom Nav -->
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-surface-dark border-t border-gray-200 dark:border-border-dark pb-safe">
+<div class="flex justify-around items-center h-16 px-2">
+<button class="flex flex-col items-center justify-center w-full h-full gap-1 group">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary transition-colors">home</span>
+<span class="text-[10px] font-medium text-text-secondary group-hover:text-primary transition-colors">Início</span>
+</button>
+<button class="flex flex-col items-center justify-center w-full h-full gap-1 group relative">
+<span class="material-symbols-outlined text-primary fill-current">bar_chart</span>
+<span class="text-[10px] font-medium text-primary">Relatórios</span>
+<span class="absolute top-3 right-8 w-1.5 h-1.5 rounded-full bg-primary"></span>
+</button>
+<button class="flex flex-col items-center justify-center w-full h-full gap-1 group">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary transition-colors">groups</span>
+<span class="text-[10px] font-medium text-text-secondary group-hover:text-primary transition-colors">Equipe</span>
+</button>
+<button class="flex flex-col items-center justify-center w-full h-full gap-1 group">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary transition-colors">person</span>
+<span class="text-[10px] font-medium text-text-secondary group-hover:text-primary transition-colors">Perfil</span>
+</button>
+</div>
+</nav>
+<!-- Safe Area Spacing for iOS Home Indicator -->
+<style>
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+    </style>
+</body></html>

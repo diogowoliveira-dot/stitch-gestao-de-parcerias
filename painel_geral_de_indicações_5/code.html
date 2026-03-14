@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Painel Geral de Indicações</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec1313",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#000000", /* Deep black as requested */
+                        "surface-dark": "#1C1C1E", /* iOS Dark Surface */
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white overflow-x-hidden pb-24">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md border-b border-white/5">
+<div class="flex items-center p-4 justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-white/10" data-alt="User profile picture showing a professional headshot" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBnvVHedLnlmwZiXsgmU6lJZLHVKUOwRrnKFGm022iRpfaS8Zu2MJsiy2ux1kVx0BxL3uS0o4PpCMez0dCL67naFf8w1vkvn4rbIMri_0lILL-omZGKvoMcZ5Xdfi3gUr1gpDSJz9SGwv_vzQ7PyB9naiFmKRuw0obbSWsx0nStrhsf-YKcsgTIoZqsVIWr0Uwr9CjSK47I-MyaGxOVPtVsByROw0xKzWqEmxsrQSzPhrcq3dVm851PyKeo9FWFt7E7EmE5Ua_scP4d");'>
+</div>
+<div>
+<h2 class="text-white text-lg font-bold leading-tight">Painel Geral</h2>
+<p class="text-xs text-gray-400 font-medium">Bem-vindo, Gestor</p>
+</div>
+</div>
+<button class="flex size-10 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-gray-300" style="font-size: 20px;">notifications</span>
+</button>
+</div>
+</div>
+<!-- Stats Grid -->
+<div class="p-4">
+<div class="grid grid-cols-2 gap-3">
+<!-- Card 1: Novas Indicações (Red) -->
+<div class="flex flex-col gap-3 rounded-xl p-4 bg-surface-dark border border-primary/20 relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-primary text-4xl">notification_important</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-primary animate-pulse"></div>
+<p class="text-gray-400 text-xs font-medium uppercase tracking-wider">Novas</p>
+</div>
+<div>
+<p class="text-white text-3xl font-bold leading-tight">12</p>
+<p class="text-gray-400 text-sm font-medium leading-normal mt-1">Sem contato</p>
+</div>
+</div>
+<!-- Card 2: Em Negociação (Yellow) -->
+<div class="flex flex-col gap-3 rounded-xl p-4 bg-surface-dark border border-white/5 relative overflow-hidden">
+<div class="absolute right-0 top-0 p-3 opacity-10">
+<span class="material-symbols-outlined text-yellow-500 text-4xl">handshake</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-yellow-500"></div>
+<p class="text-gray-400 text-xs font-medium uppercase tracking-wider">Negociando</p>
+</div>
+<div>
+<p class="text-white text-3xl font-bold leading-tight">08</p>
+<p class="text-gray-400 text-sm font-medium leading-normal mt-1">Em andamento</p>
+</div>
+</div>
+<!-- Card 3: Contratos Fechados (Green) -->
+<div class="flex flex-col gap-3 rounded-xl p-4 bg-surface-dark border border-white/5 relative overflow-hidden">
+<div class="absolute right-0 top-0 p-3 opacity-10">
+<span class="material-symbols-outlined text-green-500 text-4xl">verified</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-green-500"></div>
+<p class="text-gray-400 text-xs font-medium uppercase tracking-wider">Fechados</p>
+</div>
+<div>
+<p class="text-white text-3xl font-bold leading-tight">45</p>
+<p class="text-gray-400 text-sm font-medium leading-normal mt-1 text-green-500 font-bold">+5 este mês</p>
+</div>
+</div>
+<!-- Card 4: Parceiros (Grey/White) -->
+<div class="flex flex-col gap-3 rounded-xl p-4 bg-surface-dark border border-white/5 relative overflow-hidden">
+<div class="absolute right-0 top-0 p-3 opacity-10">
+<span class="material-symbols-outlined text-white text-4xl">domain</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-gray-400"></div>
+<p class="text-gray-400 text-xs font-medium uppercase tracking-wider">Parceiros</p>
+</div>
+<div>
+<p class="text-white text-3xl font-bold leading-tight">120</p>
+<p class="text-gray-400 text-sm font-medium leading-normal mt-1">Cadastrados</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Action Button -->
+<div class="px-4 py-2">
+<button class="w-full flex cursor-pointer items-center justify-center rounded-xl h-14 bg-primary hover:bg-red-600 transition-all active:scale-[0.98] shadow-[0_0_20px_rgba(236,19,19,0.3)]">
+<span class="material-symbols-outlined mr-2 text-white">add_circle</span>
+<span class="text-white text-base font-bold tracking-wide">CADASTRAR NOVO PARCEIRO</span>
+</button>
+</div>
+<!-- List Section Header -->
+<div class="pt-6 pb-2 px-4 flex items-center justify-between">
+<h3 class="text-white text-lg font-bold leading-tight">Aguardando Atenção</h3>
+<button class="text-xs text-primary font-bold uppercase tracking-wider">Ver Todos</button>
+</div>
+<!-- List Items -->
+<div class="flex flex-col px-4 gap-3">
+<!-- Item 1 -->
+<div class="flex items-center gap-4 bg-surface-dark rounded-xl p-3 border border-white/5 active:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 shrink-0 size-12">
+<span class="material-symbols-outlined">apartment</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<p class="text-white text-base font-bold truncate">Construtora Alpha</p>
+<span class="flex size-2 rounded-full bg-primary mt-2"></span>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-gray-500 text-[14px]">schedule</span>
+<p class="text-gray-400 text-sm truncate">Indicado há 2h • <span class="text-primary font-medium">Pendente</span></p>
+</div>
+</div>
+<div class="shrink-0 text-gray-600">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center gap-4 bg-surface-dark rounded-xl p-3 border border-white/5 active:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 shrink-0 size-12">
+<span class="material-symbols-outlined">location_city</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<p class="text-white text-base font-bold truncate">Imóveis Beta Ltda.</p>
+<span class="flex size-2 rounded-full bg-primary mt-2"></span>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-gray-500 text-[14px]">schedule</span>
+<p class="text-gray-400 text-sm truncate">Indicado há 5h • <span class="text-primary font-medium">Pendente</span></p>
+</div>
+</div>
+<div class="shrink-0 text-gray-600">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center gap-4 bg-surface-dark rounded-xl p-3 border border-white/5 active:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 shrink-0 size-12">
+<span class="material-symbols-outlined">corporate_fare</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<p class="text-white text-base font-bold truncate">Gamma Incorporadora</p>
+<span class="flex size-2 rounded-full bg-primary mt-2"></span>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-gray-500 text-[14px]">schedule</span>
+<p class="text-gray-400 text-sm truncate">Indicado há 1d • <span class="text-primary font-medium">Pendente</span></p>
+</div>
+</div>
+<div class="shrink-0 text-gray-600">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation -->
+<div class="fixed bottom-0 w-full bg-[#121212]/95 backdrop-blur-lg border-t border-white/10 pb-5 pt-3 px-6 z-50">
+<div class="flex justify-between items-end">
+<!-- Nav Item: Clientes -->
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">groups</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Clientes</span>
+</button>
+<!-- Nav Item: Indicações (Active) -->
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-primary transition-colors" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-bold text-primary transition-colors">Indicações</span>
+</button>
+<!-- Nav Item: Relatórios -->
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">bar_chart</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Relatórios</span>
+</button>
+<!-- Nav Item: Configurações -->
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Config</span>
+</button>
+</div>
+</div>
+</body></html>

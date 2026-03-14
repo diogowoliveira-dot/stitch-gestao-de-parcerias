@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lista de Parceiros DWV</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#e60022",
+                        "background-light": "#f5f5f5",
+                        "background-dark": "#000000",
+                        "surface-dark": "#1A1A1A",
+                        "text-secondary": "#B3B3B3",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "sans": ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 2px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white h-screen flex flex-col overflow-hidden">
+<!-- Top Navigation / Header -->
+<header class="flex-none px-4 pt-6 pb-2 bg-background-dark z-20">
+<div class="flex items-center justify-between mb-4">
+<h1 class="text-2xl font-bold tracking-tight text-white">Rede DWV</h1>
+<button class="text-white hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+<!-- Search Bar -->
+<div class="mb-4">
+<label class="flex w-full items-center rounded-lg bg-surface-dark h-12 px-4 border border-transparent focus-within:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-text-secondary mr-3">search</span>
+<input class="w-full bg-transparent border-none text-white placeholder-text-secondary focus:ring-0 p-0 text-base font-medium" placeholder="Buscar por nome ou cidade..." type="text"/>
+</label>
+</div>
+<!-- Segmented Filters -->
+<div class="flex p-1 bg-surface-dark rounded-lg">
+<label class="flex-1 cursor-pointer">
+<input checked="" class="peer sr-only" name="filter" type="radio" value="todos"/>
+<div class="h-9 flex items-center justify-center rounded text-sm font-medium text-text-secondary peer-checked:bg-primary peer-checked:text-white transition-all">
+                    Todos
+                </div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="peer sr-only" name="filter" type="radio" value="corretores"/>
+<div class="h-9 flex items-center justify-center rounded text-sm font-medium text-text-secondary peer-checked:bg-primary peer-checked:text-white transition-all">
+                    Corretores
+                </div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="peer sr-only" name="filter" type="radio" value="consultores"/>
+<div class="h-9 flex items-center justify-center rounded text-sm font-medium text-text-secondary peer-checked:bg-primary peer-checked:text-white transition-all">
+                    Consultores
+                </div>
+</label>
+</div>
+</header>
+<!-- Scrollable Content List -->
+<main class="flex-1 overflow-y-auto px-4 pb-24 pt-2 space-y-3">
+<!-- Summary Stats (Optional mini dashboard) -->
+<div class="flex gap-3 mb-4">
+<div class="bg-surface-dark rounded-lg p-3 flex-1 border border-white/5">
+<p class="text-xs text-text-secondary mb-1">Total Parceiros</p>
+<p class="text-xl font-bold text-white">142</p>
+</div>
+<div class="bg-surface-dark rounded-lg p-3 flex-1 border border-white/5">
+<p class="text-xs text-text-secondary mb-1">Total Cashback</p>
+<p class="text-xl font-bold text-primary">R$ 342k</p>
+</div>
+</div>
+<!-- Partner Card 1 -->
+<div class="bg-surface-dark rounded-lg p-5 border border-white/5 active:border-primary/30 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-lg font-bold text-white leading-tight">Carlos Eduardo Silva</h3>
+<p class="text-sm text-text-secondary mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+                        São Paulo, SP
+                    </p>
+</div>
+<span class="px-2 py-1 rounded bg-white/10 text-[10px] font-bold tracking-wider uppercase text-white">
+                    Corretor
+                </span>
+</div>
+<div class="h-px w-full bg-white/10 my-4"></div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-xs text-text-secondary uppercase tracking-wider mb-1">Indicações</p>
+<p class="text-xl font-medium text-white">14</p>
+</div>
+<div>
+<p class="text-xs text-text-secondary uppercase tracking-wider mb-1">Fechamentos</p>
+<p class="text-xl font-bold text-primary">03</p>
+</div>
+<div class="col-span-2 mt-2 bg-black/20 -mx-5 -mb-5 p-4 flex items-center justify-between border-t border-white/5 rounded-b-lg">
+<p class="text-sm text-text-secondary font-medium">Cashback Acumulado</p>
+<p class="text-lg font-bold text-white tracking-tight">R$ 6.000,00</p>
+</div>
+</div>
+</div>
+<!-- Partner Card 2 -->
+<div class="bg-surface-dark rounded-lg p-5 border border-white/5 active:border-primary/30 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-lg font-bold text-white leading-tight">Ana Maria Souza</h3>
+<p class="text-sm text-text-secondary mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+                        Rio de Janeiro, RJ
+                    </p>
+</div>
+<span class="px-2 py-1 rounded bg-primary/20 text-[10px] font-bold tracking-wider uppercase text-primary">
+                    Consultor
+                </span>
+</div>
+<div class="h-px w-full bg-white/10 my-4"></div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-xs text-text-secondary uppercase tracking-wider mb-1">Indicações</p>
+<p class="text-xl font-medium text-white">08</p>
+</div>
+<div>
+<p class="text-xs text-text-secondary uppercase tracking-wider mb-1">Fechamentos</p>
+<p class="text-xl font-bold text-primary">01</p>
+</div>
+<div class="col-span-2 mt-2 bg-black/20 -mx-5 -mb-5 p-4 flex items-center justify-between border-t border-white/5 rounded-b-lg">
+<p class="text-sm text-text-secondary font-medium">Cashback Acumulado</p>
+<p class="text-lg font-bold text-white tracking-tight">R$ 2.000,00</p>
+</div>
+</div>
+</div>
+<!-- Partner Card 3 -->
+<div class="bg-surface-dark rounded-lg p-5 border border-white/5 active:border-primary/30 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-lg font-bold text-white leading-tight">Roberto Mendes</h3>
+<p class="text-sm text-text-secondary mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+                        Belo Horizonte, MG
+                    </p>
+</div>
+<span class="px-2 py-1 rounded bg-white/10 text-[10px] font-bold tracking-wider uppercase text-white">
+                    Corretor
+                </span>
+</div>
+<div class="h-px w-full bg-white/10 my-4"></div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-xs text-text-secondary uppercase tracking-wider mb-1">Indicações</p>
+<p class="text-xl font-medium text-white">22</p>
+</div>
+<div>
+<p class="text-xs text-text-secondary uppercase tracking-wider mb-1">Fechamentos</p>
+<p class="text-xl font-bold text-primary">05</p>
+</div>
+<div class="col-span-2 mt-2 bg-black/20 -mx-5 -mb-5 p-4 flex items-center justify-between border-t border-white/5 rounded-b-lg">
+<p class="text-sm text-text-secondary font-medium">Cashback Acumulado</p>
+<p class="text-lg font-bold text-white tracking-tight">R$ 10.000,00</p>
+</div>
+</div>
+</div>
+<!-- Partner Card 4 -->
+<div class="bg-surface-dark rounded-lg p-5 border border-white/5 active:border-primary/30 transition-colors opacity-80">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-lg font-bold text-white leading-tight">Mariana Costa</h3>
+<p class="text-sm text-text-secondary mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+                        Curitiba, PR
+                    </p>
+</div>
+<span class="px-2 py-1 rounded bg-white/10 text-[10px] font-bold tracking-wider uppercase text-white">
+                    Corretor
+                </span>
+</div>
+<div class="h-px w-full bg-white/10 my-4"></div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-xs text-text-secondary uppercase tracking-wider mb-1">Indicações</p>
+<p class="text-xl font-medium text-white">05</p>
+</div>
+<div>
+<p class="text-xs text-text-secondary uppercase tracking-wider mb-1">Fechamentos</p>
+<p class="text-xl font-bold text-text-secondary">00</p>
+</div>
+<div class="col-span-2 mt-2 bg-black/20 -mx-5 -mb-5 p-4 flex items-center justify-between border-t border-white/5 rounded-b-lg">
+<p class="text-sm text-text-secondary font-medium">Cashback Acumulado</p>
+<p class="text-lg font-bold text-white/50 tracking-tight">R$ 0,00</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 w-full bg-surface-dark/95 backdrop-blur-lg border-t border-white/5 pb-6 pt-3 px-6 z-30">
+<ul class="flex justify-between items-center">
+<li>
+<a class="flex flex-col items-center gap-1 text-text-secondary hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:-translate-y-0.5 transition-transform" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="text-[10px] font-medium">Início</span>
+</a>
+</li>
+<li>
+<a class="flex flex-col items-center gap-1 text-primary group" href="#">
+<span class="material-symbols-outlined group-hover:-translate-y-0.5 transition-transform" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="text-[10px] font-bold">Parceiros</span>
+</a>
+</li>
+<li>
+<a class="flex flex-col items-center gap-1 text-text-secondary hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:-translate-y-0.5 transition-transform" style="font-variation-settings: 'FILL' 0;">account_balance_wallet</span>
+<span class="text-[10px] font-medium">Financeiro</span>
+</a>
+</li>
+<li>
+<a class="flex flex-col items-center gap-1 text-text-secondary hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:-translate-y-0.5 transition-transform" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="text-[10px] font-medium">Ajustes</span>
+</a>
+</li>
+</ul>
+</nav>
+</body></html>

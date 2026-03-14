@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#006161",
+                        "danger": "#D32F2F",
+                        "danger-glow": "#FF5252",
+                        "surface": "#1E1E1E",
+                        "background-dark": "#050505",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .ios-safe-area {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }.glass-card {
+            background: rgba(20, 20, 20, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(220, 38, 38, 0.3);box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 
+                        0 0 15px rgba(220, 38, 38, 0.15) inset;}.btn-premium-danger {
+            background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4), 
+                        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        }
+        .btn-premium-danger:active {
+            transform: scale(0.98);
+        }.bg-overlay {
+            background-color: rgba(5, 5, 5, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white min-h-screen flex flex-col font-display bg-[url('https://images.unsplash.com/photo-1496504175726-db7a9916d228?q=80&amp;w=2670&amp;auto=format&amp;fit=crop')] bg-cover bg-center">
+<div class="fixed inset-0 bg-overlay z-0"></div>
+<main class="relative z-10 flex-1 w-full h-full flex flex-col justify-center items-center p-6 ios-safe-area">
+<div class="w-full max-w-sm glass-card rounded-2xl p-8 flex flex-col items-center border-t border-red-900/40">
+<div class="w-full mb-6 text-center">
+<h1 class="text-white tracking-tight text-2xl font-extrabold leading-tight uppercase drop-shadow-md">
+                    Confirmar Exclusão
+                </h1>
+<div class="w-16 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent mx-auto mt-4 rounded-full opacity-80"></div>
+</div>
+<div class="w-full mb-10 text-center">
+<p class="text-gray-300 text-[15px] font-medium leading-relaxed tracking-wide">
+                    Você está prestes a excluir o acesso de <br/>
+<span class="text-white font-bold text-lg block mt-1 mb-2">João Silva</span>
+                    Esta ação é irreversível e removerá todos os vínculos de gestão deste membro.
+                </p>
+</div>
+<div class="w-full flex flex-col gap-4">
+<button class="btn-premium-danger w-full flex items-center justify-center rounded-lg h-14 px-6 text-white text-sm font-bold tracking-widest uppercase transition-all duration-200">
+                    EXCLUIR DEFINITIVAMENTE
+                </button>
+<button class="w-full flex items-center justify-center rounded-lg h-14 px-6 border border-white/10 hover:bg-white/5 bg-transparent text-gray-300 text-sm font-semibold tracking-widest uppercase transition-colors duration-200">
+                    CANCELAR
+                </button>
+</div>
+</div>
+</main>
+<div class="fixed bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/20 rounded-full z-50 pointer-events-none"></div>
+
+</body></html>

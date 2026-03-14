@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestão Completa da Indicação Horizonte</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#ec1313",
+                    "status-green": "#22c55e",
+                    "status-yellow": "#eab308",
+                    "status-bronze": "#f97316", 
+                    "status-silver": "#94a3b8",
+                    "status-diamond": "#22d3ee",
+                    "background-dark": "#000000",
+                    "surface-dark": "#1C1C1E",
+                    "surface-secondary": "#2C2C2E",
+                    "border-dark": "rgba(255, 255, 255, 0.1)"
+                },
+                fontFamily: {
+                    "display": ["Manrope", "sans-serif"]
+                },
+                borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+                },
+            },
+        },
+    }
+</script>
+<style>
+    body {
+        font-family: 'Manrope', sans-serif;
+    }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      min-height: max(884px, 100dvh);
+    }.no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white overflow-x-hidden pb-32">
+<div class="sticky top-0 z-50 bg-background-dark/95 backdrop-blur-md border-b border-border-dark">
+<div class="flex items-center px-4 pt-4 pb-4 justify-between">
+<button class="p-2 -ml-2 text-gray-400 hover:text-white transition-colors rounded-full active:bg-white/10">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<h2 class="text-white text-base font-bold leading-tight">Gestão da Indicação</h2>
+<button class="p-2 -mr-2 text-gray-400 hover:text-white transition-colors rounded-full active:bg-white/10">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col p-6 gap-6 pt-6">
+<div class="flex items-start justify-between">
+<div>
+<h1 class="text-2xl font-bold text-white tracking-tight">Construtora Horizonte</h1>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs text-gray-500">ID: #8492</span>
+</div>
+</div>
+</div>
+<div class="w-full bg-surface-dark border border-border-dark rounded-2xl p-5">
+<div class="flex items-center gap-2 mb-4 pb-3 border-b border-white/5">
+<span class="material-symbols-outlined text-primary text-sm">badge</span>
+<h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider">Dados da Empresa</h3>
+</div>
+<div class="flex flex-col gap-5">
+<div class="flex flex-col gap-1">
+<label class="text-xs text-gray-500 font-medium">Nome do Responsável</label>
+<span class="text-sm text-white font-medium">Carlos Eduardo Silva</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-1">
+<label class="text-xs text-gray-500 font-medium">Telefone</label>
+<div class="flex items-center gap-2">
+<span class="text-sm text-white font-medium">(11) 98877-6655</span>
+<span class="material-symbols-outlined text-status-green text-xs cursor-pointer">chat</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-xs text-gray-500 font-medium">Cidade</label>
+<span class="text-sm text-white font-medium">São Paulo - SP</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-xs text-gray-500 font-medium">E-mail</label>
+<span class="text-sm text-white font-medium break-all">carlos.silva@construtorahorizonte.com.br</span>
+</div>
+<div class="flex flex-col gap-2 mt-1">
+<label class="text-xs text-gray-500 font-medium">Observações</label>
+<div class="bg-surface-secondary/50 rounded-lg p-3 border border-white/5">
+<p class="text-sm text-gray-300 leading-relaxed italic">
+                        "Interessados em áreas acima de 2.000m² na zona sul para empreendimentos de médio padrão. Priorizam permuta física."
+                    </p>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full bg-surface-dark border border-border-dark rounded-2xl p-5">
+<div class="flex items-center gap-2 mb-4 pb-3 border-b border-white/5">
+<span class="material-symbols-outlined text-status-diamond text-sm">share</span>
+<h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider">Origem</h3>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-secondary flex items-center justify-center border border-white/10 text-white font-bold text-xs shrink-0">
+                    IZ
+                </div>
+<div class="flex flex-col">
+<span class="text-xs text-gray-500 uppercase tracking-wider mb-0.5">Indicado Por</span>
+<span class="text-sm font-bold text-white">Incorporadora Zenith</span>
+</div>
+</div>
+<div class="flex items-center gap-2 pl-[3.25rem]">
+<span class="material-symbols-outlined text-gray-500 text-sm">person</span>
+<span class="text-sm text-gray-300">Responsável: <span class="text-white">Roberto Almeida</span></span>
+</div>
+</div>
+</div>
+<div class="w-full bg-surface-dark border border-border-dark rounded-2xl p-5 relative overflow-hidden">
+<div class="absolute -top-10 -right-10 w-24 h-24 bg-primary/10 rounded-full blur-2xl"></div>
+<div class="flex items-center gap-2 mb-5 pb-3 border-b border-white/5 relative z-10">
+<span class="material-symbols-outlined text-primary text-sm">settings_account_box</span>
+<h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider">Ações Internas</h3>
+</div>
+<div class="flex flex-col gap-6 relative z-10">
+<div class="flex flex-col gap-2">
+<label class="text-xs text-gray-500 font-medium uppercase tracking-wide">Consultor Responsável</label>
+<div class="relative">
+<select class="w-full bg-surface-secondary text-white text-sm rounded-xl border border-white/10 px-4 py-3 pr-10 appearance-none focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+<option disabled="" value="">Selecione um consultor</option>
+<option selected="" value="1">Mariana Costa (Comercial)</option>
+<option value="2">Felipe Santos (Novos Negócios)</option>
+<option value="3">Amanda Oliveira (Pré-vendas)</option>
+</select>
+<div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+<span class="material-symbols-outlined text-xl">expand_more</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<label class="text-xs text-gray-500 font-medium uppercase tracking-wide">Fluxo de Negociação</label>
+<div class="flex items-center justify-between p-3 bg-surface-secondary/40 rounded-xl border border-white/5">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-white">Contato Realizado</span>
+<span class="text-[10px] text-gray-400">Primeira abordagem confirmada</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-status-green"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-secondary/40 rounded-xl border border-white/5">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-white">Negócio Fechado</span>
+<span class="text-[10px] text-gray-400">Contrato assinado e finalizado</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-400 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-status-green"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full bg-surface-dark border border-border-dark rounded-2xl p-5 relative overflow-hidden">
+<div class="absolute -top-10 -right-10 w-24 h-24 bg-status-green/10 rounded-full blur-2xl"></div>
+<div class="flex items-center gap-2 mb-4 pb-3 border-b border-white/5 relative z-10">
+<span class="material-symbols-outlined text-status-green text-sm">payments</span>
+<h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider">Gestão Financeira e CS</h3>
+</div>
+<div class="flex flex-col gap-3 relative z-10">
+<div class="flex items-center justify-between p-3 bg-surface-secondary/40 rounded-xl border border-white/5">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-white">Cashback Pago à Origem</span>
+<span class="text-[10px] text-gray-400">Confirmar crédito de R$ 2.000,00</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-400 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-status-green peer-checked:after:bg-white"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-secondary/40 rounded-xl border border-white/5">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-white">Prêmio Entregue</span>
+<span class="text-[10px] text-gray-400">Confirmar entrega da premiação correspondente</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-400 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-status-green peer-checked:after:bg-white"></div>
+</label>
+</div>
+</div>
+</div>
+<div class="mt-2">
+<button class="w-full py-4 rounded-xl bg-primary hover:bg-red-600 active:scale-[0.98] transition-all shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined text-white text-xl">save</span>
+<span class="font-bold text-white uppercase tracking-wider text-sm">Salvar Alterações</span>
+</button>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 w-full bg-[#121212]/95 backdrop-blur-lg border-t border-white/10 pb-6 pt-3 px-6 z-50 shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+<div class="flex justify-between items-end">
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">groups</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Clientes</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-white transition-colors" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-bold text-white transition-colors">Indicações</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">bar_chart</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Relatórios</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Config</span>
+</button>
+</div>
+</div>
+
+</body></html>

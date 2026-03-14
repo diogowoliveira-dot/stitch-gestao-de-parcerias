@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nova Indicação do Consultor</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#00f2ff",
+              "dwv-red": "#FF0000",
+              "background-light": "#fafafa",
+              "background-dark": "#0d0d0d",
+              "surface-glass": "rgba(36, 41, 47, 0.6)",
+            },
+            fontFamily: {
+              "display": ["Space Grotesk", "sans-serif"]
+            },
+            borderRadius: {
+                "DEFAULT": "0.25rem", 
+                "lg": "0.5rem", 
+                "xl": "0.75rem", 
+                "full": "9999px"
+            },
+            backgroundImage: {
+                'subtle-gradient': 'radial-gradient(circle at 100% 0%, rgba(30, 35, 40, 1) 0%, #0d0d0d 50%)',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom scrollbar for textarea */
+        textarea::-webkit-scrollbar {
+            width: 4px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(36, 41, 47, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .input-glass {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .input-glass:focus {
+            background: rgba(0, 242, 255, 0.05);
+            border-color: #00f2ff;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
+            outline: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white font-display antialiased overflow-x-hidden selection:bg-primary/30 selection:text-white">
+<div class="relative flex flex-col min-h-screen w-full bg-subtle-gradient pb-24">
+<!-- Header -->
+<header class="sticky top-0 z-30 flex items-center justify-between px-4 py-4 bg-[#0d0d0d]/90 backdrop-blur-md border-b border-white/5">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-white/5 active:scale-95 transition-transform text-white">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight text-center flex-1 pr-10">Nova Indicação</h1>
+</header>
+<!-- Subheader: Consultant Info -->
+<div class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-2 rounded-full bg-primary shadow-[0_0_8px_rgba(0,242,255,0.8)]"></div>
+<h2 class="text-lg font-medium text-gray-300 tracking-tight">Consultor: <span class="text-white font-bold">João Silva</span></h2>
+</div>
+</div>
+<!-- Form Section -->
+<form class="flex flex-col gap-5 px-5 mt-2" onsubmit="event.preventDefault()">
+<!-- Nome da Empresa -->
+<div class="flex flex-col gap-2 group">
+<label class="text-sm font-medium text-gray-400 tracking-wide uppercase ml-1 group-focus-within:text-primary transition-colors duration-300" for="company_name">Nome da Empresa Indicada</label>
+<div class="relative">
+<input class="input-glass w-full rounded-lg h-14 px-4 text-base placeholder:text-gray-600 font-normal" id="company_name" placeholder="Ex: Tech Solutions Ltda" type="text"/>
+</div>
+</div>
+<!-- Responsável -->
+<div class="flex flex-col gap-2 group">
+<label class="text-sm font-medium text-gray-400 tracking-wide uppercase ml-1 group-focus-within:text-primary transition-colors duration-300" for="contact_person">Responsável na Empresa</label>
+<div class="relative">
+<input class="input-glass w-full rounded-lg h-14 px-4 text-base placeholder:text-gray-600 font-normal" id="contact_person" placeholder="Nome completo" type="text"/>
+</div>
+</div>
+<!-- Row: Celular & Cidade -->
+<div class="grid grid-cols-1 gap-5">
+<div class="flex flex-col gap-2 group">
+<label class="text-sm font-medium text-gray-400 tracking-wide uppercase ml-1 group-focus-within:text-primary transition-colors duration-300" for="phone">Celular de Contato</label>
+<div class="relative">
+<input class="input-glass w-full rounded-lg h-14 px-4 text-base placeholder:text-gray-600 font-normal" id="phone" placeholder="(00) 00000-0000" type="tel"/>
+</div>
+</div>
+<div class="flex flex-col gap-2 group">
+<label class="text-sm font-medium text-gray-400 tracking-wide uppercase ml-1 group-focus-within:text-primary transition-colors duration-300" for="email">E-mail Corporativo</label>
+<div class="relative">
+<input class="input-glass w-full rounded-lg h-14 px-4 text-base placeholder:text-gray-600 font-normal" id="email" placeholder="nome@empresa.com" type="email"/>
+</div>
+</div>
+<div class="flex flex-col gap-2 group">
+<label class="text-sm font-medium text-gray-400 tracking-wide uppercase ml-1 group-focus-within:text-primary transition-colors duration-300" for="city">Cidade</label>
+<div class="relative">
+<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+<select class="input-glass w-full rounded-lg h-14 px-4 text-base text-white placeholder:text-gray-600 font-normal appearance-none bg-transparent" id="city">
+<option class="bg-[#1a1f24] text-gray-500" disabled="" selected="" value="">Selecione a cidade</option>
+<option class="bg-[#1a1f24]" value="sp">São Paulo</option>
+<option class="bg-[#1a1f24]" value="rj">Rio de Janeiro</option>
+<option class="bg-[#1a1f24]" value="bh">Belo Horizonte</option>
+<option class="bg-[#1a1f24]" value="pr">Curitiba</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Observações -->
+<div class="flex flex-col gap-2 group mt-2">
+<label class="text-sm font-medium text-gray-400 tracking-wide uppercase ml-1 group-focus-within:text-primary transition-colors duration-300" for="notes">Observações Iniciais</label>
+<div class="relative">
+<textarea class="input-glass w-full rounded-lg p-4 text-base placeholder:text-gray-600 font-normal resize-none" id="notes" placeholder="Detalhes sobre a necessidade do cliente..." rows="4"></textarea>
+</div>
+</div>
+<!-- Main Action -->
+<div class="pt-6 pb-4">
+<button class="w-full h-14 bg-dwv-red hover:bg-red-600 active:bg-red-700 text-white font-bold text-lg tracking-wider rounded-lg shadow-lg shadow-red-900/20 transform transition-all active:scale-[0.98] flex items-center justify-center gap-2" type="button">
+                    CADASTRAR INDICAÇÃO
+                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<p class="text-center text-xs text-gray-600 mt-4">Ao cadastrar, a indicação será processada imediatamente.</p>
+</div>
+</form>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 w-full z-40">
+<!-- Glass effect container -->
+<div class="absolute inset-0 bg-[#0d0d0d]/90 backdrop-blur-lg border-t border-white/5"></div>
+<div class="relative flex justify-between items-center px-2 h-20 w-full max-w-lg mx-auto">
+<a class="flex flex-col items-center justify-center w-full h-full gap-1 group" href="#">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors text-[28px] font-light">home</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full gap-1 group" href="#">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors text-[28px] font-light">search</span>
+</a>
+<!-- Active Item -->
+<a class="flex flex-col items-center justify-center w-full h-full gap-1 relative" href="#">
+<div class="absolute top-3 size-1 bg-primary rounded-full shadow-[0_0_8px_#00f2ff]"></div>
+<span class="material-symbols-outlined text-primary text-[32px] font-normal translate-y-1">add_circle</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full gap-1 group" href="#">
+<div class="relative">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors text-[28px] font-light">notifications</span>
+<span class="absolute top-0 right-0 size-2 bg-dwv-red rounded-full border border-[#0d0d0d]"></span>
+</div>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full gap-1 group" href="#">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors text-[28px] font-light">person</span>
+</a>
+</div>
+<!-- Safe area spacer for iPhone home bar -->
+<div class="h-6 w-full bg-[#0d0d0d]"></div>
+</nav>
+</div>
+</body></html>

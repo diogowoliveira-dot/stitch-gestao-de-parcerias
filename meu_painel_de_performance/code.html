@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Painel de Performance Corrigido</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#cc0000",
+                        "primary-dark": "#990000",
+                        "background-light": "#ffffff",
+                        "background-dark": "#121212",
+                        "surface-dark": "#1F1F1F",
+                        "surface-darker": "#181818",
+                    },
+                    fontFamily: {
+                        "display": ["Epilogue", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                    boxShadow: {
+                        "glow": "0 0 20px rgba(204, 0, 0, 0.15)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>.hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }.glass-nav {
+            background: rgba(31, 31, 31, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-white antialiased overflow-x-hidden pb-24">
+<header class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-gray-200 dark:border-white/5">
+<div class="px-6 pt-12 pb-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="size-10 rounded-full bg-surface-darker flex items-center justify-center border-2 border-primary/20">
+<span class="font-bold text-white text-sm">RM</span>
+</div>
+<div class="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full border-2 border-background-dark"></div>
+</div>
+<div class="flex flex-col">
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wide uppercase">Bem-vindo</span>
+<h1 class="text-lg font-bold leading-none tracking-tight">Ricardo Mendes</h1>
+</div>
+</div>
+<button class="flex items-center justify-center size-10 rounded-full bg-surface-darker hover:bg-surface-dark transition-colors relative group">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-white transition-colors" style="font-size: 24px;">notifications</span>
+<span class="absolute top-2.5 right-2.5 size-2 bg-primary rounded-full ring-2 ring-background-dark"></span>
+</button>
+</div>
+</header>
+<main class="flex flex-col gap-6 px-6 pt-6">
+<section>
+<div class="flex items-baseline justify-between mb-4">
+<h2 class="text-2xl font-bold tracking-tight">Performance</h2>
+<span class="text-xs text-primary font-medium flex items-center gap-1 cursor-pointer">
+                    Ver relatório <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="col-span-2 bg-surface-dark rounded-2xl p-5 border border-white/5 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-primary">monetization_on</span>
+</div>
+<p class="text-gray-400 text-sm font-medium mb-1">Meus Fechamentos</p>
+<div class="flex items-end gap-3">
+<h3 class="text-4xl font-bold tracking-tighter text-white">R$ 1.2M</h3>
+<span class="mb-1.5 px-2 py-0.5 rounded text-xs font-bold bg-green-500/20 text-green-500 flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">trending_up</span> 10%
+                        </span>
+</div>
+<div class="mt-4 h-1 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-orange-600 w-[75%] rounded-full"></div>
+</div>
+<p class="text-xs text-gray-500 mt-2">Meta: R$ 1.6M</p>
+</div>
+<div class="bg-surface-dark rounded-2xl p-4 border border-white/5 flex flex-col justify-between h-32 hover:border-primary/30 transition-colors">
+<div class="flex justify-between items-start">
+<div class="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
+<span class="material-symbols-outlined">handshake</span>
+</div>
+<span class="text-xs font-bold text-green-500">+5%</span>
+</div>
+<div>
+<h3 class="text-2xl font-bold text-white">24</h3>
+<p class="text-gray-400 text-xs font-medium">Parceiros</p>
+</div>
+</div>
+<div class="bg-surface-dark rounded-2xl p-4 border border-white/5 flex flex-col justify-between h-32 hover:border-primary/30 transition-colors">
+<div class="flex justify-between items-start">
+<div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+<span class="text-xs font-bold text-green-500">+2%</span>
+</div>
+<div>
+<h3 class="text-2xl font-bold text-white">12</h3>
+<p class="text-gray-400 text-xs font-medium">Indicações</p>
+</div>
+</div>
+</div>
+</section>
+<button class="w-full bg-primary hover:bg-primary-dark active:scale-[0.98] transition-all duration-200 text-white h-14 rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-glow group">
+<span class="material-symbols-outlined group-hover:rotate-90 transition-transform duration-300">add</span>
+            Novo Parceiro
+        </button>
+<section class="mt-2">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold">Parceiros Recentes</h3>
+<button class="text-primary p-1 rounded hover:bg-primary/10">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+<div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2 -mx-6 px-6">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-white text-background-dark font-bold text-sm border border-transparent shadow-sm">
+                    Todos
+                </button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-dark text-gray-400 font-medium text-sm border border-white/5 hover:border-gray-500 transition-colors">
+                    Incorporadoras
+                </button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-dark text-gray-400 font-medium text-sm border border-white/5 hover:border-gray-500 transition-colors">
+                    Corretores
+                </button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-dark text-gray-400 font-medium text-sm border border-white/5 hover:border-gray-500 transition-colors">
+                    Consultores
+                </button>
+</div>
+<div class="flex flex-col gap-3 mt-2">
+<div class="bg-surface-dark p-4 rounded-xl flex items-center gap-4 border border-white/5 hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="size-12 rounded-full bg-gray-800 flex items-center justify-center shrink-0 border border-white/10">
+<span class="font-bold text-white text-lg">CS</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<h4 class="text-white font-bold text-sm truncate">Carlos Silva</h4>
+<span class="text-[10px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded">Hoje</span>
+</div>
+<p class="text-gray-400 text-xs truncate">Corretor • Indicação Pendente</p>
+</div>
+<div class="size-2 rounded-full bg-orange-500 shrink-0"></div>
+</div>
+<div class="bg-surface-dark p-4 rounded-xl flex items-center gap-4 border border-white/5 hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="size-12 rounded-full bg-gray-800 flex items-center justify-center shrink-0 border border-white/10">
+<span class="font-bold text-white text-lg">A</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<h4 class="text-white font-bold text-sm truncate">Alpha Construtora</h4>
+<span class="text-[10px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded">Ontem</span>
+</div>
+<p class="text-gray-400 text-xs truncate">Incorporadora • Ativa</p>
+</div>
+<div class="size-2 rounded-full bg-green-500 shrink-0"></div>
+</div>
+<div class="bg-surface-dark p-4 rounded-xl flex items-center gap-4 border border-white/5 hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="size-12 rounded-full bg-gray-800 flex items-center justify-center shrink-0 border border-white/10">
+<span class="font-bold text-white text-lg">JC</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<h4 class="text-white font-bold text-sm truncate">Juliana Costa</h4>
+<span class="text-[10px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded">3 dias atrás</span>
+</div>
+<p class="text-gray-400 text-xs truncate">Consultora • Em Negociação</p>
+</div>
+<div class="size-2 rounded-full bg-blue-500 shrink-0"></div>
+</div>
+<div class="bg-surface-dark p-4 rounded-xl flex items-center gap-4 border border-white/5 hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="size-12 rounded-full bg-gray-800 flex items-center justify-center shrink-0 border border-white/10">
+<span class="font-bold text-white text-lg">M</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<h4 class="text-white font-bold text-sm truncate">Mobi Development</h4>
+<span class="text-[10px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded">5 dias atrás</span>
+</div>
+<p class="text-gray-400 text-xs truncate">Incorporadora • Ativa</p>
+</div>
+<div class="size-2 rounded-full bg-green-500 shrink-0"></div>
+</div>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 w-full glass-nav pb-6 pt-3 px-6 z-50">
+<ul class="flex justify-between items-center">
+<li class="flex-1 flex flex-col items-center gap-1 cursor-pointer group">
+<span class="material-symbols-outlined text-primary group-hover:text-primary-dark transition-colors">home</span>
+<span class="text-[10px] font-medium text-white group-hover:text-gray-200">Início</span>
+</li>
+<li class="flex-1 flex flex-col items-center gap-1 cursor-pointer group">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors">group</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-gray-300">Parceiros</span>
+</li>
+<li class="flex-1 flex flex-col items-center gap-1 cursor-pointer group">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors">assignment</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-gray-300">Indicações</span>
+</li>
+<li class="flex-1 flex flex-col items-center gap-1 cursor-pointer group">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors">person</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-gray-300">Perfil</span>
+</li>
+</ul>
+</nav>
+
+</body></html>

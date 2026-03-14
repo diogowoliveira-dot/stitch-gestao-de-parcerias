@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2e5cb8",
+                        "background-light": "#fafafa",
+                        "background-dark": "#0d0d0d",
+                        "card-dark": "#1a1a1a",
+                        "border-dark": "#2a2a2a"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "sans": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .ios-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }</style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 ios-blur border-b border-slate-200 dark:border-border-dark">
+<div class="flex items-center px-4 h-16 justify-between max-w-md mx-auto">
+<button class="flex items-center text-primary gap-1">
+<span class="material-symbols-outlined text-[24px]">chevron_left</span>
+<span class="text-base font-medium">Voltar</span>
+</button>
+<h1 class="text-base font-bold tracking-tight">Editar Perfil</h1>
+<button class="text-primary font-bold text-base hover:opacity-80 transition-opacity">
+                Salvar
+            </button>
+</div>
+</header>
+<main class="max-w-md mx-auto pb-20">
+<section class="flex flex-col items-center pt-10 pb-6 px-4">
+<div class="text-center">
+<h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">João Silva</h2>
+</div>
+</section>
+<section class="px-4 space-y-4">
+<h3 class="text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-widest font-bold px-1">Dados Cadastrais</h3>
+<div class="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-border-dark overflow-hidden divide-y divide-slate-100 dark:divide-border-dark">
+<div class="px-4 py-3 flex flex-col">
+<label class="text-xs font-semibold text-slate-500 dark:text-slate-500 mb-1">Nome Completo</label>
+<input class="bg-transparent border-none p-0 text-base focus:ring-0 w-full placeholder:text-slate-600 text-slate-900 dark:text-slate-100" placeholder="Ex: Nome do Usuário" type="text" value="João Silva"/>
+</div>
+<div class="px-4 py-3 flex flex-col">
+<label class="text-xs font-semibold text-slate-500 dark:text-slate-500 mb-1">Endereço de E-mail</label>
+<input class="bg-transparent border-none p-0 text-base focus:ring-0 w-full placeholder:text-slate-600 text-slate-900 dark:text-slate-100" placeholder="email@exemplo.com" type="email" value="joao.silva@empresa.com.br"/>
+</div>
+<div class="px-4 py-3 flex items-center justify-between group cursor-pointer">
+<div class="flex flex-col">
+<label class="text-xs font-semibold text-slate-500 dark:text-slate-500 mb-1">Nível de Acesso</label>
+<span class="text-base text-slate-900 dark:text-slate-100">Gestor de Operações</span>
+</div>
+<span class="material-symbols-outlined text-slate-400">unfold_more</span>
+</div>
+</div>
+</section>
+<section class="mt-8 px-4 space-y-4">
+<h3 class="text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-widest font-bold px-1">Ações Administrativas</h3>
+<div class="space-y-3">
+<button class="w-full bg-transparent text-slate-700 dark:text-slate-300 font-semibold py-4 rounded-xl border border-slate-300 dark:border-border-dark flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-card-dark transition-all">
+<span class="material-symbols-outlined text-[20px]">block</span>
+                    Desativar Acesso
+                </button>
+<button class="w-full bg-transparent text-slate-700 dark:text-slate-300 font-semibold py-4 rounded-xl border border-slate-300 dark:border-border-dark flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-card-dark transition-all">
+<span class="material-symbols-outlined text-[20px]">lock_reset</span>
+                    Enviar Link de Recuperação
+                </button>
+</div>
+</section>
+<footer class="mt-12 mb-8 px-4 text-center">
+<button class="text-red-500 font-medium text-base hover:opacity-80 transition-opacity">
+                Excluir Definitivamente
+            </button>
+<p class="mt-4 text-[11px] text-slate-500 dark:text-slate-600 px-10 leading-relaxed">
+                Esta ação é irreversível e removerá todos os logs e acessos vinculados a este perfil.
+            </p>
+</footer>
+</main>
+<div class="fixed bottom-1 left-1/2 -translate-x-1/2 w-32 h-1 bg-slate-800 rounded-full opacity-20 pointer-events-none"></div>
+
+</body></html>

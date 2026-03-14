@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec1313",
+                        "background-light": "#f2f2f7",
+                        "background-dark": "#000000",
+                        "card-dark": "#121212",
+                        "border-dark": "#27272a",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen pb-24">
+<header class="sticky top-0 z-50 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10">
+<div class="flex items-center p-4 justify-between max-w-md mx-auto">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">admin_panel_settings</span>
+<h2 class="text-lg font-bold tracking-tight uppercase">Painel Master</h2>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-md mx-auto">
+<section class="px-5 pt-6 pb-2">
+<h1 class="text-3xl font-bold leading-tight tracking-tight">Gestão de<br/>Acessos e Equipes</h1>
+<p class="text-slate-500 dark:text-slate-400 mt-2 text-sm font-light">Controle centralizado de permissões.</p>
+</section>
+<section class="px-5 py-6">
+<button class="w-full flex items-center justify-center gap-2 bg-[#ec1313] hover:bg-red-600 text-white h-12 rounded-lg font-bold text-sm tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-red-600/20">
+<span class="material-symbols-outlined text-lg">add</span>
+<span>CADASTRAR NOVO</span>
+</button>
+</section>
+<section class="px-5 pb-4 sticky top-[72px] z-40 bg-background-light dark:bg-background-dark">
+<div class="flex h-10 items-center justify-center rounded-lg bg-slate-200 dark:bg-[#1c1c1e] p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-[4px] has-[:checked]:bg-white dark:has-[:checked]:bg-[#2c2c2e] has-[:checked]:text-primary text-slate-500 dark:text-slate-400 text-xs font-bold uppercase transition-all shadow-sm">
+<span class="truncate">Usuários do Sistema</span>
+<input checked="" class="hidden" name="tab-selector" type="radio"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-[4px] has-[:checked]:bg-white dark:has-[:checked]:bg-[#2c2c2e] has-[:checked]:text-primary text-slate-500 dark:text-slate-400 text-xs font-bold uppercase transition-all">
+<span class="truncate">Equipe de Contato</span>
+<input class="hidden" name="tab-selector" type="radio"/>
+</label>
+</div>
+</section>
+<section class="px-5 space-y-4">
+<div class="bg-white dark:bg-card-dark rounded-lg p-5 border border-slate-100 dark:border-white/10 border-l-4 border-l-primary shadow-sm relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-slate-900 dark:text-white text-lg font-bold">João Silva</h3>
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest font-semibold mt-1">Gestor de TI</p>
+</div>
+<div class="flex items-center gap-1.5 bg-green-500/10 px-2 py-1 rounded text-green-500">
+<div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+<span class="text-[10px] font-bold">ATIVO</span>
+</div>
+</div>
+<div class="flex items-center gap-6 border-t border-slate-100 dark:border-white/5 pt-4">
+<button class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-wide transition-colors">Editar</button>
+<button class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-wide transition-colors">Resetar Senha</button>
+<button class="text-xs font-bold text-primary hover:text-red-400 uppercase tracking-wide transition-colors ml-auto">Deletar</button>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark rounded-lg p-5 border border-slate-100 dark:border-white/10 border-l-4 border-l-primary shadow-sm relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-slate-900 dark:text-white text-lg font-bold">Maria Oliveira</h3>
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest font-semibold mt-1">Consultora Senior</p>
+</div>
+<div class="flex items-center gap-1.5 bg-slate-500/10 px-2 py-1 rounded text-slate-500">
+<div class="w-1.5 h-1.5 bg-slate-500 rounded-full"></div>
+<span class="text-[10px] font-bold">OFFLINE</span>
+</div>
+</div>
+<div class="flex items-center gap-6 border-t border-slate-100 dark:border-white/5 pt-4">
+<button class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-wide transition-colors">Editar</button>
+<button class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-wide transition-colors">Resetar Senha</button>
+<button class="text-xs font-bold text-primary hover:text-red-400 uppercase tracking-wide transition-colors ml-auto">Deletar</button>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark rounded-lg p-5 border border-slate-100 dark:border-white/10 border-l-4 border-l-primary shadow-sm relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-slate-900 dark:text-white text-lg font-bold">Ricardo Santos</h3>
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest font-semibold mt-1">Analista de Suporte</p>
+</div>
+<div class="flex items-center gap-1.5 bg-green-500/10 px-2 py-1 rounded text-green-500">
+<div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+<span class="text-[10px] font-bold">ATIVO</span>
+</div>
+</div>
+<div class="flex items-center gap-6 border-t border-slate-100 dark:border-white/5 pt-4">
+<button class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-wide transition-colors">Editar</button>
+<button class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-wide transition-colors">Resetar Senha</button>
+<button class="text-xs font-bold text-primary hover:text-red-400 uppercase tracking-wide transition-colors ml-auto">Deletar</button>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark rounded-lg p-5 border border-slate-100 dark:border-white/10 border-l-4 border-l-slate-700 opacity-60 shadow-sm relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-slate-900 dark:text-white text-lg font-bold">Fernando Lima</h3>
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest font-semibold mt-1">Coordenador</p>
+</div>
+<div class="flex items-center gap-1.5 bg-red-500/10 px-2 py-1 rounded text-red-500">
+<div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+<span class="text-[10px] font-bold">BLOQUEADO</span>
+</div>
+</div>
+<div class="flex items-center gap-6 border-t border-slate-100 dark:border-white/5 pt-4">
+<button class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-wide transition-colors">Reativar</button>
+<button class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-wide transition-colors">Log</button>
+<button class="text-xs font-bold text-primary hover:text-red-400 uppercase tracking-wide transition-colors ml-auto">Expurgar</button>
+</div>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 bg-background-light/95 dark:bg-[#000000]/90 backdrop-blur-xl border-t border-slate-200 dark:border-white/10 pb-8 pt-4 z-50">
+<div class="max-w-md mx-auto flex justify-around items-center">
+<button class="flex flex-col items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Painel</span>
+</button>
+<button class="flex flex-col items-center gap-1.5 text-slate-400 hover:text-white transition-colors group">
+<span class="material-symbols-outlined group-hover:text-white transition-colors">groups</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Equipes</span>
+</button>
+<button class="flex flex-col items-center gap-1.5 text-slate-400 hover:text-white transition-colors group">
+<span class="material-symbols-outlined group-hover:text-white transition-colors">analytics</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Relatórios</span>
+</button>
+<button class="flex flex-col items-center gap-1.5 text-slate-400 hover:text-white transition-colors group">
+<span class="material-symbols-outlined group-hover:text-white transition-colors">settings</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Config</span>
+</button>
+</div>
+</nav>
+
+</body></html>

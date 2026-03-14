@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#006161",
+                        "danger": "#E53935",
+                        "surface": "#121212",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#000000",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .ios-safe-area {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            background: rgba(18, 18, 18, 0.8);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-white min-h-screen flex flex-col items-center justify-center font-display">
+<!-- Top Navigation Bar (iOS Style) -->
+<div class="fixed top-0 left-0 w-full z-50 bg-background-light dark:bg-background-dark ios-safe-area">
+<div class="flex items-center p-4 justify-between">
+<div aria-label="Voltar" class="text-white flex size-12 shrink-0 items-center cursor-pointer">
+<span class="material-symbols-outlined">arrow_back_ios</span>
+</div>
+<h2 class="text-white text-sm font-bold uppercase tracking-widest flex-1 text-center pr-12">Segurança Master</h2>
+</div>
+</div>
+<!-- Main Content Container -->
+<main class="flex-1 w-full max-w-md px-6 flex flex-col justify-center items-center ios-safe-area">
+<!-- Severity Alert Icon -->
+<div class="mb-8 flex items-center justify-center">
+<div class="w-16 h-16 rounded-full border border-danger/30 flex items-center justify-center bg-danger/10">
+<span class="material-symbols-outlined text-danger text-4xl">warning</span>
+</div>
+</div>
+<!-- Headline -->
+<div class="w-full mb-4">
+<h1 class="text-white tracking-tight text-3xl font-extrabold leading-tight text-center">
+                Confirmar Exclusão
+            </h1>
+</div>
+<!-- Body Text -->
+<div class="w-full mb-12">
+<p class="text-gray-400 text-base font-normal leading-relaxed text-center">
+                Você está prestes a excluir o acesso de <span class="text-white font-bold">João Silva</span>. 
+                Esta ação é <span class="text-white underline underline-offset-4 decoration-danger">irreversível</span> e removerá todos os vínculos de gestão deste membro permanentemente.
+            </p>
+</div>
+<!-- Action Group -->
+<div class="w-full flex flex-col gap-4">
+<!-- Destructive Action -->
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-danger hover:bg-red-700 transition-colors text-white text-base font-extrabold leading-normal tracking-wide w-full shadow-lg shadow-danger/20">
+<span class="truncate">EXCLUIR DEFINITIVAMENTE</span>
+</button>
+<!-- Cancel Action -->
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 border border-white/20 hover:bg-white/5 transition-colors text-white text-base font-bold leading-normal tracking-wide w-full">
+<span class="truncate">CANCELAR</span>
+</button>
+</div>
+</main>
+<!-- Visual Polish: Bottom Status Line -->
+<div class="w-24 h-1 bg-white/20 rounded-full mb-2 fixed bottom-2 left-1/2 -translate-x-1/2"></div>
+<!-- Background Decoration (Subtle light leak for depth) -->
+<div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-danger/5 blur-[120px] rounded-full -z-10 pointer-events-none"></div>
+<div class="fixed bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-primary/5 blur-[100px] rounded-full -z-10 pointer-events-none"></div>
+</body></html>

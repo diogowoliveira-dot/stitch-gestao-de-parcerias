@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cadastro de Membro Premium DWV</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D80000", // Vermelho mais profundo/vibrante
+                        "primary-dark": "#990000",
+                        "dark-bg": "#050505", // Preto profundo
+                        "glass-border": "rgba(153, 27, 27, 0.3)", // Vermelho escuro translúcido
+                        "glass-bg": "rgba(255, 255, 255, 0.03)",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "xl": "12px",
+                        "2xl": "16px",
+                    },
+                    boxShadow: {
+                        "glow": "0 0 20px rgba(216, 0, 0, 0.15)",
+                        "depth": "0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #050505;
+        }.bg-gradient-spot-1 {
+            background: radial-gradient(circle at top left, rgba(120, 0, 0, 0.15), transparent 60%);
+        }
+        .bg-gradient-spot-2 {
+            background: radial-gradient(circle at bottom right, rgba(120, 0, 0, 0.1), transparent 50%);
+        }
+        .glass-input {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(153, 27, 27, 0.3);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: #D80000;
+            box-shadow: 0 0 15px rgba(216, 0, 0, 0.1);
+            outline: none;
+        }
+        .ios-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(5, 5, 5, 0.85);
+        }.toggle-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-shine {
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-dark-bg text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden">
+<div class="fixed inset-0 pointer-events-none z-0">
+<div class="absolute inset-0 bg-gradient-spot-1"></div>
+<div class="absolute inset-0 bg-gradient-spot-2"></div>
+</div>
+<header class="sticky top-0 z-50 ios-blur border-b border-white/5">
+<div class="flex items-center p-4 h-16 max-w-md mx-auto relative z-10">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-white/10 transition-colors text-white">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+</button>
+<h1 class="flex-1 text-center text-lg font-bold tracking-tight pr-10 text-white">Novo Cadastro</h1>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto px-6 py-8 max-w-md mx-auto w-full space-y-10 pb-36 relative z-10">
+<section class="space-y-6">
+<div class="flex items-center gap-3 border-b border-white/10 pb-2">
+<span class="material-symbols-outlined text-primary text-[22px]">person</span>
+<h3 class="text-xs font-bold uppercase tracking-[0.2em] text-white/80">Informações Pessoais</h3>
+</div>
+<div class="space-y-6">
+<div class="group">
+<label class="block text-xs font-semibold text-gray-400 mb-2 ml-1 uppercase tracking-wide">Nome Completo</label>
+<input class="glass-input w-full rounded-2xl h-14 px-5 text-base placeholder-gray-600 font-medium" placeholder="Ex: João Silva" type="text"/>
+</div>
+<div class="group">
+<label class="block text-xs font-semibold text-gray-400 mb-2 ml-1 uppercase tracking-wide">E-mail Corporativo</label>
+<input class="glass-input w-full rounded-2xl h-14 px-5 text-base placeholder-gray-600 font-medium" placeholder="nome@dwv.com.br" type="email"/>
+</div>
+</div>
+</section>
+<section class="space-y-6">
+<div class="flex items-center gap-3 border-b border-white/10 pb-2">
+<span class="material-symbols-outlined text-primary text-[22px]">badge</span>
+<h3 class="text-xs font-bold uppercase tracking-[0.2em] text-white/80">Atribuições</h3>
+</div>
+<div class="space-y-6">
+<div class="group">
+<label class="block text-xs font-semibold text-gray-400 mb-2 ml-1 uppercase tracking-wide">Cargo / Função</label>
+<input class="glass-input w-full rounded-2xl h-14 px-5 text-base placeholder-gray-600 font-medium" placeholder="Ex: Gerente Comercial" type="text"/>
+</div>
+<div class="space-y-3">
+<label class="block text-xs font-semibold text-gray-400 ml-1 uppercase tracking-wide">Tipo de Perfil</label>
+<div class="toggle-container p-1.5 rounded-full flex relative h-14 items-center">
+<button class="flex-1 h-full rounded-full bg-primary text-white font-bold text-sm shadow-lg flex items-center justify-center relative overflow-hidden transition-all duration-300">
+<span class="relative z-10">USUÁRIO</span>
+<div class="absolute inset-0 btn-shine"></div>
+</button>
+<button class="flex-1 h-full rounded-full text-gray-400 font-medium text-sm flex items-center justify-center hover:text-white transition-colors">
+                            EQUIPE
+                        </button>
+</div>
+<p class="text-[10px] text-gray-500 text-center font-medium">
+                        *Usuário possui acesso total à gestão de parceiros
+                    </p>
+</div>
+</div>
+</section>
+<section class="space-y-6">
+<div class="flex items-center gap-3 border-b border-white/10 pb-2">
+<span class="material-symbols-outlined text-primary text-[22px]">shield_lock</span>
+<h3 class="text-xs font-bold uppercase tracking-[0.2em] text-white/80">Segurança</h3>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-gray-400 mb-2 ml-1 uppercase tracking-wide">Senha Inicial</label>
+<div class="relative">
+<input class="glass-input w-full rounded-2xl h-14 px-5 pr-12 text-base placeholder-gray-600 font-medium" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+</div>
+<p class="text-[11px] text-gray-500 ml-1">Senha provisória para primeiro acesso.</p>
+</div>
+</section>
+</main>
+<footer class="fixed bottom-0 left-0 right-0 p-6 ios-blur border-t border-white/5 z-20">
+<div class="max-w-md mx-auto">
+<button class="group w-full bg-primary hover:bg-red-600 text-white font-bold py-4 rounded-2xl shadow-glow relative overflow-hidden transition-all active:scale-[0.98]">
+<div class="absolute inset-0 btn-shine pointer-events-none"></div>
+<div class="flex items-center justify-center gap-3 relative z-10">
+<span class="text-sm uppercase tracking-wider">Salvar Cadastro</span>
+<span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</button>
+<div class="h-6"></div>
+</div>
+</footer>
+
+</body></html>

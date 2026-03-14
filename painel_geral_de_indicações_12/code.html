@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestão de Parceiros por Selos</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#ec1313",
+                    "status-green": "#22c55e",
+                    "status-yellow": "#eab308",
+                    "status-bronze": "#f97316", 
+                    "status-silver": "#94a3b8",
+                    "status-diamond": "#22d3ee",
+                    "background-dark": "#000000","surface-dark": "#1C1C1E","border-dark": "rgba(255, 255, 255, 0.1)"
+                },
+                fontFamily: {
+                    "display": ["Manrope", "sans-serif"]
+                },
+                borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+                },
+            },
+        },
+    }
+</script>
+<style>
+    body {
+        font-family: 'Manrope', sans-serif;
+    }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      min-height: max(884px, 100dvh);
+    }.no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }.no-scrollbar {
+        -ms-overflow-style: none;scrollbar-width: none;}
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white overflow-x-hidden pb-24">
+<div class="sticky top-0 z-50 bg-background-dark/95 backdrop-blur-md border-b border-border-dark">
+<div class="flex items-center px-4 pt-4 pb-3 justify-between">
+<div>
+<h2 class="text-white text-xl font-bold leading-tight">Parceiros Indicantes</h2>
+<p class="text-xs text-gray-500 font-medium mt-0.5">Gestão de Incorporadoras</p>
+</div>
+<button class="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-primary active:bg-red-700 transition-colors shadow-lg shadow-red-900/20">
+<span class="material-symbols-outlined text-white text-[20px]">add</span>
+<span class="text-xs font-bold uppercase tracking-wider text-white">Novo Parceiro</span>
+</button>
+</div>
+<div class="flex overflow-x-auto gap-2 px-4 pb-4 no-scrollbar">
+<button class="px-4 py-1.5 rounded-full bg-white text-black text-xs font-bold whitespace-nowrap transition-transform active:scale-95">Todos</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-dark border border-border-dark text-status-diamond text-xs font-bold whitespace-nowrap hover:bg-surface-dark/80 transition-all active:scale-95">Diamante</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-dark border border-border-dark text-status-yellow text-xs font-bold whitespace-nowrap hover:bg-surface-dark/80 transition-all active:scale-95">Ouro</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-dark border border-border-dark text-status-silver text-xs font-bold whitespace-nowrap hover:bg-surface-dark/80 transition-all active:scale-95">Prata</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-dark border border-border-dark text-status-bronze text-xs font-bold whitespace-nowrap hover:bg-surface-dark/80 transition-all active:scale-95">Bronze</button>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="group flex flex-col p-5 border-b border-border-dark bg-background-dark active:bg-surface-dark transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Incorporadora Zenith</h3>
+</div>
+<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-status-diamond/10 text-status-diamond border border-status-diamond/20 shrink-0 shadow-[0_0_10px_rgba(34,211,238,0.1)]">
+<span class="material-symbols-outlined text-[14px]">diamond</span>
+                Diamante
+            </span>
+</div>
+<div class="grid grid-cols-3 gap-4 border-t border-white/5 pt-4">
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Total</p>
+<p class="text-white text-lg font-bold font-display">142</p>
+</div>
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Convertidas</p>
+<p class="text-status-diamond text-lg font-bold font-display">18</p>
+</div>
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Sem Contato</p>
+<p class="text-white text-lg font-bold font-display">4</p>
+</div>
+</div>
+</div>
+<div class="group flex flex-col p-5 border-b border-border-dark bg-background-dark active:bg-surface-dark transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Construtora Aliança</h3>
+</div>
+<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-status-yellow/10 text-status-yellow border border-status-yellow/20 shrink-0">
+<span class="material-symbols-outlined text-[14px]">emoji_events</span>
+                Ouro
+            </span>
+</div>
+<div class="grid grid-cols-3 gap-4 border-t border-white/5 pt-4">
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Total</p>
+<p class="text-white text-lg font-bold font-display">89</p>
+</div>
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Convertidas</p>
+<p class="text-status-yellow text-lg font-bold font-display">3</p>
+</div>
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Sem Contato</p>
+<p class="text-white text-lg font-bold font-display">12</p>
+</div>
+</div>
+</div>
+<div class="group flex flex-col p-5 border-b border-border-dark bg-background-dark active:bg-surface-dark transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Predial Norte</h3>
+</div>
+<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-status-silver/10 text-status-silver border border-status-silver/20 shrink-0">
+<span class="material-symbols-outlined text-[14px]">military_tech</span>
+                Prata
+            </span>
+</div>
+<div class="grid grid-cols-3 gap-4 border-t border-white/5 pt-4">
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Total</p>
+<p class="text-white text-lg font-bold font-display">45</p>
+</div>
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Convertidas</p>
+<p class="text-status-silver text-lg font-bold font-display">2</p>
+</div>
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Sem Contato</p>
+<p class="text-white text-lg font-bold font-display">8</p>
+</div>
+</div>
+</div>
+<div class="group flex flex-col p-5 border-b border-border-dark bg-background-dark active:bg-surface-dark transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Urbanize Loteamentos</h3>
+</div>
+<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-status-bronze/10 text-status-bronze border border-status-bronze/20 shrink-0">
+<span class="material-symbols-outlined text-[14px]">stars</span>
+                Bronze
+            </span>
+</div>
+<div class="grid grid-cols-3 gap-4 border-t border-white/5 pt-4">
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Total</p>
+<p class="text-white text-lg font-bold font-display">28</p>
+</div>
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Convertidas</p>
+<p class="text-status-bronze text-lg font-bold font-display">1</p>
+</div>
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Sem Contato</p>
+<p class="text-white text-lg font-bold font-display">5</p>
+</div>
+</div>
+</div>
+<div class="group flex flex-col p-5 border-b border-border-dark bg-background-dark active:bg-surface-dark transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Nova Era Engenharia</h3>
+</div>
+<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-surface-dark text-gray-400 border border-white/10 shrink-0">
+<span class="material-symbols-outlined text-[14px]">new_releases</span>
+                Novo
+            </span>
+</div>
+<div class="grid grid-cols-3 gap-4 border-t border-white/5 pt-4">
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Total</p>
+<p class="text-white text-lg font-bold font-display">12</p>
+</div>
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Convertidas</p>
+<p class="text-gray-500 text-lg font-bold font-display">0</p>
+</div>
+<div>
+<p class="text-gray-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Sem Contato</p>
+<p class="text-white text-lg font-bold font-display">3</p>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed bottom-0 w-full bg-[#121212]/95 backdrop-blur-lg border-t border-white/10 pb-5 pt-3 px-6 z-50">
+<div class="flex justify-between items-end">
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">groups</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Clientes</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Indicações</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">bar_chart</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Relatórios</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-primary transition-colors" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="text-[10px] font-bold text-primary transition-colors">Config</span>
+</button>
+</div>
+</div>
+
+</body></html>

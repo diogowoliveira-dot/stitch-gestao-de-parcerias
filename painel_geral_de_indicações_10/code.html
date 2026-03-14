@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Histórico Completo de Indicações</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec1313",
+                        "status-green": "#22c55e",
+                        "status-yellow": "#eab308",
+                        "status-bronze": "#f97316", 
+                        "status-silver": "#94a3b8",
+                        "status-diamond": "#22d3ee",
+                        "background-dark": "#000000",
+                        "surface-dark": "#1C1C1E",
+                        "border-dark": "rgba(255, 255, 255, 0.1)"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            min-height: max(884px, 100dvh);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white overflow-x-hidden pb-24">
+<div class="sticky top-0 z-50 bg-background-dark/95 backdrop-blur-md border-b border-border-dark">
+<div class="flex items-center px-4 pt-4 pb-4 justify-between">
+<button class="p-2 -ml-2 text-gray-400 hover:text-white transition-colors rounded-full active:bg-white/10">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<h2 class="text-white text-base font-bold leading-tight">Histórico de Indicações</h2>
+<button class="p-2 -mr-2 text-gray-400 hover:text-white transition-colors rounded-full active:bg-white/10">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col p-6 gap-6">
+<div>
+<h1 class="text-2xl font-bold text-white tracking-tight">Incorporadora Zenith</h1>
+<p class="text-sm text-gray-400 mt-1">Gerencie o status de todas as indicações enviadas.</p>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-surface-dark border border-border-dark rounded-xl p-3 flex flex-col items-center justify-center">
+<span class="text-3xl font-bold text-white">22</span>
+<span class="text-xs text-gray-400 uppercase tracking-wide font-semibold mt-1">Total</span>
+</div>
+<div class="bg-surface-dark border border-status-green/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-[0_0_10px_rgba(34,197,94,0.05)]">
+<span class="text-3xl font-bold text-status-green">10</span>
+<span class="text-xs text-gray-400 uppercase tracking-wide font-semibold mt-1">Fechados</span>
+</div>
+<div class="bg-surface-dark border border-status-yellow/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-[0_0_10px_rgba(234,179,8,0.05)]">
+<span class="text-3xl font-bold text-status-yellow">8</span>
+<span class="text-xs text-gray-400 uppercase tracking-wide font-semibold mt-1">Em Negociação</span>
+</div>
+<div class="bg-surface-dark border border-primary/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-[0_0_10px_rgba(236,19,19,0.05)]">
+<span class="text-3xl font-bold text-primary">4</span>
+<span class="text-xs text-gray-400 uppercase tracking-wide font-semibold mt-1">Sem Contato</span>
+</div>
+</div>
+<div class="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-6 px-6">
+<button class="px-4 py-2 rounded-full bg-white text-black font-bold text-sm whitespace-nowrap border border-white">
+                Todas
+            </button>
+<button class="px-4 py-2 rounded-full bg-surface-dark text-primary font-bold text-sm whitespace-nowrap border border-primary/30 hover:bg-primary/10 transition-colors">
+                Sem Contato (4)
+            </button>
+<button class="px-4 py-2 rounded-full bg-surface-dark text-status-yellow font-bold text-sm whitespace-nowrap border border-status-yellow/30 hover:bg-status-yellow/10 transition-colors">
+                Negociando (8)
+            </button>
+<button class="px-4 py-2 rounded-full bg-surface-dark text-status-green font-bold text-sm whitespace-nowrap border border-status-green/30 hover:bg-status-green/10 transition-colors">
+                Fechados (10)
+            </button>
+</div>
+<div class="flex flex-col gap-3">
+<div class="bg-surface-dark border-l-[4px] border-status-green rounded-r-xl p-4 flex justify-between items-center active:bg-white/5 transition-colors cursor-pointer group hover:shadow-lg hover:shadow-green-900/10">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-white text-sm">Roberto &amp; Ana Silva</h4>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[14px]">apartment</span>
+<p class="text-xs text-gray-400 font-medium">Cyrela</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-status-green/10 text-status-green uppercase tracking-wide border border-status-green/10">Fechado</span>
+<span class="text-xs font-bold text-white">R$ 2.000,00</span>
+</div>
+</div>
+<div class="bg-surface-dark border-l-[4px] border-status-yellow rounded-r-xl p-4 flex justify-between items-center active:bg-white/5 transition-colors cursor-pointer group hover:shadow-lg hover:shadow-yellow-900/10">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-white text-sm">Mariana Costa</h4>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[14px]">apartment</span>
+<p class="text-xs text-gray-400 font-medium">MRV Engenharia</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-status-yellow/10 text-status-yellow uppercase tracking-wide border border-status-yellow/10">Negociando</span>
+<span class="text-xs font-medium text-gray-500">Doc. Análise</span>
+</div>
+</div>
+<div class="bg-surface-dark border-l-[4px] border-status-green rounded-r-xl p-4 flex justify-between items-center active:bg-white/5 transition-colors cursor-pointer group hover:shadow-lg hover:shadow-green-900/10">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-white text-sm">Carlos Eduardo</h4>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[14px]">apartment</span>
+<p class="text-xs text-gray-400 font-medium">Even</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-status-green/10 text-status-green uppercase tracking-wide border border-status-green/10">Fechado</span>
+<span class="text-xs font-bold text-white">R$ 2.000,00</span>
+</div>
+</div>
+<div class="bg-surface-dark border-l-[4px] border-primary rounded-r-xl p-4 flex justify-between items-center active:bg-white/5 transition-colors cursor-pointer group hover:shadow-lg hover:shadow-red-900/10">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-white text-sm">Fernando Santos</h4>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[14px]">apartment</span>
+<p class="text-xs text-gray-400 font-medium">Tenda</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary uppercase tracking-wide border border-primary/10">Sem Contato</span>
+<span class="text-xs font-medium text-gray-500">3ª tentativa</span>
+</div>
+</div>
+<div class="bg-surface-dark border-l-[4px] border-primary rounded-r-xl p-4 flex justify-between items-center active:bg-white/5 transition-colors cursor-pointer group hover:shadow-lg hover:shadow-red-900/10">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-white text-sm">Luciana Dias</h4>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[14px]">apartment</span>
+<p class="text-xs text-gray-400 font-medium">Gafisa</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary uppercase tracking-wide border border-primary/10">Sem Contato</span>
+<span class="text-xs font-medium text-gray-500">2ª tentativa</span>
+</div>
+</div>
+<div class="bg-surface-dark border-l-[4px] border-status-yellow rounded-r-xl p-4 flex justify-between items-center active:bg-white/5 transition-colors cursor-pointer group hover:shadow-lg hover:shadow-yellow-900/10">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-white text-sm">Eduardo &amp; Patrícia</h4>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[14px]">apartment</span>
+<p class="text-xs text-gray-400 font-medium">Mitre Realty</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-status-yellow/10 text-status-yellow uppercase tracking-wide border border-status-yellow/10">Negociando</span>
+<span class="text-xs font-medium text-gray-500">Visita Agendada</span>
+</div>
+</div>
+<div class="bg-surface-dark border-l-[4px] border-status-green rounded-r-xl p-4 flex justify-between items-center active:bg-white/5 transition-colors cursor-pointer group hover:shadow-lg hover:shadow-green-900/10">
+<div class="flex flex-col gap-1">
+<h4 class="font-bold text-white text-sm">Bruno Mendes</h4>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-gray-500 text-[14px]">apartment</span>
+<p class="text-xs text-gray-400 font-medium">Eztec</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-status-green/10 text-status-green uppercase tracking-wide border border-status-green/10">Fechado</span>
+<span class="text-xs font-bold text-white">R$ 3.500,00</span>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed bottom-0 w-full bg-[#121212]/95 backdrop-blur-lg border-t border-white/10 pb-5 pt-3 px-6 z-50">
+<div class="flex justify-between items-end">
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">groups</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Clientes</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-white transition-colors" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-bold text-white transition-colors">Indicações</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">bar_chart</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Relatórios</span>
+</button>
+<button class="flex flex-col items-center gap-1 group w-16">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-white transition-colors" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="text-[10px] font-medium text-gray-500 group-hover:text-white transition-colors">Config</span>
+</button>
+</div>
+</div>
+
+</body></html>
