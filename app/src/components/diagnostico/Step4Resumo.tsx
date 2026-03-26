@@ -55,13 +55,13 @@ export default function Step4Resumo() {
                   </div>
                 </div>
               )}
-              {cargo.metricas.length > 0 && (
+              {(cargo.kpiPrincipal || []).length > 0 && (
                 <div className="mb-2">
-                  <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: "#f59e0b" }}>Métricas</p>
+                  <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: "#f59e0b" }}>KPI</p>
                   <div className="flex flex-wrap gap-1">
-                    {cargo.metricas.map((m) => (
-                      <span key={m} className="text-[10px] px-2 py-0.5 rounded-full bg-[#f59e0b]/[0.08] text-slate-400">
-                        {m}
+                    {(cargo.kpiPrincipal || []).map((k) => (
+                      <span key={k} className="text-[10px] px-2 py-0.5 rounded-full bg-[#f59e0b]/[0.08] text-slate-400">
+                        {k}
                       </span>
                     ))}
                   </div>

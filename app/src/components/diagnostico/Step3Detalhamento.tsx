@@ -1,14 +1,13 @@
 "use client";
 import { useState } from "react";
 import { useDiagData } from "@/lib/diagnostico-context";
-import { TAREFAS_PREDEFINIDAS, METRICAS_PREDEFINIDAS, FERRAMENTAS_PREDEFINIDAS, KPIS_PREDEFINIDOS } from "@/lib/diagnostico-mock-data";
+import { TAREFAS_PREDEFINIDAS, FERRAMENTAS_PREDEFINIDAS, KPIS_PREDEFINIDOS } from "@/lib/diagnostico-mock-data";
 
 export default function Step3Detalhamento() {
   const { formState, dispatch } = useDiagData();
   const cargosExistentes = formState.cargos.filter((c) => c.existe);
   const cargoAtual = cargosExistentes[formState.cargoAtualIndex];
   const [customTarefa, setCustomTarefa] = useState("");
-  const [customMetrica, setCustomMetrica] = useState("");
   const [customFerramenta, setCustomFerramenta] = useState("");
   const [customKpi, setCustomKpi] = useState("");
 
@@ -24,7 +23,7 @@ export default function Step3Detalhamento() {
 
   const cargoIndex = formState.cargos.findIndex((c) => c.id === cargoAtual.id);
 
-  const toggleItem = (field: "tarefas" | "metricas" | "ferramentas", item: string) => {
+  const toggleItem = (field: "tarefas" | "ferramentas", item: string) => {
     const current = cargoAtual[field];
     const updated = current.includes(item)
       ? current.filter((t) => t !== item)
@@ -32,7 +31,7 @@ export default function Step3Detalhamento() {
     dispatch({ type: "UPDATE_CARGO", index: cargoIndex, data: { [field]: updated } });
   };
 
-  const addCustomItem = (field: "tarefas" | "metricas" | "ferramentas", value: string, setter: (v: string) => void) => {
+  const addCustomItem = (field: "tarefas" | "ferramentas", value: string, setter: (v: string) => void) => {
     if (!value.trim()) return;
     const current = cargoAtual[field];
     if (!current.includes(value.trim())) {
@@ -131,65 +130,7 @@ export default function Step3Detalhamento() {
         </div>
       </div>
 
-      {/* Bloco B - Métricas */}
-      <div className="rounded-2xl p-5 bg-[#121212] border border-white/[0.06]">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#f59e0b" }}>speed</span>
-          <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">Métricas de resultado</h3>
-        </div>
-        <div className="space-y-1.5">
-          {METRICAS_PREDEFINIDAS.map((metrica) => {
-            const selected = cargoAtual.metricas.includes(metrica);
-            return (
-              <button
-                key={metrica}
-                onClick={() => toggleItem("metricas", metrica)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all text-sm ${
-                  selected ? "bg-[#f59e0b]/[0.06] text-white" : "text-slate-400"
-                }`}
-              >
-                <div
-                  className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${
-                    selected ? "bg-[#f59e0b]" : "bg-white/[0.04] border border-white/[0.06]"
-                  }`}
-                >
-                  {selected && (
-                    <span className="material-symbols-outlined text-white" style={{ fontSize: 14 }}>check</span>
-                  )}
-                </div>
-                {metrica}
-              </button>
-            );
-          })}
-          {cargoAtual.metricas.filter((m) => !METRICAS_PREDEFINIDAS.includes(m)).map((m) => (
-            <div
-              key={m}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-[#f59e0b]/[0.06] text-white"
-            >
-              <div className="w-5 h-5 rounded flex items-center justify-center shrink-0 bg-[#f59e0b]">
-                <span className="material-symbols-outlined text-white" style={{ fontSize: 14 }}>check</span>
-              </div>
-              <span className="flex-1">{m}</span>
-              <button onClick={() => toggleItem("metricas", m)} className="p-0.5 rounded hover:bg-red-500/10 text-slate-500">
-                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
-              </button>
-            </div>
-          ))}
-        </div>
-        <div className="flex gap-2 mt-3">
-          <input
-            type="text"
-            value={customMetrica}
-            onChange={(e) => setCustomMetrica(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && addCustomItem("metricas", customMetrica, setCustomMetrica)}
-            placeholder="Outra métrica..."
-            className="flex-1 px-3 py-2.5 rounded-lg text-xs text-white placeholder-[#4a5f73] outline-none bg-white/[0.03] border border-white/[0.06] focus:border-white/[0.15]"
-          />
-          <button onClick={() => addCustomItem("metricas", customMetrica, setCustomMetrica)} className="px-3 py-2.5 rounded-lg text-xs font-bold text-[#f59e0b]">
-            +
-          </button>
-        </div>
-      </div>
+      {/* Bloco B removido — unificado com KPI (Bloco E) */}
 
       {/* Bloco C - Ferramentas */}
       <div className="rounded-2xl p-5 bg-[#121212] border border-white/[0.06]">
@@ -274,7 +215,7 @@ export default function Step3Detalhamento() {
       <div className="rounded-2xl p-5 bg-[#121212] border border-white/[0.06]">
         <div className="flex items-center gap-2 mb-4">
           <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#f59e0b" }}>target</span>
-          <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">KPIs / Métricas de resultado cobradas</h3>
+          <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">KPI</h3>
         </div>
         <div className="space-y-1.5">
           {KPIS_PREDEFINIDOS.map((kpi) => {

@@ -77,15 +77,7 @@ export const TAREFAS_PREDEFINIDAS = [
 // ============================================
 // MÉTRICAS PRÉ-DEFINIDAS
 // ============================================
-export const METRICAS_PREDEFINIDAS = [
-  'VGV mensal',
-  'Número de propostas',
-  'Número de corretores ativos',
-  'Taxa de conversão',
-  'Número de visitas realizadas',
-  'Engajamento da base',
-  'Número de novos corretores captados',
-];
+// METRICAS_PREDEFINIDAS removido — unificado com KPIS_PREDEFINIDOS (são a mesma coisa)
 
 // ============================================
 // FERRAMENTAS PRÉ-DEFINIDAS
