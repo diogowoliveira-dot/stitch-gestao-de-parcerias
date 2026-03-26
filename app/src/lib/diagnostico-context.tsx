@@ -183,6 +183,22 @@ export interface DiagFormState {
   cargoAtualIndex: number;
   problemas: string[];
   outputGerado: boolean;
+  // Campos de vendas / corretores (usados no cálculo do diagnóstico)
+  totalVGV?: number;
+  vgvGoal?: number;
+  avgTicket?: number;
+  totalBrokers?: number;
+  activeBrokers?: number;
+  hasCRM?: boolean;
+  crmName?: string;
+  challenges?: string[];
+  challengesText?: string;
+  desiredReports?: string[];
+  tabelaZero?: boolean;
+  tabelaZeroAccess?: string[];
+  tabelaZeroObs?: string;
+  observations?: string;
+  toolCosts?: Record<string, number>;
   // Novos campos
   shareHouse?: number;
   shareParcerias?: number;
