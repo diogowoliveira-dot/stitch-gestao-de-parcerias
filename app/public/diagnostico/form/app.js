@@ -9,27 +9,23 @@ const STEPS=[
 ];
 const CHAL_LABELS={
   engagement:'Baixo engajamento de corretores',
-  visibility:'Falta de visibilidade das ações',
+  exec_reports:'Relatórios dos executivos de parceria',
   exec_mgmt:'Falta de gestão dos executivos de parceria',
   build_team:'Construir e treinar time de parcerias',
   high_demand:'Alta demanda de solicitações dos corretores',
-  turnover:'Alto giro de corretores',
   training:'Falta de capacitação dos corretores',
   competition:'Concorrência com outras incorporadoras',
   product:'Corretores não conhecem o produto',
-  crm:'Sem gestão de carteira (Ouro/Prata/Bronze)',
   data_loss:'Histórico perdido quando executivo sai'
 };
 const RPT_LABELS={
-  engagement:'Engajamento por corretor/imobiliária',
-  exec_kpi:'KPIs por executivo de parceria',
-  vgv_exec:'VGV por executivo/gerente',
-  portfolio:'Carteira Ouro/Prata/Bronze',
-  other:'Outro'
+  corretores_engajados:'Quais e quantos corretores estão engajados nos meus produtos',
+  imob_ofertando:'Quais e quantas imobiliárias estão ofertando meu produto',
+  impacto_exec:'Quantos corretores o executivo de parceria impacta diariamente/semanalmente e mensalmente'
 };
 const TZ_LABELS={
   house:'Canal House',
-  parcerias:'House + Parcerias',
+  canal_parcerias:'Canal Parcerias',
   imobiliarias:'Imobiliárias parceiras selecionadas',
   todos:'Todos ao mesmo tempo'
 };
@@ -37,11 +33,16 @@ const TOOLS_DEF=[
   {k:'toolsWhatsapp',   l:'WhatsApp pessoal / grupos avulsos',      hint:'Sem API, sem rastreamento de leitura'},
   {k:'toolsWhatsappBiz',l:'WhatsApp Business sem API oficial',       hint:'Risco de banimento do número'},
   {k:'toolsEmail',      l:'E-mail marketing',                        hint:'Sem taxa de abertura rastreada'},
-  {k:'toolsDrive',      l:'Google Drive',                            hint:'Sem rastreamento de acesso por corretor'},
+  {k:'toolsDrive',      l:'Drive',                                   hint:'Sem rastreamento de acesso por corretor'},
   {k:'toolsIntranet',   l:'Intranet / portal próprio',               hint:'Sem monitoramento de acesso individual'},
   {k:'toolsExcel',      l:'Planilhas Excel / Google Sheets',         hint:'Sem visão consolidada de carteira'},
-  {k:'toolsOfficialCRM',l:'CRM focado em contratos',                hint:'Não gerencia relacionamento com corretores'},
-  {k:'toolsUnofficial', l:'Apps/ferramentas não homologadas',        hint:'Software não autorizado, risco de vazamento de dados'}
+  {k:'toolsOfficialCRM',l:'CRM focado em contratos',                hint:'Não gerencia relacionamento com corretores',askWhich:true},
+  {k:'toolsOrulo',      l:'Orulo',                                   hint:'Marketplace de imóveis'},
+  {k:'toolsZe',         l:'Zé',                                      hint:'Plataforma de corretores'},
+  {k:'toolsDisparos',   l:'Ferramentas de disparos de WhatsApp',     hint:'Disparos em massa via WhatsApp'},
+  {k:'toolsAnapro',     l:'Anapro',                                  hint:'CRM imobiliário'},
+  {k:'toolsHypnobox',   l:'Hypnobox',                                hint:'Atendimento digital'},
+  {k:'toolsFacilita',   l:'Facilita',                                hint:'Gestão de vendas imobiliárias'}
 ];
 
 // Plano Operadora DWV
@@ -144,21 +145,30 @@ let D={};
 let isSim=false;
 let currentStep=0;
 
+const ESTADOS_BR=['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'];
+const CARGOS_CANAL=[
+  {id:'diretor',nome:'Diretor de Parceria',nivel:1},
+  {id:'gerente',nome:'Gerente de Parceria',nivel:2},
+  {id:'marketing',nome:'Marketing',nivel:2},
+  {id:'executivo',nome:'Executivo de Parceria',nivel:3}
+];
 function resetD(){
   D={
-    companyName:'',location:'',responsibleName:'',responsibleRole:'',
+    companyName:'',cidade:'',estado:'',responsibleName:'',responsibleRole:'',
     totalVGV:0,vgvGoal:0,avgTicket:0,
     totalBrokers:0,activeBrokers:0,brokersExclusivity:'',
-    hasHouse:false,hasParc:true,hasImob:false,
-    parcManagers:0,parcExecutives:0,houseManagers:0,houseBrokers:0,
-    hasCRM:false,crmName:'',toolCosts:{},
+    hasHouse:false,hasParc:true,hasImob:false,numImobiliarias:0,
+    shareHouse:0,shareParcerias:0,
+    // Cargos dinâmicos
+    cargos:{},// {id: {existe:bool, qtd:number, kpi:'', atividades:''}}
+    hasCRM:false,crmName:'',crmContratoNome:'',toolCosts:{},
     meetingGoals:'',challenges:[],challengesText:'',
     testedActions:false,testedResults:'',
-    brokerSegmentation:'',brokerSegCRM:'',
-    desiredReports:[],desiredReportsOther:'',
-    tabelaZero:false,tabelaZeroAccess:[],tabelaZeroObs:'',
-    observations:''
+    brokerSegmentation:'',brokerSegDescritivo:'',
+    desiredReports:[],desiredReportsDescritivo:'',
+    tabelaZero:false,tabelaZeroAccess:[],tabelaZeroObs:''
   };
+  CARGOS_CANAL.forEach(c=>D.cargos[c.id]={existe:false,qtd:1,kpi:'',atividades:''});
   TOOLS_DEF.forEach(t=>D[t.k]=false);
 }
 resetD();
@@ -184,18 +194,24 @@ function showStart(){
 function startDiag(sim){
   resetD();isSim=sim;currentStep=0;
   if(sim){
-    D.companyName='Vertice Incorporadora';D.location='Florianópolis, SC';
+    D.companyName='Vertice Incorporadora';D.cidade='Florianópolis';D.estado='SC';
     D.responsibleName='Ricardo Menezes';D.responsibleRole='Diretor de Parcerias';
     D.totalVGV=48000000;D.vgvGoal=80000000;D.avgTicket=620000;
     D.totalBrokers=420;D.activeBrokers=58;D.brokersExclusivity='non-exclusive';
-    D.hasHouse=true;D.hasParc=true;D.parcManagers=3;D.parcExecutives=6;D.houseManagers=2;D.houseBrokers=8;
+    D.hasHouse=true;D.hasParc=true;D.hasImob=true;D.numImobiliarias=12;
+    D.shareHouse=30;D.shareParcerias=70;
+    D.cargos.diretor={existe:true,qtd:1,kpi:'VGV mensal, gestão do time',atividades:'Gestão estratégica do canal de parcerias, definição de metas e acompanhamento de resultados.'};
+    D.cargos.gerente={existe:true,qtd:3,kpi:'VGV mensal, nº corretores ativos',atividades:'Visitas a imobiliárias, treinamentos de produto, gestão dos executivos.'};
+    D.cargos.marketing={existe:true,qtd:1,kpi:'Leads gerados, campanhas ativas',atividades:'Gestão de campanhas, materiais de venda, redes sociais.'};
+    D.cargos.executivo={existe:true,qtd:6,kpi:'Nº visitas, propostas geradas',atividades:'Visitas a corretores, treinamentos, captação de novos corretores, atendimento via WhatsApp.'};
+    D.parcManagers=3;D.parcExecutives=6;
     D.hasCRM=false;D.toolsWhatsapp=true;D.toolsEmail=true;D.toolsDrive=true;D.toolsExcel=true;
     D.toolCosts={toolsEmail:350,toolsDrive:200};
-    D.meetingGoals='partial';D.challenges=['engagement','visibility','exec_mgmt','crm'];
+    D.meetingGoals='partial';D.challenges=['engagement','exec_reports','exec_mgmt'];
     D.challengesText='Executivos não conseguem rastrear quais corretores estão próximos de fechar.';
     D.testedActions=true;D.testedResults='Grupos de WhatsApp por empreendimento, sem controle de leitura.';
-    D.brokerSegmentation='none';D.desiredReports=['engagement','exec_kpi','portfolio'];
-    D.tabelaZero=true;D.tabelaZeroAccess=['parcerias'];D.tabelaZeroObs='Apenas corretores Ouro.';
+    D.brokerSegmentation='nao';D.desiredReports=['corretores_engajados','imob_ofertando','impacto_exec'];
+    D.tabelaZero=true;D.tabelaZeroAccess=['canal_parcerias'];D.tabelaZeroObs='Apenas corretores Ouro.';
   }
   document.getElementById('startScreen').style.display='none';
   document.getElementById('formWrap').style.display='block';
@@ -221,28 +237,38 @@ function save(){
   const gc=id=>{const e=document.getElementById(id);return e?e.checked:false};
   const gr=name=>{const e=document.querySelector(`input[name=${name}]:checked`);return e?e.value:''};
   const gca=name=>Array.from(document.querySelectorAll(`input[name=${name}]:checked`)).map(e=>e.value);
-  if(currentStep===0){D.companyName=g('cN');D.location=g('loc');D.responsibleName=g('rN');D.responsibleRole=g('rR');}
+  if(currentStep===0){D.companyName=g('cN');D.cidade=g('cidadeField');D.estado=g('estadoField');D.responsibleName=g('rN');D.responsibleRole=g('rR');}
   else if(currentStep===1){D.totalVGV=parseCur(g('tVGV'));D.vgvGoal=parseCur(g('vGoal'));D.avgTicket=parseCur(g('avgT'));}
   else if(currentStep===2){
     D.totalBrokers=parseInt(g('tBr'))||0;D.activeBrokers=parseInt(g('aBr'))||0;
     D.brokersExclusivity=g('bExcl');
     D.hasHouse=gc('chHouse');D.hasParc=gc('chParc');D.hasImob=gc('chImob');
-    D.parcManagers=parseInt(g('pMgr'))||0;D.parcExecutives=parseInt(g('pExec'))||0;
-    D.houseManagers=parseInt(g('hMgr'))||0;D.houseBrokers=parseInt(g('hBr'))||0;
+    D.numImobiliarias=parseInt(g('numImob'))||0;
+    D.shareHouse=parseInt(g('shareHouse'))||0;D.shareParcerias=parseInt(g('shareParc'))||0;
+    CARGOS_CANAL.forEach(c=>{
+      D.cargos[c.id].existe=gc('cargo_'+c.id);
+      D.cargos[c.id].qtd=parseInt(g('cargoQtd_'+c.id))||1;
+      D.cargos[c.id].kpi=g('cargoKpi_'+c.id);
+      D.cargos[c.id].atividades=g('cargoAtiv_'+c.id);
+    });
+    // Backward compat
+    const ger=D.cargos.gerente;const exec=D.cargos.executivo;
+    D.parcManagers=ger.existe?ger.qtd:0;D.parcExecutives=exec.existe?exec.qtd:0;
   }
   else if(currentStep===3){
     D.hasCRM=gr('hasCRM')==='yes';D.crmName=g('crmName');
+    D.crmContratoNome=g('which_toolsOfficialCRM')||'';
     TOOLS_DEF.forEach(t=>{D[t.k]=gc(t.k);const v=g('cost_'+t.k);if(v)D.toolCosts[t.k]=parseCur(v);else delete D.toolCosts[t.k];});
   }
   else if(currentStep===4){
     D.meetingGoals=gr('mGoals');D.challenges=gca('chal');D.challengesText=g('chalText');
     D.testedActions=gr('tested')==='yes';D.testedResults=g('testRes');
-    D.brokerSegmentation=gr('bSeg');D.brokerSegCRM=g('bSegCRM');
-    D.desiredReports=gca('reports');D.desiredReportsOther=g('repOther');
+    D.brokerSegmentation=gr('bSeg');D.brokerSegDescritivo=g('segDescritivo')||'';
+    D.desiredReports=gca('reports');D.desiredReportsDescritivo=g('repDescritivo')||'';
   }
   else if(currentStep===5){
     D.tabelaZero=gr('tz')==='yes';D.tabelaZeroAccess=gca('tzAccess');
-    D.tabelaZeroObs=g('tzObs');D.observations=g('obs');
+    D.tabelaZeroObs=g('tzObs');
   }
 }
 
@@ -268,10 +294,23 @@ function updateConditionals(){
   const tF=document.getElementById('testResField');if(tF)tF.style.display=tested?'block':'none';
   const tzYes=document.querySelector('input[name=tz][value=yes]')?.checked;
   const tzF=document.getElementById('tzAccessField');if(tzF)tzF.style.display=tzYes?'block':'none';
-  const segSys=document.querySelector('input[name=bSeg][value=system]')?.checked;
-  const segF=document.getElementById('segCRMField');if(segF)segF.style.display=segSys?'block':'none';
-  const repO=document.querySelector('input[name=reports][value=other]')?.checked;
-  const repF=document.getElementById('repOtherField');if(repF)repF.style.display=repO?'block':'none';
+  // Segmentação — mostrar descritivo se Sim parcial ou total
+  const segSim=document.querySelector('input[name=bSeg][value=sim_parcial]')?.checked||document.querySelector('input[name=bSeg][value=sim_total]')?.checked;
+  const segF=document.getElementById('segDescField');if(segF)segF.style.display=segSim?'block':'none';
+  // Imobiliárias — mostrar número se checkbox marcado
+  const imobChecked=document.getElementById('chImob')?.checked;
+  const imobF=document.getElementById('numImobField');if(imobF)imobF.style.display=imobChecked?'block':'none';
+  // Share VGV — mostrar se tem pelo menos 1 canal
+  const hasHouse=document.getElementById('chHouse')?.checked;
+  const hasParc=document.getElementById('chParc')?.checked;
+  const shareF=document.getElementById('shareVGVFields');if(shareF)shareF.style.display=(hasHouse||hasParc)?'block':'none';
+  const shareHF=document.getElementById('shareHouseField');if(shareHF)shareHF.style.display=hasHouse?'block':'none';
+  // Cargos — mostrar detalhes se checkbox marcado
+  CARGOS_CANAL.forEach(c=>{
+    const cb=document.getElementById('cargo_'+c.id);
+    const det=document.getElementById('cargoDetail_'+c.id);
+    if(cb&&det)det.style.display=cb.checked?'block':'none';
+  });
   TOOLS_DEF.forEach(t=>{
     const cb=document.getElementById(t.k);
     const row=document.getElementById('costrow_'+t.k);
@@ -312,16 +351,20 @@ function body(){
       <div class="field"><label>Responsável <span class="req">*</span></label>
         <input type="text" id="rN" placeholder="Nome completo"/></div>
       <div class="field"><label>Cargo</label>
-        <input type="text" id="rR" placeholder="Ex: Diretor Comercial"/></div>
+        <input type="text" id="rR" placeholder="Ex: Diretor de Parceria"/></div>
     </div>
-    <div class="field"><label>Cidade / Estado <span class="req">*</span></label>
-      <input type="text" id="loc" placeholder="Ex: Florianópolis, SC"/></div>`;
+    <div class="g2">
+      <div class="field"><label>Cidade <span class="req">*</span></label>
+        <input type="text" id="cidadeField" placeholder="Ex: Florianópolis"/></div>
+      <div class="field"><label>Estado <span class="req">*</span></label>
+        <select id="estadoField"><option value="">Selecione</option>${ESTADOS_BR.map(e=>`<option value="${e}">${e}</option>`).join('')}</select></div>
+    </div>`;
 
   if(currentStep===1)return`
     <div class="field"><label>VGV vendido nos últimos 12 meses (R$) <span class="req">*</span></label>
       <input type="text" id="tVGV" placeholder="0" oninput="this.value=fmtCI(this.value)"/>
       <div class="hint">Total de vendas pelo canal de parcerias nos últimos 12 meses.</div></div>
-    <div class="field"><label>Meta de VGV anual (R$) <span class="req">*</span></label>
+    <div class="field"><label>Meta de VGV (R$) <span class="req">*</span></label>
       <input type="text" id="vGoal" placeholder="0" oninput="this.value=fmtCI(this.value)"/></div>
     <div class="field"><label>Ticket médio por unidade (R$)</label>
       <input type="text" id="avgT" placeholder="0" oninput="this.value=fmtCI(this.value)"/>
@@ -347,16 +390,35 @@ function body(){
         <label class="co"><input type="checkbox" id="chParc"/> Canal Parcerias</label>
         <label class="co"><input type="checkbox" id="chImob"/> Imobiliária(s) parceiras</label>
       </div></div>
+    <div id="numImobField" style="display:none" class="field"><label>Número de imobiliárias parceiras</label>
+      <input type="number" id="numImob" placeholder="0" min="0"/></div>
+    <div id="shareVGVFields" style="display:none">
+      <div class="g2">
+        <div id="shareHouseField" style="display:none" class="field"><label>% do VGV vendido pela House</label>
+          <input type="number" id="shareHouse" placeholder="0" min="0" max="100"/> <span style="color:var(--mu);font-size:12px">%</span></div>
+        <div class="field"><label>% do VGV vendido pelo Canal de Parcerias</label>
+          <input type="number" id="shareParc" placeholder="0" min="0" max="100"/> <span style="color:var(--mu);font-size:12px">%</span></div>
+      </div>
+    </div>
     <div class="subbox">
       <div class="subbox-tag">Organograma · Canal Parcerias</div>
-      <div class="g2">
-        <div class="field"><label>Gerentes de Parceria</label><input type="number" id="pMgr" placeholder="0" min="0"/></div>
-        <div class="field"><label>Executivos de Parceria</label><input type="number" id="pExec" placeholder="0" min="0"/></div>
-      </div>
-      <div class="g2">
-        <div class="field"><label>Gerentes House</label><input type="number" id="hMgr" placeholder="0" min="0"/></div>
-        <div class="field"><label>Corretores internos (House)</label><input type="number" id="hBr" placeholder="0" min="0"/></div>
-      </div>
+      <div class="hint" style="margin-bottom:12px">Selecione os cargos que existem e informe quantidade, KPI e atividades de cada um.</div>
+      ${CARGOS_CANAL.map(c=>`
+        <div class="tool-row" style="flex-direction:column;align-items:stretch">
+          <label class="tool-check" style="margin-bottom:6px"><input type="checkbox" id="cargo_${c.id}"/>
+            <div><div style="font-size:13px;font-weight:600">${c.nome}</div><div style="font-size:11px;color:var(--mu)">Nível ${c.nivel}</div></div>
+          </label>
+          <div id="cargoDetail_${c.id}" style="display:none;padding-left:28px">
+            <div class="g2" style="margin-bottom:8px">
+              <div class="field"><label>Quantidade de pessoas</label><input type="number" id="cargoQtd_${c.id}" placeholder="1" min="1" value="1" style="width:80px"/></div>
+              <div class="field"><label>KPI / Métrica de resultado</label><input type="text" id="cargoKpi_${c.id}" placeholder="Ex: VGV mensal, nº propostas, nº visitas..."/></div>
+            </div>
+            <div class="field"><label>Atividades do cargo</label>
+              <textarea id="cargoAtiv_${c.id}" placeholder="Descreva as principais atividades deste cargo..." style="min-height:60px"></textarea>
+              <div class="hint">Esta resposta será analisada por IA para gerar insights no relatório.</div>
+            </div>
+          </div>
+        </div>`).join('')}
     </div>`;
 
   if(currentStep===3)return`
@@ -375,10 +437,11 @@ function body(){
           <label class="tool-check"><input type="checkbox" id="${t.k}"/>
             <div><div style="font-size:13px">${t.l}</div><div style="font-size:11px;color:var(--mu);margin-top:1px">${t.hint}</div></div>
           </label>
-          <div id="costrow_${t.k}" style="display:none;align-items:center">
+          <div id="costrow_${t.k}" style="display:none;align-items:center;gap:8px">
             <div class="tool-cost-pfx"><span>R$</span>
               <input type="text" id="cost_${t.k}" placeholder="0/mês" oninput="this.value=fmtCI(this.value)" style="width:120px;font-size:13px;padding:7px 10px 7px 28px"/>
             </div>
+            ${t.askWhich?`<input type="text" id="which_${t.k}" placeholder="Qual CRM?" style="width:180px;font-size:13px;padding:7px 10px"/>`:''}
           </div>
         </div>`).join('')}
     </div>`;
@@ -396,18 +459,21 @@ function body(){
       </div></div>
     <div class="field"><label>Existe alguma segmentação dos corretores da base?</label>
       <div class="rg" style="margin-top:8px">
-        <label class="ro"><input type="radio" name="bSeg" value="none"/> Não — todos tratados da mesma forma</label>
-        <label class="ro"><input type="radio" name="bSeg" value="manual"/> Sim, manualmente (planilha ou memória)</label>
-        <label class="ro"><input type="radio" name="bSeg" value="system"/> Sim, por sistema (CRM ou plataforma)</label>
+        <label class="ro"><input type="radio" name="bSeg" value="nao"/> Não</label>
+        <label class="ro"><input type="radio" name="bSeg" value="nao_gostaria"/> Não, mas eu gostaria</label>
+        <label class="ro"><input type="radio" name="bSeg" value="sim_parcial"/> Sim, parcialmente</label>
+        <label class="ro"><input type="radio" name="bSeg" value="sim_total"/> Sim, totalmente</label>
       </div></div>
-    <div id="segCRMField" style="display:none" class="field"><label>Qual CRM ou plataforma utiliza para segmentação?</label>
-      <input type="text" id="bSegCRM" placeholder="Ex: HubSpot, RD Station, sistema próprio..."/></div>
+    <div id="segDescField" style="display:none" class="field"><label>Descreva como é feita a segmentação</label>
+      <textarea id="segDescritivo" placeholder="Descreva como segmenta seus corretores..."></textarea>
+      <div class="hint">Esta resposta será analisada por IA para gerar insights no BI.</div></div>
     <div class="field"><label>Quais relatórios você mais gostaria de ter sobre o canal de parcerias?</label>
       <div class="cg" style="margin-top:8px">
         ${Object.entries(RPT_LABELS).map(([k,l])=>`<label class="co"><input type="checkbox" name="reports" value="${k}"/> ${l}</label>`).join('')}
       </div></div>
-    <div id="repOtherField" style="display:none" class="field"><label>Qual outro relatório?</label>
-      <input type="text" id="repOther" placeholder="Descreva..."/></div>
+    <div class="field"><label>Outros relatórios ou observações</label>
+      <textarea id="repDescritivo" placeholder="Descreva outros relatórios que gostaria de ter..."></textarea>
+      <div class="hint">Esta resposta será analisada por IA para gerar insights no BI.</div></div>
     <div class="field"><label>Descrição dos obstáculos comerciais</label>
       <textarea id="chalText" placeholder="Conte mais sobre o que trava o crescimento do canal de parcerias..."></textarea></div>
     <div class="field"><label>Já testaram ações para engajar mais corretores?</label>
@@ -432,8 +498,7 @@ function body(){
       <div class="field"><label>Observações sobre a Tabela Zero</label>
         <textarea id="tzObs" placeholder="Ex: só corretores Ouro têm acesso, parceiros recebem 48h antes..."></textarea></div>
     </div>
-    <div class="field"><label>Observações gerais</label>
-      <textarea id="obs" placeholder="Qualquer contexto adicional sobre o modelo comercial..."></textarea></div>`;
+    `;
   return '';
 }
 
@@ -443,7 +508,7 @@ function restore(){
   const sc=(id,v)=>{const e=document.getElementById(id);if(e)e.checked=v;};
   const sr=(name,v)=>{if(!v)return;const e=document.querySelector(`input[name=${name}][value="${v}"]`);if(e)e.checked=true;};
   const sca=(name,arr)=>(arr||[]).forEach(v=>{const e=document.querySelector(`input[name=${name}][value="${v}"]`);if(e)e.checked=true;});
-  if(currentStep===0){s('cN',D.companyName);s('rN',D.responsibleName);s('rR',D.responsibleRole);s('loc',D.location);}
+  if(currentStep===0){s('cN',D.companyName);s('rN',D.responsibleName);s('rR',D.responsibleRole);s('cidadeField',D.cidade);s('estadoField',D.estado);}
   else if(currentStep===1){
     s('tVGV',D.totalVGV?D.totalVGV.toLocaleString('pt-BR'):'');
     s('vGoal',D.vgvGoal?D.vgvGoal.toLocaleString('pt-BR'):'');
@@ -452,18 +517,23 @@ function restore(){
   else if(currentStep===2){
     s('tBr',D.totalBrokers||'');s('aBr',D.activeBrokers||'');s('bExcl',D.brokersExclusivity);
     sc('chHouse',D.hasHouse);sc('chParc',D.hasParc);sc('chImob',D.hasImob);
-    s('pMgr',D.parcManagers||'');s('pExec',D.parcExecutives||'');
-    s('hMgr',D.houseManagers||'');s('hBr',D.houseBrokers||'');
+    s('numImob',D.numImobiliarias||'');s('shareHouse',D.shareHouse||'');s('shareParc',D.shareParcerias||'');
+    CARGOS_CANAL.forEach(c=>{
+      sc('cargo_'+c.id,D.cargos[c.id]?.existe);
+      s('cargoQtd_'+c.id,D.cargos[c.id]?.qtd||1);
+      s('cargoKpi_'+c.id,D.cargos[c.id]?.kpi||'');
+      s('cargoAtiv_'+c.id,D.cargos[c.id]?.atividades||'');
+    });
   }
   else if(currentStep===3){
-    sr('hasCRM',D.hasCRM?'yes':'no');s('crmName',D.crmName);
+    sr('hasCRM',D.hasCRM?'yes':'no');s('crmName',D.crmName);s('which_toolsOfficialCRM',D.crmContratoNome||'');
     TOOLS_DEF.forEach(t=>{sc(t.k,D[t.k]);if(D.toolCosts[t.k])s('cost_'+t.k,D.toolCosts[t.k].toLocaleString('pt-BR'));});
   }
   else if(currentStep===4){
     sr('mGoals',D.meetingGoals);sca('chal',D.challenges);s('chalText',D.challengesText);
     sr('tested',D.testedActions?'yes':'no');s('testRes',D.testedResults);
-    sr('bSeg',D.brokerSegmentation);s('bSegCRM',D.brokerSegCRM);
-    sca('reports',D.desiredReports);s('repOther',D.desiredReportsOther);
+    sr('bSeg',D.brokerSegmentation);s('segDescritivo',D.brokerSegDescritivo||'');
+    sca('reports',D.desiredReports);s('repDescritivo',D.desiredReportsDescritivo||'');
   }
   else if(currentStep===5){
     sr('tz',D.tabelaZero?'yes':'no');sca('tzAccess',D.tabelaZeroAccess);
@@ -531,12 +601,21 @@ async function showResults(){
   const allToolBadges=toolBadges+(!D.hasCRM?'<div class="badge hi">Sem CRM de parceiros</div>':'');
   const tzTxt=D.tabelaZeroAccess.map(k=>TZ_LABELS[k]||k).join(', ');
 
-  // Organograma — apenas Canal Parcerias
-  const parcBoxes=Array(Math.max(D.parcManagers,0)).fill(0).map((_,i)=>
-    `<div class="ob hi">Ger. Parceria ${D.parcManagers>1?i+1:''}</div>`).join('');
-  const execBoxes=Array(Math.min(D.parcExecutives,8)).fill(0).map((_,i)=>
-    `<div class="ob">Exec. ${i+1}</div>`).join('')+
-    (D.parcExecutives>8?`<div class="ob" style="color:var(--mu)">+${D.parcExecutives-8}</div>`:'');
+  // Organograma dinâmico — baseado nos cargos selecionados
+  function buildOrgLevel(cargoId, label, cssClass){
+    const c=D.cargos[cargoId];
+    if(!c||!c.existe) return '';
+    const boxes=Array(Math.min(c.qtd,10)).fill(0).map((_,i)=>
+      `<div class="ob ${cssClass}">${label} ${c.qtd>1?i+1:''}</div>`).join('')+
+      (c.qtd>10?`<div class="ob" style="color:var(--mu)">+${c.qtd-10}</div>`:'');
+    const kpiHtml=c.kpi?`<div style="font-size:10px;color:var(--am);margin-top:4px">KPI: ${c.kpi}</div>`:'';
+    return `<div class="ol"><div class="olab">${CARGOS_CANAL.find(x=>x.id===cargoId)?.nome||label}</div>
+      <div class="obs-boxes">${boxes}</div>${kpiHtml}</div>`;
+  }
+  const dirLevel=buildOrgLevel('diretor','Dir. Parceria','hi');
+  const gerLevel=buildOrgLevel('gerente','Ger. Parceria','hi');
+  const mktLevel=D.cargos.marketing?.existe?`<div class="ob" style="background:rgba(139,92,246,0.1);color:#a78bfa;border-color:rgba(139,92,246,0.2)">Marketing${D.cargos.marketing.qtd>1?' ×'+D.cargos.marketing.qtd:''}</div>`:'';
+  const execLevel=buildOrgLevel('executivo','Exec.','');
 
   // ROI — narrativa em corretores
   const corMinTxt=r.corretoresParaPagarPlano!==null
@@ -553,7 +632,7 @@ async function showResults(){
 
     <!-- RESUMO EXECUTIVO -->
     <div class="exec-card">
-      <div class="exec-lbl">Resumo Executivo · ${D.companyName||'Incorporadora'} · ${D.location||''}</div>
+      <div class="exec-lbl">Resumo Executivo · ${D.companyName||'Incorporadora'} · ${D.cidade||''}${D.estado?'/'+D.estado:''}</div>
       <div class="kpis">
         <div class="kpi"><div class="kl">VGV Atual (12m)</div><div class="kv">${fmt(D.totalVGV)}</div><div class="ks">Canal parcerias</div></div>
         <div class="kpi"><div class="kl">Meta de VGV</div><div class="kv r">${fmt(D.vgvGoal)}</div><div class="ks">Gap de ${fmt(r.gap)}</div></div>
@@ -607,24 +686,20 @@ async function showResults(){
 
         <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Organograma atual — sem DWV</div>
         <div class="org">
-          <div class="ol"><div class="olab">Direção</div>
-            <div class="obs-boxes"><div class="ob hi">Dir. de Parceria</div></div>
-          </div>
-          <div class="oarr">↓</div>
-          <div class="ol"><div class="olab">Gerência</div>
-            <div class="obs-boxes">${parcBoxes||'<div class="ob hi" style="color:var(--mu)">Não informado</div>'}</div>
-          </div>
-          ${D.parcExecutives>0?`
-          <div class="oarr">↓</div>
-          <div class="ol"><div class="olab">Executivos de Parceria</div>
-            <div class="obs-boxes">${execBoxes}</div>
-          </div>`:''}
-          <div class="oarr">↓</div>
+          ${dirLevel?dirLevel+'<div class="oarr">↓</div>':''}
+          ${gerLevel||mktLevel?`<div class="ol"><div class="olab">Gerência / Marketing</div>
+            <div class="obs-boxes">${gerLevel?D.cargos.gerente.existe?Array(Math.min(D.cargos.gerente.qtd,10)).fill(0).map((_,i)=>'<div class="ob hi">Ger. '+(D.cargos.gerente.qtd>1?i+1:'Parceria')+'</div>').join(''):'':''}${mktLevel}</div>
+            ${D.cargos.gerente?.kpi?'<div style="font-size:10px;color:var(--am);margin-top:4px">KPI Gerente: '+D.cargos.gerente.kpi+'</div>':''}
+          </div><div class="oarr">↓</div>`:''}
+          ${D.cargos.executivo?.existe?`<div class="ol"><div class="olab">Executivos de Parceria</div>
+            <div class="obs-boxes">${Array(Math.min(D.cargos.executivo.qtd,10)).fill(0).map((_,i)=>'<div class="ob">Exec. '+(i+1)+'</div>').join('')}${D.cargos.executivo.qtd>10?'<div class="ob" style="color:var(--mu)">+'+( D.cargos.executivo.qtd-10)+'</div>':''}</div>
+            ${D.cargos.executivo.kpi?'<div style="font-size:10px;color:var(--am);margin-top:4px">KPI: '+D.cargos.executivo.kpi+'</div>':''}
+          </div><div class="oarr">↓</div>`:''}
           <div class="ol"><div class="olab">Base de Corretores</div>
             <div class="obs-boxes">
               <div class="ob">${fmtN(D.totalBrokers)} cadastrados</div>
               <div class="ob hi">${fmtN(D.activeBrokers)} ativos (${fmtP(r.te)})</div>
-              ${D.hasImob?'<div class="ob">Imobiliárias parceiras</div>':''}
+              ${D.hasImob?`<div class="ob">${D.numImobiliarias||''} imobiliárias parceiras</div>`:''}
             </div>
           </div>
         </div>
@@ -640,20 +715,18 @@ async function showResults(){
 
         <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin:20px 0 10px">Organograma com Operadora DWV</div>
         <div class="org">
-          <div class="ol"><div class="olab">Direção</div>
-            <div class="obs-boxes"><div class="ob hi">Dir. de Parceria</div></div>
-          </div>
-          <div class="oarr">↓</div>
+          ${dirLevel?`<div class="ol"><div class="olab">Direção</div><div class="obs-boxes"><div class="ob hi">Dir. de Parceria</div></div></div><div class="oarr">↓</div>`:''}
           <div class="ol"><div class="olab">Gerência · Operadora DWV (lateral)</div>
             <div class="obs-boxes">
-              ${parcBoxes||''}
+              ${D.cargos.gerente?.existe?Array(Math.min(D.cargos.gerente.qtd,10)).fill(0).map((_,i)=>'<div class="ob hi">Ger. '+(D.cargos.gerente.qtd>1?i+1:'Parceria')+'</div>').join(''):''}
+              ${mktLevel}
               <div class="ob gn">Operadora DWV ↔ Gerentes</div>
             </div>
           </div>
-          ${D.parcExecutives>0?`
+          ${D.cargos.executivo?.existe?`
           <div class="oarr">↓</div>
-          <div class="ol"><div class="olab">Executivos de Parceria · Suporte Operadora</div>
-            <div class="obs-boxes">${execBoxes}<div class="ob gn">Suporte Op.</div></div>
+          <div class="ol"><div class="olab">Executivos · Suporte Operadora</div>
+            <div class="obs-boxes">${Array(Math.min(D.cargos.executivo.qtd,10)).fill(0).map((_,i)=>'<div class="ob">Exec. '+(i+1)+'</div>').join('')}<div class="ob gn">Suporte Op.</div></div>
           </div>`:''}
           <div class="oarr">↓</div>
           <div class="ol"><div class="olab">Base Segmentada pela DWV</div>
