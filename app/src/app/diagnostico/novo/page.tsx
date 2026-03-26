@@ -62,7 +62,15 @@ function NovoDiagnostico() {
   const canAdvance = (): boolean => {
     switch (etapaAtual) {
       case 1:
-        return !!(formState.empresa.nome.trim() && formState.empresa.cidade.trim() && formState.empresa.estado);
+        return !!(
+          formState.empresa.nome.trim() &&
+          formState.empresa.cidade.trim() &&
+          formState.empresa.estado &&
+          (formState.totalVGV || 0) > 0 &&
+          (formState.vgvGoal || 0) > 0 &&
+          (formState.totalBrokers || 0) > 0 &&
+          (formState.activeBrokers || 0) > 0
+        );
       case 2:
         return cargosExistentes.length > 0;
       case 3:

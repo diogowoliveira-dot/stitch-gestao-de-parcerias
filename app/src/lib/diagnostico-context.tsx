@@ -183,6 +183,8 @@ export interface DiagFormState {
   cargoAtualIndex: number;
   problemas: string[];
   outputGerado: boolean;
+  responsibleName?: string;
+  responsibleRole?: string;
   // Campos de vendas / corretores (usados no cálculo do diagnóstico)
   totalVGV?: number;
   vgvGoal?: number;
