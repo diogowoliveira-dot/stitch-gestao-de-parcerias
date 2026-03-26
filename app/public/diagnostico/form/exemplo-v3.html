@@ -260,22 +260,36 @@ body{background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 
     <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin:20px 0 10px">Organograma com Operadora DWV</div>
     <div class="org">
-      <div class="ol"><div class="olab">Direcao</div><div class="obs-boxes"><div class="ob hi">Dir. de Parceria</div></div></div>
+      <!-- Direção + entregas DWV para direção -->
+      <div class="ol"><div class="olab">Direcao</div>
+        <div class="obs-boxes">
+          <div class="ob hi">Dir. de Parceria</div>
+          <div class="ob gn">Relatorios de performance da equipe</div>
+          <div class="ob gn">Analises de mercado</div>
+        </div>
+        <div style="font-size:10px;color:var(--gr);margin-top:4px;font-style:italic">&#8593; Entregas da Operadora DWV para a Direcao</div>
+      </div>
       <div class="oarr">&#8595;</div>
+      <!-- Gerência + entregas DWV para gerência -->
       <div class="ol"><div class="olab">Gerencia · Operadora DWV (lateral)</div>
         <div class="obs-boxes">
           <div class="ob hi">Ger. 1</div><div class="ob hi">Ger. 2</div><div class="ob hi">Ger. 3</div>
           <div class="ob" style="background:rgba(139,92,246,0.1);color:#a78bfa;border-color:rgba(139,92,246,0.2)">Marketing</div>
-          <div class="ob gn">Operadora DWV &#8596; Gerentes</div>
+          <div class="ob gn">Definicao de estrategias</div>
+          <div class="ob gn">Relatorios gerenciais</div>
         </div>
+        <div style="font-size:10px;color:var(--gr);margin-top:4px;font-style:italic">&#8593; Entregas da Operadora DWV para a Gerencia</div>
       </div>
       <div class="oarr">&#8595;</div>
+      <!-- Executivos + entregas DWV -->
       <div class="ol"><div class="olab">Executivos · Suporte Operadora</div>
         <div class="obs-boxes">
           <div class="ob">Exec. 1</div><div class="ob">Exec. 2</div><div class="ob">Exec. 3</div>
           <div class="ob">Exec. 4</div><div class="ob">Exec. 5</div><div class="ob">Exec. 6</div>
-          <div class="ob gn">Suporte Op.</div>
+          <div class="ob gn">Organizacao de carteiras</div>
+          <div class="ob gn">Ativacoes</div>
         </div>
+        <div style="font-size:10px;color:var(--gr);margin-top:4px;font-style:italic">&#8593; Entregas da Operadora DWV para os Executivos</div>
       </div>
       <div class="oarr">&#8595;</div>
       <div class="ol"><div class="olab">Base Segmentada pela DWV</div>
@@ -284,6 +298,19 @@ body{background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
           <div class="ob si">Prata — engajados</div>
           <div class="ob br">Bronze — inativos</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Legenda das entregas DWV -->
+    <div style="margin-top:12px;padding:12px 16px;background:rgba(58,184,122,0.04);border:1px solid rgba(58,184,122,0.1);border-radius:10px">
+      <div style="font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;font-weight:600">Entregas da Operadora DWV por nivel</div>
+      <div style="font-size:12px;color:#ccc;line-height:1.8">
+        <strong style="color:var(--gr)">Direcao:</strong> Relatorios de performance da equipe + Analises de mercado<br/>
+        <strong style="color:var(--gr)">Gerencia:</strong> Definicao de estrategias + Relatorios gerenciais<br/>
+        <strong style="color:var(--gr)">Executivos:</strong> Organizacao de carteiras + Ativacoes
+      </div>
+      <div style="font-size:11px;color:var(--mu);margin-top:8px;font-style:italic">
+        Regra: Caso nao haja Diretor, as entregas da direcao sao absorvidas pela Gerencia. Caso nao haja Gerencia nem Direcao, todas as entregas sao direcionadas ao Responsavel pelo canal.
       </div>
     </div>
 
