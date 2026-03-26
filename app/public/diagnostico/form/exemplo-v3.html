@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>DWV · Diagnóstico Comercial — Vertice Incorporadora</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;min-height:100vh}
+:root{--red:#E8392A;--rd:#b02d20;--rf:rgba(232,57,42,0.10);--b:rgba(255,255,255,0.10);--s:#111;--s2:#181818;--mu:rgba(255,255,255,0.45);--gr:#3ab87a;--am:#e0a020}
+.app{max-width:800px;margin:0 auto;padding:24px 20px 80px}
+.hdr{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.logo{width:38px;height:38px;background:var(--red);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bn{font-size:17px;font-weight:500;letter-spacing:.02em}
+.bs{font-size:12px;color:var(--mu)}
+.sim-warn{background:rgba(224,160,32,0.12);border:.5px solid rgba(224,160,32,0.35);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:var(--am);display:flex;align-items:center;gap:10px}
+.exec-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:22px;margin-bottom:22px}
+.exec-lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:12px 14px}
+.kl{font-size:11px;color:var(--mu);margin-bottom:5px}
+.kv{font-size:20px;font-weight:500}
+.kv.r{color:var(--red)}.kv.g{color:var(--gr)}.kv.a{color:var(--am)}
+.ks{font-size:11px;color:var(--mu);margin-top:3px}
+.verdict{border-top:.5px solid var(--b);padding-top:13px;font-size:13px;line-height:1.75;color:rgba(255,255,255,0.8)}
+.verdict strong{color:#fff}
+.db{border:.5px solid var(--b);border-radius:12px;margin-bottom:13px;overflow:hidden}
+.dh{padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--s);user-select:none}
+.dh:hover{background:var(--s2)}
+.dh h3{font-size:13px;font-weight:500}
+.dhr{display:flex;align-items:center;gap:8px}
+.dtag{font-size:11px;padding:3px 8px;border-radius:4px;background:var(--rf);color:var(--red)}
+.dtag.g{background:rgba(58,184,122,0.1);color:var(--gr)}
+.dtag.a{background:rgba(224,160,32,0.1);color:var(--am)}
+.chev{font-size:11px;color:var(--mu);transition:transform .3s}
+.chev.o{transform:rotate(180deg)}
+.dbody{padding:18px;border-top:.5px solid var(--b);background:#0d0d0d;display:none}
+.dbody.open{display:block}
+.fm{background:#090909;border:.5px solid rgba(255,255,255,0.06);border-radius:6px;padding:9px 13px;font-size:13px;font-family:monospace;color:rgba(255,255,255,0.6);margin:7px 0 13px}
+.cl{background:var(--rf);border:.5px solid rgba(232,57,42,0.18);border-radius:8px;padding:11px 15px;font-size:13px;line-height:1.65;color:rgba(255,255,255,0.85)}
+.cl.g{background:rgba(58,184,122,0.08);border-color:rgba(58,184,122,0.2)}
+.routes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+.rc{background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px}
+.rcn{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-bottom:7px}
+.rct{font-size:13px;font-weight:500;margin-bottom:5px}
+.rcv{font-size:19px;font-weight:500;color:var(--red);margin-bottom:4px}
+.rcd{font-size:12px;color:var(--mu);line-height:1.5}
+.org{margin-top:6px}
+.ol{margin-bottom:8px}
+.olab{font-size:10px;color:var(--mu);margin-bottom:5px;letter-spacing:.07em;text-transform:uppercase}
+.obs-boxes{display:flex;gap:7px;flex-wrap:wrap}
+.ob{background:var(--s);border:.5px solid var(--b);border-radius:8px;padding:6px 12px;font-size:12px;color:rgba(255,255,255,0.8)}
+.ob.hi{border-color:rgba(232,57,42,0.4);color:var(--red)}
+.ob.gn{border-color:rgba(58,184,122,0.4);color:var(--gr)}
+.ob.go{border-color:rgba(212,168,0,0.5);color:#d4a800}
+.ob.si{border-color:rgba(170,170,170,0.4);color:#aaa}
+.ob.br{border-color:rgba(180,120,60,0.4);color:#b47830}
+.oarr{color:var(--mu);font-size:12px;margin:2px 0 2px 5px}
+.flow{display:flex;align-items:flex-start;gap:0;margin-top:8px;flex-wrap:wrap}
+.fs{background:var(--s);border:.5px solid var(--b);border-radius:8px;padding:9px 12px;font-size:12px;min-width:90px;flex:1}
+.fs .ft{font-weight:500;font-size:12px;margin-bottom:3px}
+.fs .fd{font-size:11px;color:var(--mu);line-height:1.4}
+.farr{display:flex;align-items:center;padding:0 3px;color:var(--mu);font-size:13px;flex-shrink:0;align-self:center}
+.fs.hi{border-color:rgba(58,184,122,0.4)}
+.fs.red{border-color:rgba(232,57,42,0.3)}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.badge{font-size:12px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:.5px solid var(--b);color:var(--mu)}
+.badge.hi{background:var(--rf);border-color:rgba(232,57,42,0.3);color:var(--red)}
+.roi-hi{background:var(--rf);border:.5px solid rgba(232,57,42,0.3);border-radius:10px;padding:16px 18px;margin-top:12px}
+.roin{font-size:30px;font-weight:500;color:var(--red);margin-bottom:4px}
+.roic{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.65}
+.acts{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.bto{background:transparent;border:.5px solid var(--b);color:rgba(255,255,255,0.6);padding:9px 16px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;transition:all .2s}
+.bto:hover{border-color:var(--red);color:#fff}
+.btr{background:var(--red);color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;border:none;font-weight:500}
+.btr:hover{background:var(--rd)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+/* Proportional bar */
+.prop-bar{display:flex;height:28px;border-radius:8px;overflow:hidden;margin:10px 0;font-size:12px;font-weight:500}
+.prop-bar .seg-house{background:rgba(232,57,42,0.25);color:var(--red);display:flex;align-items:center;justify-content:center}
+.prop-bar .seg-parc{background:rgba(58,184,122,0.18);color:var(--gr);display:flex;align-items:center;justify-content:center}
+/* Context boxes */
+.ctx-box{background:var(--s);border:.5px solid var(--b);border-radius:10px;padding:14px 16px;margin-top:12px}
+.ctx-box-tag{font-size:10px;color:var(--am);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;font-weight:500}
+.ctx-box-body{font-size:13px;color:rgba(255,255,255,0.8);line-height:1.65}
+/* Cargo table */
+.cargo-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+.cargo-tbl th{text-align:left;padding:8px 10px;border-bottom:.5px solid var(--b);font-size:10px;color:var(--mu);font-weight:500;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.cargo-tbl td{padding:9px 10px;border-bottom:.5px solid rgba(255,255,255,0.04);vertical-align:top;color:rgba(255,255,255,0.82)}
+.cargo-tbl tr:last-child td{border-bottom:none}
+.cargo-tbl tr:hover td{background:rgba(255,255,255,0.02)}
+/* Segmentation box */
+.seg-box{background:var(--s);border:.5px solid var(--b);border-radius:10px;padding:14px 16px;margin-top:12px}
+.seg-box-tag{font-size:10px;color:var(--red);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;font-weight:500}
+/* Reports list */
+.rpt-list{margin:8px 0;padding-left:16px}
+.rpt-list li{font-size:13px;color:rgba(255,255,255,0.8);line-height:1.7;list-style:disc}
+@media(max-width:580px){.g2,.routes,.g3{grid-template-columns:1fr}.flow{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo">
+    <svg viewBox="0 0 22 22" fill="none" width="22" height="22">
+      <rect x="2" y="2" width="18" height="18" rx="4" fill="white" opacity=".15"/>
+      <circle cx="7" cy="7" r="2" fill="white"/>
+      <circle cx="11" cy="11" r="2" fill="white"/>
+      <circle cx="15" cy="15" r="2" fill="white"/>
+    </svg>
+  </div>
+  <div><div class="bn">DWV</div><div class="bs">Diagnostico Comercial · Formula de Aceleracao</div></div>
+</div>
+
+<!-- SIM WARN -->
+<div class="sim-warn">&#9888; Simulacao com dados nao reais — este diagnostico nao representa uma incorporadora real.</div>
+
+<!-- RESUMO EXECUTIVO -->
+<div class="exec-card">
+  <div class="exec-lbl">Resumo Executivo · Vertice Incorporadora · Florianopolis/SC</div>
+
+  <!-- NEW: Responsavel no header -->
+  <div style="font-size:12px;color:var(--mu);margin-bottom:14px">Responsavel: <strong style="color:#fff">Ricardo Menezes</strong> · Diretor de Parcerias</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="kl">VGV Atual (12m)</div><div class="kv">R$ 48.000.000</div><div class="ks">Canal parcerias</div></div>
+    <div class="kpi"><div class="kl">Meta de VGV</div><div class="kv r">R$ 80.000.000</div><div class="ks">Gap de R$ 32.000.000</div></div>
+    <div class="kpi"><div class="kl">Taxa de Engajamento</div><div class="kv r">13,8%</div><div class="ks">Critica · 58 de 420</div></div>
+    <div class="kpi"><div class="kl">Corretores a Ativar</div><div class="kv r">39</div><div class="ks">Meta da DWV</div></div>
+  </div>
+
+  <!-- NEW: Barra proporcional House / Parcerias -->
+  <div style="font-size:11px;color:var(--mu);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Canais de venda</div>
+  <div class="prop-bar">
+    <div class="seg-house" style="width:30%">House 30%</div>
+    <div class="seg-parc" style="width:70%">Parcerias 70%</div>
+  </div>
+
+  <!-- NEW: Badges de Metas, Exclusividade, Imobiliarias -->
+  <div class="badges" style="margin-bottom:14px">
+    <div class="badge" style="background:rgba(224,160,32,0.1);border-color:rgba(224,160,32,0.3);color:var(--am)">Metas: Parcialmente</div>
+    <div class="badge">Exclusividade: Nao exclusivos</div>
+    <div class="badge">12 imobiliarias parceiras</div>
+    <div class="badge">Ticket medio: R$ 620.000</div>
+  </div>
+
+  <div class="verdict">
+    A <strong>Vertice Incorporadora</strong> tem <strong>420 corretores</strong> cadastrados, mas apenas <strong>58 (13,8%)</strong> venderam — engajamento <strong>critico</strong>. Para atingir <strong>R$ 80.000.000</strong>, a DWV precisa ativar mais <strong>39 corretores</strong>. Cada corretor ativado representa em media <strong>R$ 827.586</strong> em VGV. Principais desafios: <strong>Baixo engajamento de corretores, Relatorios dos executivos de parceria, Falta de gestao dos executivos de parceria</strong>.
+  </div>
+</div>
+
+<!-- 1: TE -->
+<div class="db"><div class="dh" onclick="tog(this)"><h3>1 · Taxa de Engajamento (TE)</h3><div class="dhr"><span class="dtag">Critica · 13,8%</span><span class="chev">&#9662;</span></div></div>
+  <div class="dbody open">
+    <div class="fm">TE = (58 / 420) x 100 = 13,8%</div>
+    <div class="cl">Apenas 13,8% da base vendeu nos ultimos 12 meses. Nivel critico — a maioria da base esta inativa.</div>
+  </div>
+</div>
+
+<!-- 2: DC -->
+<div class="db"><div class="dh" onclick="tog(this)"><h3>2 · Delta de Corretores por Milhao (DC)</h3><div class="dhr"><span class="dtag">1,21 corretores/M</span><span class="chev">&#9662;</span></div></div>
+  <div class="dbody">
+    <div class="fm">DC = 58 / (R$ 48.000.000 / 1M) = 1,21 corretores/M</div>
+    <div class="cl">Sao necessarios 1,21 corretores ativos para gerar R$ 1 milhao em VGV. Cada corretor ativado vale em media <strong>R$ 827.586</strong>.</div>
+  </div>
+</div>
+
+<!-- 3: NC -->
+<div class="db"><div class="dh" onclick="tog(this)"><h3>3 · Corretores Necessarios para a Meta</h3><div class="dhr"><span class="dtag">97 corretores ativos</span><span class="chev">&#9662;</span></div></div>
+  <div class="dbody">
+    <div class="fm">NC = (R$ 80.000.000 / 1M) x 1,21 = 97 corretores ativos</div>
+    <div class="cl">Para atingir R$ 80.000.000, a incorporadora precisa de <strong>97 corretores engajados</strong>. Hoje tem 58 — a DWV precisa ativar mais <strong>39</strong>.</div>
+  </div>
+</div>
+
+<!-- 4: ROTAS -->
+<div class="db"><div class="dh" onclick="tog(this)"><h3>4 · 3 Rotas Estrategicas</h3><div class="dhr"><span class="dtag">Como atingir a meta</span><span class="chev">&#9662;</span></div></div>
+  <div class="dbody">
+    <div class="routes">
+      <div class="rc"><div class="rcn">Rota A</div><div class="rct">Aumentar Engajamento</div><div class="rcv">23,1%</div><div class="rcd">Nova TE mantendo base de 420. Hoje: 13,8%.</div></div>
+      <div class="rc"><div class="rcn">Rota B</div><div class="rct">Crescer a Base</div><div class="rcv">703</div><div class="rcd">Total necessario mantendo TE atual. Hoje: 420.</div></div>
+      <div class="rc"><div class="rcn">Rota C</div><div class="rct">Aumentar Produtividade</div><div class="rcv">0,73/M</div><div class="rcd">DC necessario com base e TE atuais. Hoje: 1,21/M.</div></div>
+    </div>
+    <div class="cl" style="margin-top:12px">A DWV atua nas 3 rotas: ativa inativos via WhatsApp API + campanhas (A), expande base via Meta Ads (B) e aumenta produtividade com CRM, Tabela Zero e treinamento (C).</div>
+
+    <!-- NEW: Contexto do cliente -->
+    <div class="ctx-box">
+      <div class="ctx-box-tag">Contexto do cliente</div>
+      <div class="ctx-box-body">Executivos nao conseguem rastrear quais corretores estao proximos de fechar. Falta visibilidade do pipeline.</div>
+    </div>
+
+    <!-- NEW: Acoes ja testadas -->
+    <div class="ctx-box" style="border-color:rgba(224,160,32,0.25)">
+      <div class="ctx-box-tag">Acoes ja testadas</div>
+      <div class="ctx-box-body">Grupos de WhatsApp por empreendimento, sem controle de leitura. Engajamento subiu brevemente mas voltou.</div>
+    </div>
+
+    <!-- NEW: Segmentacao -->
+    <div class="seg-box">
+      <div class="seg-box-tag">Segmentacao de corretores</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.8);margin-top:4px">Nao segmenta, mas gostaria de segmentar.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 5: ORGANOGRAMA -->
+<div class="db"><div class="dh" onclick="tog(this)"><h3>5 · Organograma e Fluxos · Canal Parcerias</h3><div class="dhr"><span class="dtag">Sem DWV vs. Com DWV</span><span class="chev">&#9662;</span></div></div>
+  <div class="dbody">
+
+    <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Organograma atual — sem DWV</div>
+    <div class="org">
+      <div class="ol"><div class="olab">Diretor de Parceria</div>
+        <div class="obs-boxes"><div class="ob hi">Dir. Parceria</div></div>
+        <div style="font-size:10px;color:var(--am);margin-top:4px">KPI: VGV mensal, gestao do time</div>
+        <!-- NEW: Atividades resumidas -->
+        <div style="font-size:10px;color:var(--mu);margin-top:2px">Gestao estrategica do canal, definicao de metas e acompanhamento de resultados.</div>
+      </div>
+      <div class="oarr">&#8595;</div>
+      <div class="ol"><div class="olab">Gerencia / Marketing</div>
+        <div class="obs-boxes">
+          <div class="ob hi">Ger. 1</div><div class="ob hi">Ger. 2</div><div class="ob hi">Ger. 3</div>
+          <div class="ob" style="background:rgba(139,92,246,0.1);color:#a78bfa;border-color:rgba(139,92,246,0.2)">Marketing</div>
+        </div>
+        <div style="font-size:10px;color:var(--am);margin-top:4px">KPI Gerente: VGV mensal, n corretores ativos</div>
+        <!-- NEW: Atividades resumidas -->
+        <div style="font-size:10px;color:var(--mu);margin-top:2px">Visitas a imobiliarias, treinamentos de produto, gestao dos executivos, relacionamento com donos de imobiliarias.</div>
+      </div>
+      <div class="oarr">&#8595;</div>
+      <div class="ol"><div class="olab">Executivos de Parceria</div>
+        <div class="obs-boxes">
+          <div class="ob">Exec. 1</div><div class="ob">Exec. 2</div><div class="ob">Exec. 3</div>
+          <div class="ob">Exec. 4</div><div class="ob">Exec. 5</div><div class="ob">Exec. 6</div>
+        </div>
+        <div style="font-size:10px;color:var(--am);margin-top:4px">KPI: N visitas, propostas geradas, novos corretores captados</div>
+        <!-- NEW: Atividades resumidas -->
+        <div style="font-size:10px;color:var(--mu);margin-top:2px">Visitas a corretores, treinamentos de produto, captacao de novos corretores, atendimento via WhatsApp, distribuicao de tabelas.</div>
+      </div>
+      <div class="oarr">&#8595;</div>
+      <div class="ol"><div class="olab">Base de Corretores</div>
+        <div class="obs-boxes">
+          <div class="ob">420 cadastrados</div>
+          <div class="ob hi">58 ativos (13,8%)</div>
+          <!-- NEW: Numero de imobiliarias -->
+          <div class="ob">12 imobiliarias parceiras</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin:20px 0 10px">Fluxo atual — canal cego</div>
+    <div class="flow">
+      <div class="fs red"><div class="ft">Captacao</div><div class="fd">Manual. Sem rastreio de origem.</div></div><div class="farr">&#8594;</div>
+      <div class="fs red"><div class="ft">Cadastro</div><div class="fd">Planilha. Sem segmentacao.</div></div><div class="farr">&#8594;</div>
+      <div class="fs red"><div class="ft">Comunicacao</div><div class="fd">WhatsApp pessoal. Sem rastreio.</div></div><div class="farr">&#8594;</div>
+      <div class="fs red"><div class="ft">Proposta</div><div class="fd">Sem visibilidade do gerente.</div></div><div class="farr">&#8594;</div>
+      <div class="fs red"><div class="ft">Resultado</div><div class="fd">Gerente ve so na mesa de propostas.</div></div>
+    </div>
+
+    <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin:20px 0 10px">Organograma com Operadora DWV</div>
+    <div class="org">
+      <div class="ol"><div class="olab">Direcao</div><div class="obs-boxes"><div class="ob hi">Dir. de Parceria</div></div></div>
+      <div class="oarr">&#8595;</div>
+      <div class="ol"><div class="olab">Gerencia · Operadora DWV (lateral)</div>
+        <div class="obs-boxes">
+          <div class="ob hi">Ger. 1</div><div class="ob hi">Ger. 2</div><div class="ob hi">Ger. 3</div>
+          <div class="ob" style="background:rgba(139,92,246,0.1);color:#a78bfa;border-color:rgba(139,92,246,0.2)">Marketing</div>
+          <div class="ob gn">Operadora DWV &#8596; Gerentes</div>
+        </div>
+      </div>
+      <div class="oarr">&#8595;</div>
+      <div class="ol"><div class="olab">Executivos · Suporte Operadora</div>
+        <div class="obs-boxes">
+          <div class="ob">Exec. 1</div><div class="ob">Exec. 2</div><div class="ob">Exec. 3</div>
+          <div class="ob">Exec. 4</div><div class="ob">Exec. 5</div><div class="ob">Exec. 6</div>
+          <div class="ob gn">Suporte Op.</div>
+        </div>
+      </div>
+      <div class="oarr">&#8595;</div>
+      <div class="ol"><div class="olab">Base Segmentada pela DWV</div>
+        <div class="obs-boxes">
+          <div class="ob go">Ouro — ja venderam</div>
+          <div class="ob si">Prata — engajados</div>
+          <div class="ob br">Bronze — inativos</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin:20px 0 10px">Fluxo com Operadora DWV</div>
+    <div class="flow">
+      <div class="fs hi"><div class="ft">Captacao</div><div class="fd">Meta Ads &#8594; CRM DWV. Rastreada.</div></div><div class="farr">&#8594;</div>
+      <div class="fs hi"><div class="ft">Classificacao</div><div class="fd">Bronze/Prata/Ouro automatico.</div></div><div class="farr">&#8594;</div>
+      <div class="fs hi"><div class="ft">Ativacao</div><div class="fd">WhatsApp API + e-mail + Stories.</div></div><div class="farr">&#8594;</div>
+      <div class="fs hi"><div class="ft">Proposta</div><div class="fd">Rastreada em tempo real.</div></div><div class="farr">&#8594;</div>
+      <div class="fs hi"><div class="ft">BI Completo</div><div class="fd">Exec / Gerente / Diretoria.</div></div>
+    </div>
+
+    <div class="cl" style="margin-top:14px">A Operadora DWV nao e subordinada — atua <strong>lateralmente</strong> com gerentes e diretores, entregando inteligencia de dados que hoje nao existe no canal.</div>
+
+    <!-- NEW: Tabela Cargo x Qtd x KPI x Atividades -->
+    <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin:20px 0 8px">Equipe do canal de parcerias</div>
+    <table class="cargo-tbl">
+      <thead>
+        <tr><th>Cargo</th><th>Qtd</th><th>KPI / Metricas</th><th>Atividades</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:500;color:var(--red)">Diretor de Parceria</td>
+          <td>1</td>
+          <td>VGV mensal, gestao do time</td>
+          <td>Gestao estrategica do canal, definicao de metas e acompanhamento de resultados.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:500;color:var(--red)">Gerente de Parceria</td>
+          <td>3</td>
+          <td>VGV mensal, n corretores ativos</td>
+          <td>Visitas a imobiliarias, treinamentos de produto, gestao dos executivos, relacionamento com donos de imobiliarias.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:500;color:#a78bfa">Marketing</td>
+          <td>1</td>
+          <td>Leads gerados, campanhas ativas</td>
+          <td>Gestao de campanhas de incentivo, materiais de venda, redes sociais, eventos.</td>
+        </tr>
+        <tr>
+          <td style="font-weight:500">Executivo de Parceria</td>
+          <td>6</td>
+          <td>N visitas, propostas geradas, novos corretores captados</td>
+          <td>Visitas a corretores, treinamentos de produto, captacao de novos corretores, atendimento via WhatsApp, distribuicao de tabelas.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 6: FERRAMENTAS -->
+<div class="db"><div class="dh" onclick="tog(this)"><h3>6 · Tecnologia e Ferramentas</h3><div class="dhr"><span class="dtag">5 desconectadas</span><span class="chev">&#9662;</span></div></div>
+  <div class="dbody">
+    <div class="cl" style="margin-bottom:12px">Sem CRM voltado para parceiros. Canal opera sem rastreamento de acoes por corretor.</div>
+
+    <!-- NEW: CRM de contratos -->
+    <div style="font-size:13px;color:var(--mu);margin-bottom:12px">CRM de contratos: <strong style="color:#fff">Sienge</strong> — focado em contratos, nao em gestao de corretores.</div>
+
+    <div class="badges">
+      <div class="badge hi">WhatsApp pessoal / grupos avulsos</div>
+      <div class="badge hi">E-mail marketing · R$ 4.200/ano</div>
+      <div class="badge hi">Drive · R$ 2.400/ano</div>
+      <div class="badge hi">Planilhas Excel / Google Sheets</div>
+      <div class="badge hi">Facilita · R$ 6.000/ano</div>
+      <div class="badge hi">Sem CRM de parceiros</div>
+    </div>
+    <div style="font-size:13px;color:var(--mu);margin-top:12px">Custo anual estimado com essas ferramentas: <strong style="color:#fff">R$ 12.600</strong></div>
+    <div class="cl" style="margin-top:12px">A DWV substitui <strong>5 ferramentas desconectadas</strong> em um unico ambiente integrado — WhatsApp API, e-mail com rastreio, CRM de parceiros, eventos com QR, trafego pago e BI completo.</div>
+  </div>
+</div>
+
+<!-- 7: ROI -->
+<div class="db"><div class="dh" onclick="tog(this)"><h3>7 · Retorno sobre Investimento DWV</h3><div class="dhr"><span class="dtag g">39 corretores · R$ 32.275.854</span><span class="chev">&#9662;</span></div></div>
+  <div class="dbody">
+
+    <div class="g2" style="margin-bottom:16px">
+      <div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Plano com Operadora DWV</div>
+        <div style="font-size:22px;font-weight:500">R$ 57.295<span style="font-size:13px;color:var(--mu);font-weight:400">/ano</span></div>
+        <div style="font-size:13px;color:var(--mu);margin-top:3px">12x R$ 4.775/mes</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">VGV por corretor ativado</div>
+        <div style="font-size:22px;font-weight:500;color:var(--red)">R$ 827.586</div>
+        <div style="font-size:13px;color:var(--mu);margin-top:3px">produtividade media atual</div>
+      </div>
+    </div>
+
+    <div style="background:var(--s);border:.5px solid var(--b);border-radius:10px;padding:16px 18px;margin-bottom:14px">
+      <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Meta da DWV — corretores a ativar</div>
+      <div style="font-size:13px;line-height:1.8;color:rgba(255,255,255,0.85)">
+        A incorporadora precisa ativar <strong>39 corretores</strong> para atingir a meta de VGV.<br/>
+        Cada corretor ativado gera em media <strong>R$ 827.586</strong> em VGV.<br/>
+        Com apenas <strong>1 corretor</strong> ativado pela DWV o investimento anual ja se paga.<br/>
+        Se a DWV conseguir ativar todos os <strong>39 corretores necessarios</strong>, o retorno potencial e de <strong>R$ 32.275.854</strong> em VGV adicional.
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Corretores p/ pagar o plano</div>
+        <div style="font-size:26px;font-weight:500;color:var(--red)">1</div>
+        <div style="font-size:11px;color:var(--mu);margin-top:4px">ponto de equilibrio</div>
+      </div>
+      <div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Meta de ativacoes DWV</div>
+        <div style="font-size:26px;font-weight:500;color:var(--am)">39</div>
+        <div style="font-size:11px;color:var(--mu);margin-top:4px">corretores a engajar</div>
+      </div>
+      <div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Retorno se meta atingida</div>
+        <div style="font-size:18px;font-weight:500;color:var(--gr)">R$ 32.275.854</div>
+        <div style="font-size:11px;color:var(--mu);margin-top:4px">em VGV adicional</div>
+      </div>
+    </div>
+
+    <div style="font-size:13px;color:var(--mu);padding:10px 13px;background:rgba(58,184,122,0.06);border:.5px solid rgba(58,184,122,0.15);border-radius:8px;margin-bottom:12px">Economia adicional ao consolidar 5 ferramentas na DWV: <strong style="color:var(--gr)">R$ 12.600/ano</strong></div>
+
+    <!-- NEW: Relatorios desejados com 3 itens + descritivo -->
+    <div class="cl g">
+      <div style="font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:500">Relatorios desejados pelo cliente</div>
+      <ul class="rpt-list">
+        <li>Quais e quantos corretores estao engajados nos meus produtos</li>
+        <li>Quais e quantas imobiliarias estao ofertando meu produto</li>
+        <li>Quantos corretores o executivo de parceria impacta diariamente/semanalmente e mensalmente</li>
+      </ul>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:8px;font-style:italic">Gostaria tambem de saber a taxa de conversao por executivo e por imobiliaria.</div>
+      <div style="margin-top:10px;font-size:13px">Todos disponiveis na plataforma DWV.</div>
+      <div style="margin-top:10px;font-size:13px">Com <strong>Tabela Zero</strong> (acesso: Canal Parcerias), a DWV potencializa a fidelizacao dos corretores Ouro, que tem acesso antecipado ao produto — aumentando a produtividade por corretor ativo.</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:6px;font-style:italic">Obs: Apenas corretores Ouro recebem 48h antes.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ACTION BUTTONS -->
+<div class="acts">
+  <button class="bto" onclick="void(0)">&#8592; Dashboard</button>
+  <button class="bto" onclick="void(0)">Copiar para Pipefy</button>
+  <button class="bto" onclick="openAll()">Expandir Tudo</button>
+  <button class="btr" onclick="void(0)">&#11015; Baixar PDF</button>
+</div>
+
+</div><!-- /app -->
+
+<script>
+function tog(h){var b=h.nextElementSibling;var c=h.querySelector('.chev');var o=b.classList.contains('open');b.classList.toggle('open',!o);if(c)c.classList.toggle('o',!o);}
+function openAll(){document.querySelectorAll('.dbody').forEach(function(b){b.classList.add('open');});}
+</script>
+</body>
+</html>
