@@ -94,9 +94,8 @@ function truncateAtWord(text: string, maxChars: number): string {
 function getNivel(cargo: CargoData): number {
   if (cargo.nome.includes("Diretor Comercial")) return 1;
   if (cargo.nome.includes("Diretor de Parceria") || cargo.nome.includes("Diretor")) return 2;
-  if (cargo.nome.includes("Gerente") || cargo.nome.includes("Coordenador") || cargo.nome.includes("Supervisor")) return 3;
+  if (cargo.nome.includes("Gerente") || cargo.nome.includes("Marketing")) return 3;
   if (cargo.nome.includes("Executivo")) return 4;
-  if (cargo.nome.includes("Assistente")) return 5;
   return 4;
 }
 

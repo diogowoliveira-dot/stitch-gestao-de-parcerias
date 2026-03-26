@@ -104,9 +104,6 @@ export default function Step2Cargos() {
                 <p className="text-sm font-medium text-white">{cargo.nome}</p>
                 <p className="text-[10px] uppercase tracking-wider text-slate-600">
                   Nível {cargo.nivel}
-                  {cargo.id === "cargo_coordenador_comercial" || cargo.id === "cargo_supervisor_vendas"
-                    ? " · Cargo alternativo"
-                    : ""}
                 </p>
               </div>
               {selected && (
