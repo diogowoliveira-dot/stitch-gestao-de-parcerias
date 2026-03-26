@@ -67,7 +67,6 @@ export default function Step2Cargos() {
   const hasDiretorParceria = isCargoSelected("cargo_diretor_parceria");
   const hasGerente = isCargoSelected("cargo_gerente_parceria");
   const hasExecutivo = isCargoSelected("cargo_executivo_parceria");
-  const hasDiretorComercial = isCargoSelected("cargo_diretor_comercial");
 
   return (
     <div className="space-y-6">
@@ -166,14 +165,7 @@ export default function Step2Cargos() {
       )}
 
       {/* Smart Questions */}
-      {hasDiretorComercial && !hasDiretorParceria && (
-        <div className="px-4 py-3 rounded-xl bg-[#f59e0b]/[0.08] border border-[#f59e0b]/[0.15]">
-          <p className="text-xs text-[#f59e0b]">
-            <span className="font-bold">Nota:</span> Sem Diretor de Parceria, o Diretor Comercial acumula essa função.
-          </p>
-        </div>
-      )}
-      {!hasGerente && (hasDiretorParceria || hasDiretorComercial) && hasExecutivo && (
+      {!hasGerente && hasDiretorParceria && hasExecutivo && (
         <div className="px-4 py-3 rounded-xl bg-[#f59e0b]/[0.08] border border-[#f59e0b]/[0.15]">
           <p className="text-xs text-[#f59e0b]">
             <span className="font-bold">Nota:</span> Sem Gerente, a Diretoria faz gestão direta dos Executivos.

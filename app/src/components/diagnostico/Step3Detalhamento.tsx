@@ -283,23 +283,7 @@ export default function Step3Detalhamento() {
         </div>
       </div>
 
-      {/* Bloco F - Atividades Descritivas */}
-      <div className="rounded-2xl p-5 bg-[#121212] border border-white/[0.06]">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#06b6d4" }}>description</span>
-          <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">Atividades do dia a dia (descritivo)</h3>
-        </div>
-        <p className="text-xs text-slate-500 mb-3">Descreva com suas palavras as principais atividades deste cargo. Esta resposta será analisada por IA para gerar insights no BI.</p>
-        <textarea
-          value={cargoAtual.atividadesDescritivas || ""}
-          onChange={(e) => dispatch({ type: "UPDATE_CARGO", index: cargoIndex, data: { atividadesDescritivas: e.target.value } })}
-          placeholder="Ex: Visita 3 imobiliárias por dia, faz treinamentos semanais de novos produtos, envia tabelas atualizadas via WhatsApp..."
-          rows={4}
-          className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-[#4a5f73] outline-none bg-white/[0.03] border border-white/[0.06] focus:border-white/[0.15] resize-y"
-        />
-      </div>
-
-      {/* Bloco G - CRM Condicional */}
+      {/* Bloco F - CRM Condicional */}
       {cargoAtual.ferramentas.includes('CRM interno (focado em contratos)') && (
         <div className="rounded-2xl p-5 bg-[#121212] border border-white/[0.06]">
           <div className="flex items-center gap-2 mb-4">

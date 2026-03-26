@@ -86,7 +86,8 @@ export const FERRAMENTAS_PREDEFINIDAS = [
   'E-mail marketing (ferramenta genérica)',
   'CRM interno (focado em contratos)',
   'Planilhas Excel / Google Sheets',
-  'Google Drive / Intranet',
+  'Drive',
+  'Intranet',
   'WhatsApp pessoal',
   'Recebimento de propostas em canais variados (WhatsApp, e-mail, físico)',
   'Orulo',
@@ -104,7 +105,8 @@ export const PROBLEMAS_POR_FERRAMENTA: Record<string, string> = {
   'E-mail marketing (ferramenta genérica)': 'Disparos sem rastreamento de abertura — impossível saber quem engajou',
   'CRM interno (focado em contratos)': 'CRM focado em contrato, não em corretor — sem perfil de engajamento da base',
   'Planilhas Excel / Google Sheets': 'Dados descentralizados e desatualizados — sem visão de carteira em tempo real',
-  'Google Drive / Intranet': 'Materiais compartilhados sem rastreamento — ninguém sabe quem acessou o quê',
+  'Drive': 'Materiais compartilhados sem rastreamento — ninguém sabe quem acessou o quê',
+  'Intranet': 'Materiais compartilhados sem rastreamento — ninguém sabe quem acessou o quê',
   'WhatsApp pessoal': 'Histórico de relacionamento some quando o executivo sai — risco de perda de carteira',
   'Recebimento de propostas em canais variados (WhatsApp, e-mail, físico)': 'Sem rastreamento por executivo — gerente não sabe de onde veio cada proposta',
   'Ferramentas de disparos de WhatsApp': 'Risco de banimento do número e sem rastreamento de engajamento',
@@ -148,11 +150,10 @@ export const KPIS_PREDEFINIDOS = [
 // CARGOS PADRÃO
 // ============================================
 export const CARGOS_PADRAO = [
-  { id: 'cargo_diretor_comercial', nome: 'Diretor Comercial', nivel: 1 },
-  { id: 'cargo_diretor_parceria', nome: 'Diretor de Parceria', nivel: 2 },
-  { id: 'cargo_gerente_parceria', nome: 'Gerente de Parceria', nivel: 3 },
-  { id: 'cargo_marketing', nome: 'Marketing', nivel: 3 },
-  { id: 'cargo_executivo_parceria', nome: 'Executivo de Parceria', nivel: 4 },
+  { id: 'cargo_diretor_parceria', nome: 'Diretor de Parceria', nivel: 1 },
+  { id: 'cargo_gerente_parceria', nome: 'Gerente de Parceria', nivel: 2 },
+  { id: 'cargo_marketing', nome: 'Marketing', nivel: 2 },
+  { id: 'cargo_executivo_parceria', nome: 'Executivo de Parceria', nivel: 3 },
 ];
 
 // ============================================
@@ -210,26 +211,13 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
     empresa: { nome: 'MRV Engenharia', cidade: 'Belo Horizonte', estado: 'MG' },
     cargos: [
       {
-        id: 'cargo_diretor_comercial',
-        nome: 'Diretor Comercial',
-        existe: true,
-        tarefas: ['Definição de metas', 'Relatórios para diretoria', 'Gestão de campanhas'],
-        metricas: ['VGV mensal', 'Número de propostas', 'Taxa de conversão'],
-        ferramentas: ['Planilhas Excel / Google Sheets', 'WhatsApp pessoal', 'Google Drive / Intranet'],
-        subordinadosDe: null,
-        subordinados: ['cargo_diretor_parceria'],
-        quantidade: 1,
-        kpiPrincipal: [],
-        atividadesDescritivas: '',
-      },
-      {
         id: 'cargo_diretor_parceria',
         nome: 'Diretor de Parceria',
         existe: true,
         tarefas: ['Gestão de campanhas', 'Definição de metas', 'Relatórios para diretoria'],
         metricas: ['VGV mensal', 'Engajamento da base', 'Número de corretores ativos'],
         ferramentas: ['CRM interno (focado em contratos)', 'Planilhas Excel / Google Sheets', 'E-mail marketing (ferramenta genérica)'],
-        subordinadosDe: 'cargo_diretor_comercial',
+        subordinadosDe: null,
         subordinados: ['cargo_gerente_parceria'],
         quantidade: 1,
         kpiPrincipal: [],
@@ -254,7 +242,7 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         existe: true,
         tarefas: ['Visitas a corretores / imobiliárias', 'Captação de novos corretores', 'Atendimento via WhatsApp', 'Distribuição de tabelas e materiais', 'Treinamentos de produto'],
         metricas: ['Número de visitas realizadas', 'Número de novos corretores captados', 'Engajamento da base'],
-        ferramentas: ['WhatsApp pessoal', 'Recebimento de propostas em canais variados (WhatsApp, e-mail, físico)', 'Ferramenta não oficial de disparo em massa', 'Google Drive / Intranet'],
+        ferramentas: ['WhatsApp pessoal', 'Recebimento de propostas em canais variados (WhatsApp, e-mail, físico)', 'Ferramenta não oficial de disparo em massa', 'Drive'],
         subordinadosDe: 'cargo_gerente_parceria',
         subordinados: [],
         quantidade: 1,
@@ -269,7 +257,7 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
       'E-mail marketing (ferramenta genérica)',
       'Recebimento de propostas em canais variados (WhatsApp, e-mail, físico)',
       'Ferramenta não oficial de disparo em massa',
-      'Google Drive / Intranet',
+      'Drive',
     ],
     problemasIdentificados: [
       'Dados descentralizados e desatualizados — sem visão de carteira em tempo real',

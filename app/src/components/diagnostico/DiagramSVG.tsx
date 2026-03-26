@@ -92,8 +92,7 @@ function truncateAtWord(text: string, maxChars: number): string {
 // ============================================
 
 function getNivel(cargo: CargoData): number {
-  if (cargo.nome.includes("Diretor Comercial")) return 1;
-  if (cargo.nome.includes("Diretor de Parceria") || cargo.nome.includes("Diretor")) return 2;
+  if (cargo.nome.includes("Diretor de Parceria") || cargo.nome.includes("Diretor")) return 1;
   if (cargo.nome.includes("Gerente") || cargo.nome.includes("Marketing")) return 3;
   if (cargo.nome.includes("Executivo")) return 4;
   return 4;
@@ -291,8 +290,6 @@ export function OrganogramaSVG({
   if (comDWV) {
     const hasGerente = existentes.some((c) => c.nome.includes("Gerente"));
     const hasDiretorParceria = existentes.some((c) => c.nome.includes("Diretor de Parceria"));
-    const hasDiretorComercial = existentes.some((c) => c.nome.includes("Diretor Comercial"));
-
     let opY: number, opX: number;
     if (hasGerente) {
       const gerentes = nodes.filter((n) => n.cargo.nome.includes("Gerente"));
@@ -301,10 +298,6 @@ export function OrganogramaSVG({
       opY = last.y;
     } else if (hasDiretorParceria) {
       const dir = nodes.find((n) => n.cargo.nome.includes("Diretor de Parceria"));
-      opX = (dir?.x || 400) + nodeW + 60;
-      opY = dir?.y || 70;
-    } else if (hasDiretorComercial) {
-      const dir = nodes.find((n) => n.cargo.nome.includes("Diretor Comercial"));
       opX = (dir?.x || 400) + nodeW + 60;
       opY = dir?.y || 70;
     } else {
@@ -798,14 +791,7 @@ function FluxogramaDWV({
       <g key="strat">
         <rect x={faixaStart} y={nodeY} width={190} height={48} rx={10} fill={COLORS.bgCard} stroke={getLevelColor(1).border} strokeWidth={1.5} />
         <rect x={faixaStart} y={nodeY + 4} width={4} height={40} rx={2} fill="#f97316" />
-        <text x={faixaStart + 16} y={nodeY + 30} fontSize="12" fontWeight="600" fill={COLORS.text} fontFamily={FONT}>Diretor Comercial</text>
-        {hasDiretorParceria && (
-          <g>
-            <rect x={faixaStart + 210} y={nodeY} width={190} height={48} rx={10} fill={COLORS.bgCard} stroke={getLevelColor(2).border} strokeWidth={1.5} />
-            <rect x={faixaStart + 210} y={nodeY + 4} width={4} height={40} rx={2} fill="#f97316" />
-            <text x={faixaStart + 226} y={nodeY + 30} fontSize="12" fontWeight="600" fill={COLORS.text} fontFamily={FONT}>Diretor de Parceria</text>
-          </g>
-        )}
+        <text x={faixaStart + 16} y={nodeY + 30} fontSize="12" fontWeight="600" fill={COLORS.text} fontFamily={FONT}>Diretor de Parceria</text>
         <rect x={faixaStart + 480} y={nodeY} width={300} height={48} rx={10} fill={COLORS.redBg} stroke={COLORS.redBorder} strokeWidth={1.5} />
         <rect x={faixaStart + 480} y={nodeY + 4} width={4} height={40} rx={2} fill={COLORS.operadoraMain} />
         <text x={faixaStart + 500} y={nodeY + 20} fontSize="10" fontWeight="700" fill={COLORS.operadoraMain} fontFamily={FONT}>Recebem da Operadora</text>
