@@ -273,7 +273,9 @@ function save(){
   }
 }
 
+function isAdmin(){const u=getUser();return u&&u.role==='admin';}
 function canNext(){
+  if(isAdmin()) return true;
   if(currentStep===0)return !!(document.getElementById('cN')?.value);
   if(currentStep===1)return parseCur(document.getElementById('tVGV')?.value||'')>0&&parseCur(document.getElementById('vGoal')?.value||'')>0;
   if(currentStep===2)return (parseInt(document.getElementById('tBr')?.value)||0)>0&&(parseInt(document.getElementById('aBr')?.value)||0)>0;
