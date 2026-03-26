@@ -119,7 +119,7 @@ export default function DiagDashboard() {
                       {isAdmin && (
                         <>
                           <button
-                            onClick={(e) => { e.stopPropagation(); window.location.href = `/diagnostico/form/index.html?ver=${diag.id}`; }}
+                            onClick={(e) => { e.stopPropagation(); window.location.href = `/diagnostico/form/index.html?editar=${diag.id}`; }}
                             className="p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
                             title="Editar"
                           >

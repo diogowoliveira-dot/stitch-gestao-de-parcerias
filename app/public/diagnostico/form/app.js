@@ -1135,7 +1135,44 @@ ${D.observations?`<h2>Observações</h2><div class="box">${D.observations}</div>
   setTimeout(()=>{w.focus();w.print();},600);
 }
 
-// ── INIT ──────────────────────────────────────────────────────
+// ── POPULATE D FROM API RECORD ────────────────────────────────
+function populateFromAPI(rec){
+  resetD();
+  D.companyName=rec.empresa?.nome||'';
+  D.cidade=rec.empresa?.cidade||'';
+  D.estado=rec.empresa?.estado||'';
+  D.responsibleName=rec.criadoPorNome||'';
+  D.responsibleRole='';
+  D.totalVGV=rec.totalVGV||0;
+  D.vgvGoal=rec.vgvGoal||0;
+  D.avgTicket=rec.avgTicket||0;
+  D.totalBrokers=rec.totalBrokers||0;
+  D.activeBrokers=rec.activeBrokers||0;
+  D.shareHouse=rec.shareHouse||0;
+  D.shareParcerias=rec.shareParcerias||0;
+  D.numImobiliarias=rec.numImobiliarias||0;
+  D.hasImob=D.numImobiliarias>0;
+  D.hasParc=true;
+  // Cargos from API
+  (rec.cargos||[]).forEach(c=>{
+    const key=c.id?.replace('cargo_','')||'';
+    if(D.cargos[key]){
+      D.cargos[key].existe=c.existe||true;
+      D.cargos[key].qtd=c.quantidade||1;
+      D.cargos[key].kpi=(c.kpiPrincipal||[]).join(', ');
+      D.cargos[key].atividades=c.atividadesDescritivas||'';
+    }
+  });
+  const ger=D.cargos.gerente;const exec=D.cargos.executivo;
+  D.parcManagers=ger.existe?ger.qtd:0;
+  D.parcExecutives=exec.existe?exec.qtd:0;
+  D.brokerSegmentation=rec.segmentacao||'nao';
+  D.brokerSegDescritivo=rec.segmentacaoDescritiva||'';
+  D.desiredReports=rec.relatoriosDesejados||[];
+  D.desiredReportsDescritivo=rec.relatoriosDescritivo||'';
+  isSim=rec.isSimulacao||false;
+}
+
 // ── INIT ──────────────────────────────────────────────────────
 (async function init(){
   const user=checkAuth();
@@ -1148,37 +1185,36 @@ ${D.observations?`<h2>Observações</h2><div class="box">${D.observations}</div>
     return;
   }
 
+  // Editar — abre no formulário step 0
+  if(params.get('editar')){
+    const id=params.get('editar');
+    try{
+      const res=await fetch('/api/diagnostico/diagnosticos');
+      const all=await res.json();
+      const rec=all.find(d=>d.id===id);
+      if(rec){
+        populateFromAPI(rec);
+        currentStep=0;
+        document.getElementById('startScreen').style.display='none';
+        document.getElementById('formWrap').style.display='block';
+        document.getElementById('simBadge').style.display=isSim?'flex':'none';
+        document.getElementById('results').style.display='none';
+        document.getElementById('dashboard').style.display='none';
+        render();
+        return;
+      }
+    }catch(e){console.error(e);}
+  }
+
+  // Ver — abre direto no relatório
   if(params.get('ver')){
-    // Load and display existing diagnostic
     const id=params.get('ver');
     try{
       const res=await fetch('/api/diagnostico/diagnosticos');
       const all=await res.json();
       const rec=all.find(d=>d.id===id);
       if(rec){
-        // Populate D from API record
-        D.companyName=rec.empresa?.nome||'';
-        D.location=(rec.empresa?.cidade||'')+(rec.empresa?.estado?', '+rec.empresa.estado:'');
-        D.responsibleName=rec.criadoPorNome||'';
-        D.responsibleRole='';
-        // Numeric fields stored as extra data in the API record
-        D.totalVGV=rec.totalVGV||0;
-        D.vgvGoal=rec.vgvGoal||0;
-        D.avgTicket=rec.avgTicket||0;
-        D.totalBrokers=rec.totalBrokers||0;
-        D.activeBrokers=rec.activeBrokers||0;
-        const ger=rec.cargos?.find(c=>c.id?.includes('gerente'));
-        const exec=rec.cargos?.find(c=>c.id?.includes('executivo'));
-        D.parcManagers=ger?.quantidade||0;
-        D.parcExecutives=exec?.quantidade||0;
-        D.hasHouse=false;D.hasParc=true;D.hasImob=false;
-        D.brokersExclusivity='non-exclusive';
-        D.hasCRM=false;D.crmName='';
-        D.challenges=[];D.challengesText='';
-        D.meetingGoals='partial';
-        D.tabelaZero='no';D.tabelaZeroAccess=[];
-        D.toolCosts={};
-        isSim=rec.isSimulacao||false;
+        populateFromAPI(rec);
         showResults();
         return;
       }
