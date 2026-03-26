@@ -82,6 +82,7 @@ export function DiagAuthProvider({ children }: { children: ReactNode }) {
         if (res.ok) {
           const userData = await res.json();
           setUser(userData);
+          if (typeof window !== 'undefined') sessionStorage.setItem('diagUser', JSON.stringify(userData));
           return true;
         }
         return false;
@@ -95,13 +96,18 @@ export function DiagAuthProvider({ children }: { children: ReactNode }) {
     );
     if (found) {
       const { senha: _, ...safe } = found;
-      setUser({ ...safe, ultimoAcesso: new Date().toISOString().split("T")[0] });
+      const safeUser = { ...safe, ultimoAcesso: new Date().toISOString().split("T")[0] };
+      setUser(safeUser);
+      if (typeof window !== 'undefined') sessionStorage.setItem('diagUser', JSON.stringify(safeUser));
       return true;
     }
     return false;
   };
 
-  const logout = () => setUser(null);
+  const logout = () => {
+    setUser(null);
+    if (typeof window !== 'undefined') sessionStorage.removeItem('diagUser');
+  };
 
   const addUser = async (data: { nome: string; email: string; senha: string; role: string; status: string }) => {
     if (useApi) {
