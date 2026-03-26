@@ -55,6 +55,7 @@ export interface DiagnosticoData {
   relatoriosDescritivo?: string;
   tabelaZeroParcerias?: boolean;
   aiAnalysis?: string;
+  isSimulacao?: boolean;
 }
 
 // ============================================

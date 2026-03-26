@@ -43,6 +43,13 @@ export default function DiagDashboard() {
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>add</span>
           Novo Diagnóstico
         </button>
+        <button
+          onClick={() => router.push("/diagnostico/novo?simulacao=true")}
+          className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-slate-400 transition-all hover:bg-white/5 border border-white/[0.06]"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 20 }}>science</span>
+          Simulação (dados não reais)
+        </button>
       </div>
 
       {/* Diagnósticos List */}
@@ -81,6 +88,11 @@ export default function DiagDashboard() {
                         >
                           {diag.status === "completo" ? "Completo" : "Rascunho"}
                         </span>
+                        {diag.isSimulacao && (
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full" style={{ background: "rgba(139, 92, 246, 0.1)", color: "#8b5cf6", border: "1px solid rgba(139, 92, 246, 0.2)" }}>
+                            Simulação
+                          </span>
+                        )}
                       </div>
                       <p className="text-xs text-slate-500">
                         {diag.empresa.cidade}/{diag.empresa.estado} &middot; {diag.cargos.filter((c) => c.existe).length} cargos &middot; {diag.problemasIdentificados.length} problemas

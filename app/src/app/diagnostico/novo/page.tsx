@@ -24,6 +24,7 @@ function NovoDiagnostico() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const verId = searchParams.get("ver");
+  const isSimulacao = searchParams.get("simulacao") === "true";
   const { user } = useDiagAuth();
   const { formState, dispatch, diagnosticos, addDiagnostico } = useDiagData();
 
@@ -113,6 +114,7 @@ function NovoDiagnostico() {
           relatoriosDesejados: formState.relatoriosDesejados,
           relatoriosDescritivo: formState.relatoriosDescritivo,
           tabelaZeroParcerias: formState.tabelaZeroParcerias,
+          isSimulacao,
         };
         await addDiagnostico(newDiag);
       }
@@ -140,6 +142,14 @@ function NovoDiagnostico() {
       showBack
     >
       <div className="max-w-2xl mx-auto">
+        {/* Simulação Banner */}
+        {isSimulacao && (
+          <div className="mb-6 flex items-center gap-2 px-4 py-3 rounded-xl text-sm bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 text-[#8b5cf6]">
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>science</span>
+            <span className="font-medium">Modo Simulação</span>
+            <span className="text-xs text-[#8b5cf6]/60">— estes dados não afetam o BI</span>
+          </div>
+        )}
         {/* Progress Bar */}
         <ProgressBar etapaAtual={etapaAtual} />
 

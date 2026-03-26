@@ -59,6 +59,7 @@ export async function GET() {
     relatoriosDescritivo: d.relatoriosDescritivo,
     tabelaZeroParcerias: d.tabelaZeroParcerias,
     aiAnalysis: d.aiAnalysis,
+    isSimulacao: d.isSimulacao,
   }));
 
   return NextResponse.json(result);
@@ -83,6 +84,7 @@ export async function POST(req: NextRequest) {
       relatoriosDesejados: data.relatoriosDesejados ? JSON.stringify(data.relatoriosDesejados) : null,
       relatoriosDescritivo: data.relatoriosDescritivo ?? null,
       tabelaZeroParcerias: data.tabelaZeroParcerias ?? null,
+      isSimulacao: data.isSimulacao ?? false,
     },
   });
 

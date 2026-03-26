@@ -42,6 +42,7 @@ model Diagnostico {
   relatoriosDescritivo  String?  // Texto livre
   tabelaZeroParcerias   Boolean? // Canal Parcerias tem acesso à Tabela Zero
   aiAnalysis            String?  // JSON resultado consolidado da IA
+  isSimulacao           Boolean  @default(false) // true = dados de teste, ignorado no BI
 
   cargos              Cargo[]
   ferramentasGerais   FerramentaGeral[]
