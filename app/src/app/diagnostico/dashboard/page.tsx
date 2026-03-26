@@ -12,13 +12,7 @@ export default function DiagDashboard() {
     e.stopPropagation();
     if (!confirm(`Tem certeza que deseja apagar o diagnóstico de "${nome}"? Esta ação não pode ser desfeita.`)) return;
     try {
-      await fetch("/api/diagnostico/diagnosticos", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-      if (deleteDiagnostico) deleteDiagnostico(id);
-      else window.location.reload();
+      await deleteDiagnostico(id);
     } catch { alert("Erro ao apagar"); }
   };
 
