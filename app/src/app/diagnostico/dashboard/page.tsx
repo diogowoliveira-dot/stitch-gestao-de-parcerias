@@ -5,8 +5,22 @@ import { useDiagAuth, useDiagData } from "@/lib/diagnostico-context";
 
 export default function DiagDashboard() {
   const router = useRouter();
-  const { users } = useDiagAuth();
-  const { diagnosticos } = useDiagData();
+  const { users, isAdmin } = useDiagAuth();
+  const { diagnosticos, deleteDiagnostico } = useDiagData();
+
+  const handleDelete = async (e: React.MouseEvent, id: string, nome: string) => {
+    e.stopPropagation();
+    if (!confirm(`Tem certeza que deseja apagar o diagnóstico de "${nome}"? Esta ação não pode ser desfeita.`)) return;
+    try {
+      await fetch("/api/diagnostico/diagnosticos", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (deleteDiagnostico) deleteDiagnostico(id);
+      else window.location.reload();
+    } catch { alert("Erro ao apagar"); }
+  };
 
   const totalDiagnosticos = diagnosticos.length;
   const completos = diagnosticos.filter((d) => d.status === "completo").length;
@@ -101,7 +115,25 @@ export default function DiagDashboard() {
                         {criador?.nome || "—"} &middot; {new Date(diag.dataCriacao).toLocaleDateString("pt-BR")}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
+                      {isAdmin && (
+                        <>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); window.location.href = `/diagnostico/form/index.html?ver=${diag.id}`; }}
+                            className="p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
+                            title="Editar"
+                          >
+                            <span className="material-symbols-outlined text-slate-500 hover:text-blue-400" style={{ fontSize: 16 }}>edit</span>
+                          </button>
+                          <button
+                            onClick={(e) => handleDelete(e, diag.id, diag.empresa.nome)}
+                            className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors"
+                            title="Apagar"
+                          >
+                            <span className="material-symbols-outlined text-slate-500 hover:text-red-400" style={{ fontSize: 16 }}>delete</span>
+                          </button>
+                        </>
+                      )}
                       <span className="material-symbols-outlined text-slate-700" style={{ fontSize: 18 }}>chevron_right</span>
                     </div>
                   </div>
