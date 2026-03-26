@@ -36,7 +36,7 @@ export default function DiagDashboard() {
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-3 mb-8">
         <button
-          onClick={() => window.location.href = "/diagnostico/form/"}
+          onClick={() => window.location.href = "/diagnostico/form/index.html"}
           className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.02]"
           style={{ background: "linear-gradient(135deg, #ec1313 0%, #d41111 100%)", boxShadow: "0 4px 16px rgba(236, 19, 19, 0.3)" }}
         >
@@ -44,7 +44,7 @@ export default function DiagDashboard() {
           Novo Diagnóstico
         </button>
         <button
-          onClick={() => window.location.href = "/diagnostico/form/?simulacao=true"}
+          onClick={() => window.location.href = "/diagnostico/form/index.html?simulacao=true"}
           className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-slate-400 transition-all hover:bg-white/5 border border-white/[0.06]"
         >
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>science</span>
@@ -72,7 +72,7 @@ export default function DiagDashboard() {
                 <div
                   key={diag.id}
                   className="rounded-2xl p-5 bg-[#121212] border border-white/[0.06] transition-all hover:border-white/[0.15] cursor-pointer group"
-                  onClick={() => window.location.href = `/diagnostico/form/?ver=${diag.id}`}
+                  onClick={() => window.location.href = `/diagnostico/form/index.html?ver=${diag.id}`}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
