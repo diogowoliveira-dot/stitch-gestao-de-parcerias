@@ -39,7 +39,12 @@ const DiagAuthContext = createContext<DiagAuthContextType>({
 });
 
 export function DiagAuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<DiagUserSafe | null>(null);
+  const [user, setUser] = useState<DiagUserSafe | null>(() => {
+    if (typeof window !== 'undefined') {
+      try { return JSON.parse(sessionStorage.getItem('diagUser') || 'null'); } catch { return null; }
+    }
+    return null;
+  });
   const [users, setUsers] = useState<DiagUserSafe[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [useApi, setUseApi] = useState(true); // false = fallback to mock data
