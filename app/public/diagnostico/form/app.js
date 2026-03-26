@@ -144,6 +144,7 @@ const fmtCI=v=>{const n=String(v).replace(/\D/g,'');return n?parseInt(n).toLocal
 let D={};
 let isSim=false;
 let currentStep=0;
+let editingId=null; // ID do diagnóstico sendo editado
 
 const ESTADOS_BR=['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'];
 const CARGOS_CANAL=[
@@ -324,6 +325,10 @@ function render(){
   const s=STEPS[currentStep];
   const isLast=currentStep===STEPS.length-1;
   document.getElementById('form-area').innerHTML=`
+    ${editingId?`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:10px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:12px">
+      <span style="font-size:12px;color:#60a5fa;font-weight:600">✏️ Editando diagnóstico</span>
+      <button onclick="window.location.href='/diagnostico/dashboard'" style="font-size:12px;color:#94a3b8;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);padding:6px 14px;border-radius:8px;cursor:pointer">← Voltar ao Dashboard</button>
+    </div>`:''}
     <div class="stag">${s.tag}</div>
     <div class="stitle">${s.title}</div>
     <div class="sdesc">${s.desc}</div>
@@ -1194,6 +1199,7 @@ function populateFromAPI(rec){
       const rec=all.find(d=>d.id===id);
       if(rec){
         populateFromAPI(rec);
+        editingId=id;
         currentStep=0;
         document.getElementById('startScreen').style.display='none';
         document.getElementById('formWrap').style.display='block';
