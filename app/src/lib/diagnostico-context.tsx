@@ -183,6 +183,15 @@ export interface DiagFormState {
   cargoAtualIndex: number;
   problemas: string[];
   outputGerado: boolean;
+  // Novos campos
+  shareHouse?: number;
+  shareParcerias?: number;
+  numImobiliarias?: number;
+  segmentacao?: string;
+  segmentacaoDescritiva?: string;
+  relatoriosDesejados?: string[];
+  relatoriosDescritivo?: string;
+  tabelaZeroParcerias?: boolean;
 }
 
 type DiagAction =
@@ -195,7 +204,8 @@ type DiagAction =
   | { type: "GERAR_PROBLEMAS" }
   | { type: "GERAR_OUTPUT" }
   | { type: "RESET" }
-  | { type: "LOAD"; data: DiagFormState };
+  | { type: "LOAD"; data: DiagFormState }
+  | { type: "SET_FIELD"; field: string; value: unknown };
 
 const initialFormState: DiagFormState = {
   etapaAtual: 1,
@@ -248,6 +258,8 @@ function diagReducer(state: DiagFormState, action: DiagAction): DiagFormState {
       return { ...initialFormState };
     case "LOAD":
       return action.data;
+    case "SET_FIELD":
+      return { ...state, [action.field]: action.value };
     default:
       return state;
   }

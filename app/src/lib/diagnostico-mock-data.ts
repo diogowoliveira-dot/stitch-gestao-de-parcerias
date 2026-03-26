@@ -27,6 +27,10 @@ export interface CargoData {
   ferramentas: string[];
   subordinadosDe: string | null;
   subordinados: string[];
+  quantidade: number;
+  kpiPrincipal: string[];
+  atividadesDescritivas: string;
+  crmNome?: string;
 }
 
 export interface DiagnosticoData {
@@ -42,6 +46,15 @@ export interface DiagnosticoData {
   dataCriacao: string;
   criadoPor: string;
   status: 'rascunho' | 'completo';
+  shareHouse?: number;
+  shareParcerias?: number;
+  numImobiliarias?: number;
+  segmentacao?: string;
+  segmentacaoDescritiva?: string;
+  relatoriosDesejados?: string[];
+  relatoriosDescritivo?: string;
+  tabelaZeroParcerias?: boolean;
+  aiAnalysis?: string;
 }
 
 // ============================================
@@ -82,8 +95,13 @@ export const FERRAMENTAS_PREDEFINIDAS = [
   'Planilhas Excel / Google Sheets',
   'Google Drive / Intranet',
   'WhatsApp pessoal',
-  'Ferramenta não oficial de disparo em massa',
   'Recebimento de propostas em canais variados (WhatsApp, e-mail, físico)',
+  'Orulo',
+  'Facilita',
+  'Anapro',
+  'Hypnobox',
+  'Zé',
+  'Ferramentas de disparos de WhatsApp',
 ];
 
 // ============================================
@@ -95,9 +113,43 @@ export const PROBLEMAS_POR_FERRAMENTA: Record<string, string> = {
   'Planilhas Excel / Google Sheets': 'Dados descentralizados e desatualizados — sem visão de carteira em tempo real',
   'Google Drive / Intranet': 'Materiais compartilhados sem rastreamento — ninguém sabe quem acessou o quê',
   'WhatsApp pessoal': 'Histórico de relacionamento some quando o executivo sai — risco de perda de carteira',
-  'Ferramenta não oficial de disparo em massa': 'Risco real de banimento do número — operação em risco',
   'Recebimento de propostas em canais variados (WhatsApp, e-mail, físico)': 'Sem rastreamento por executivo — gerente não sabe de onde veio cada proposta',
+  'Ferramentas de disparos de WhatsApp': 'Risco de banimento do número e sem rastreamento de engajamento',
 };
+
+// ============================================
+// SEGMENTAÇÃO - Opções
+// ============================================
+export const SEGMENTACAO_OPCOES = [
+  { value: 'nao', label: 'Não' },
+  { value: 'nao_gostaria', label: 'Não, mas eu gostaria' },
+  { value: 'sim_parcial', label: 'Sim, parcialmente' },
+  { value: 'sim_total', label: 'Sim, totalmente' },
+];
+
+// ============================================
+// RELATÓRIOS DESEJADOS - Opções
+// ============================================
+export const RELATORIOS_OPCOES = [
+  'Quais e quantos corretores estão engajados nos meus produtos',
+  'Quais e quantas imobiliárias estão ofertando meu produto',
+  'Quantos corretores o executivo de parceria impacta diariamente/semanalmente e mensalmente',
+];
+
+// ============================================
+// KPIs PRÉ-DEFINIDOS
+// ============================================
+export const KPIS_PREDEFINIDOS = [
+  'VGV mensal',
+  'Número de propostas geradas',
+  'Número de corretores ativos',
+  'Taxa de conversão',
+  'Número de visitas realizadas',
+  'Engajamento da base',
+  'Novos corretores captados',
+  'Número de treinamentos realizados',
+  'Volume de disparos / comunicações',
+];
 
 // ============================================
 // CARGOS PADRÃO
@@ -106,6 +158,7 @@ export const CARGOS_PADRAO = [
   { id: 'cargo_diretor_comercial', nome: 'Diretor Comercial', nivel: 1 },
   { id: 'cargo_diretor_parceria', nome: 'Diretor de Parceria', nivel: 2 },
   { id: 'cargo_gerente_parceria', nome: 'Gerente de Parceria', nivel: 3 },
+  { id: 'cargo_marketing', nome: 'Marketing', nivel: 3 },
   { id: 'cargo_executivo_parceria', nome: 'Executivo de Parceria', nivel: 4 },
   { id: 'cargo_coordenador_comercial', nome: 'Coordenador Comercial', nivel: 3 },
   { id: 'cargo_supervisor_vendas', nome: 'Supervisor de Vendas', nivel: 3 },
@@ -175,6 +228,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['Planilhas Excel / Google Sheets', 'WhatsApp pessoal', 'Google Drive / Intranet'],
         subordinadosDe: null,
         subordinados: ['cargo_diretor_parceria'],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
       {
         id: 'cargo_diretor_parceria',
@@ -185,6 +241,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['CRM interno (focado em contratos)', 'Planilhas Excel / Google Sheets', 'E-mail marketing (ferramenta genérica)'],
         subordinadosDe: 'cargo_diretor_comercial',
         subordinados: ['cargo_gerente_parceria'],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
       {
         id: 'cargo_gerente_parceria',
@@ -195,6 +254,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['CRM interno (focado em contratos)', 'E-mail marketing (ferramenta genérica)', 'WhatsApp pessoal', 'Planilhas Excel / Google Sheets'],
         subordinadosDe: 'cargo_diretor_parceria',
         subordinados: ['cargo_executivo_parceria', 'cargo_assistente_comercial'],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
       {
         id: 'cargo_executivo_parceria',
@@ -205,6 +267,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['WhatsApp pessoal', 'Recebimento de propostas em canais variados (WhatsApp, e-mail, físico)', 'Ferramenta não oficial de disparo em massa', 'Google Drive / Intranet'],
         subordinadosDe: 'cargo_gerente_parceria',
         subordinados: [],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
       {
         id: 'cargo_assistente_comercial',
@@ -215,6 +280,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['WhatsApp pessoal', 'Planilhas Excel / Google Sheets', 'Google Drive / Intranet'],
         subordinadosDe: 'cargo_gerente_parceria',
         subordinados: [],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
     ],
     ferramentasGerais: [
@@ -255,6 +323,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['Planilhas Excel / Google Sheets', 'CRM interno (focado em contratos)', 'WhatsApp pessoal'],
         subordinadosDe: null,
         subordinados: ['cargo_executivo_parceria'],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
       {
         id: 'cargo_executivo_parceria',
@@ -265,6 +336,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['WhatsApp pessoal', 'Recebimento de propostas em canais variados (WhatsApp, e-mail, físico)', 'E-mail marketing (ferramenta genérica)'],
         subordinadosDe: 'cargo_diretor_parceria',
         subordinados: [],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
     ],
     ferramentasGerais: [
@@ -301,6 +375,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['WhatsApp pessoal', 'Planilhas Excel / Google Sheets', 'Recebimento de propostas em canais variados (WhatsApp, e-mail, físico)'],
         subordinadosDe: null,
         subordinados: [],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
     ],
     ferramentasGerais: [
@@ -332,6 +409,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['Planilhas Excel / Google Sheets', 'Google Drive / Intranet'],
         subordinadosDe: null,
         subordinados: ['cargo_coordenador_comercial', 'cargo_supervisor_vendas'],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
       {
         id: 'cargo_coordenador_comercial',
@@ -342,6 +422,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['CRM interno (focado em contratos)', 'E-mail marketing (ferramenta genérica)', 'WhatsApp pessoal'],
         subordinadosDe: 'cargo_diretor_comercial',
         subordinados: ['cargo_executivo_parceria'],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
       {
         id: 'cargo_supervisor_vendas',
@@ -352,6 +435,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['WhatsApp pessoal', 'Planilhas Excel / Google Sheets'],
         subordinadosDe: 'cargo_diretor_comercial',
         subordinados: ['cargo_executivo_parceria'],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
       {
         id: 'cargo_executivo_parceria',
@@ -362,6 +448,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['WhatsApp pessoal', 'Recebimento de propostas em canais variados (WhatsApp, e-mail, físico)', 'Ferramenta não oficial de disparo em massa'],
         subordinadosDe: 'cargo_coordenador_comercial',
         subordinados: [],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
       {
         id: 'cargo_assistente_comercial',
@@ -372,6 +461,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['WhatsApp pessoal', 'Google Drive / Intranet', 'Planilhas Excel / Google Sheets'],
         subordinadosDe: 'cargo_coordenador_comercial',
         subordinados: [],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
     ],
     ferramentasGerais: [
@@ -412,6 +504,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['CRM interno (focado em contratos)'],
         subordinadosDe: null,
         subordinados: ['cargo_executivo_parceria'],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
       {
         id: 'cargo_executivo_parceria',
@@ -422,6 +517,9 @@ export const diagInitialDiagnosticos: DiagnosticoData[] = [
         ferramentas: ['WhatsApp pessoal'],
         subordinadosDe: 'cargo_gerente_parceria',
         subordinados: [],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       },
     ],
     ferramentasGerais: ['CRM interno (focado em contratos)', 'WhatsApp pessoal'],

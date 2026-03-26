@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useDiagData } from "@/lib/diagnostico-context";
-import { TAREFAS_PREDEFINIDAS, METRICAS_PREDEFINIDAS, FERRAMENTAS_PREDEFINIDAS } from "@/lib/diagnostico-mock-data";
+import { TAREFAS_PREDEFINIDAS, METRICAS_PREDEFINIDAS, FERRAMENTAS_PREDEFINIDAS, KPIS_PREDEFINIDOS } from "@/lib/diagnostico-mock-data";
 
 export default function Step3Detalhamento() {
   const { formState, dispatch } = useDiagData();
@@ -10,6 +10,7 @@ export default function Step3Detalhamento() {
   const [customTarefa, setCustomTarefa] = useState("");
   const [customMetrica, setCustomMetrica] = useState("");
   const [customFerramenta, setCustomFerramenta] = useState("");
+  const [customKpi, setCustomKpi] = useState("");
 
   if (!cargoAtual) {
     return (
@@ -249,6 +250,130 @@ export default function Step3Detalhamento() {
           </button>
         </div>
       </div>
+
+      {/* Bloco D - Quantidade de Pessoas */}
+      <div className="rounded-2xl p-5 bg-[#121212] border border-white/[0.06]">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#10b981" }}>groups</span>
+          <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">Quantidade de pessoas</h3>
+        </div>
+        <div className="flex items-center gap-3">
+          <input
+            type="number"
+            min={1}
+            max={100}
+            value={cargoAtual.quantidade || 1}
+            onChange={(e) => dispatch({ type: "UPDATE_CARGO", index: cargoIndex, data: { quantidade: Math.max(1, parseInt(e.target.value) || 1) } })}
+            className="w-24 px-3 py-2.5 rounded-lg text-sm text-white text-center outline-none bg-white/[0.03] border border-white/[0.06] focus:border-white/[0.15]"
+          />
+          <span className="text-xs text-slate-500">pessoa(s) neste cargo</span>
+        </div>
+      </div>
+
+      {/* Bloco E - KPIs */}
+      <div className="rounded-2xl p-5 bg-[#121212] border border-white/[0.06]">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#f59e0b" }}>target</span>
+          <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">KPIs / Métricas de resultado cobradas</h3>
+        </div>
+        <div className="space-y-1.5">
+          {KPIS_PREDEFINIDOS.map((kpi) => {
+            const selected = (cargoAtual.kpiPrincipal || []).includes(kpi);
+            return (
+              <button
+                key={kpi}
+                onClick={() => {
+                  const current = cargoAtual.kpiPrincipal || [];
+                  const updated = current.includes(kpi) ? current.filter((k) => k !== kpi) : [...current, kpi];
+                  dispatch({ type: "UPDATE_CARGO", index: cargoIndex, data: { kpiPrincipal: updated } });
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all text-sm ${
+                  selected ? "bg-[#f59e0b]/[0.06] text-white" : "text-slate-400"
+                }`}
+              >
+                <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${selected ? "bg-[#f59e0b]" : "bg-white/[0.04] border border-white/[0.06]"}`}>
+                  {selected && <span className="material-symbols-outlined text-white" style={{ fontSize: 14 }}>check</span>}
+                </div>
+                {kpi}
+              </button>
+            );
+          })}
+          {(cargoAtual.kpiPrincipal || []).filter((k) => !KPIS_PREDEFINIDOS.includes(k)).map((k) => (
+            <div key={k} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-[#f59e0b]/[0.06] text-white">
+              <div className="w-5 h-5 rounded flex items-center justify-center shrink-0 bg-[#f59e0b]">
+                <span className="material-symbols-outlined text-white" style={{ fontSize: 14 }}>check</span>
+              </div>
+              <span className="flex-1">{k}</span>
+              <button onClick={() => {
+                const updated = (cargoAtual.kpiPrincipal || []).filter((x) => x !== k);
+                dispatch({ type: "UPDATE_CARGO", index: cargoIndex, data: { kpiPrincipal: updated } });
+              }} className="p-0.5 rounded hover:bg-red-500/10 text-slate-500">
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-2 mt-3">
+          <input
+            type="text"
+            value={customKpi}
+            onChange={(e) => setCustomKpi(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && customKpi.trim()) {
+                const current = cargoAtual.kpiPrincipal || [];
+                if (!current.includes(customKpi.trim())) {
+                  dispatch({ type: "UPDATE_CARGO", index: cargoIndex, data: { kpiPrincipal: [...current, customKpi.trim()] } });
+                }
+                setCustomKpi("");
+              }
+            }}
+            placeholder="Outro KPI..."
+            className="flex-1 px-3 py-2.5 rounded-lg text-xs text-white placeholder-[#4a5f73] outline-none bg-white/[0.03] border border-white/[0.06] focus:border-white/[0.15]"
+          />
+          <button onClick={() => {
+            if (customKpi.trim()) {
+              const current = cargoAtual.kpiPrincipal || [];
+              if (!current.includes(customKpi.trim())) {
+                dispatch({ type: "UPDATE_CARGO", index: cargoIndex, data: { kpiPrincipal: [...current, customKpi.trim()] } });
+              }
+              setCustomKpi("");
+            }
+          }} className="px-3 py-2.5 rounded-lg text-xs font-bold text-[#f59e0b]">+</button>
+        </div>
+      </div>
+
+      {/* Bloco F - Atividades Descritivas */}
+      <div className="rounded-2xl p-5 bg-[#121212] border border-white/[0.06]">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#06b6d4" }}>description</span>
+          <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">Atividades do dia a dia (descritivo)</h3>
+        </div>
+        <p className="text-xs text-slate-500 mb-3">Descreva com suas palavras as principais atividades deste cargo. Esta resposta será analisada por IA para gerar insights no BI.</p>
+        <textarea
+          value={cargoAtual.atividadesDescritivas || ""}
+          onChange={(e) => dispatch({ type: "UPDATE_CARGO", index: cargoIndex, data: { atividadesDescritivas: e.target.value } })}
+          placeholder="Ex: Visita 3 imobiliárias por dia, faz treinamentos semanais de novos produtos, envia tabelas atualizadas via WhatsApp..."
+          rows={4}
+          className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-[#4a5f73] outline-none bg-white/[0.03] border border-white/[0.06] focus:border-white/[0.15] resize-y"
+        />
+      </div>
+
+      {/* Bloco G - CRM Condicional */}
+      {cargoAtual.ferramentas.includes('CRM interno (focado em contratos)') && (
+        <div className="rounded-2xl p-5 bg-[#121212] border border-white/[0.06]">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#8b5cf6" }}>database</span>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">Qual CRM?</h3>
+          </div>
+          <input
+            type="text"
+            value={cargoAtual.crmNome || ""}
+            onChange={(e) => dispatch({ type: "UPDATE_CARGO", index: cargoIndex, data: { crmNome: e.target.value } })}
+            placeholder="Ex: Salesforce, HubSpot, Sienge, CV CRM..."
+            className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-[#4a5f73] outline-none bg-white/[0.03] border border-white/[0.06] focus:border-white/[0.15]"
+          />
+        </div>
+      )}
 
       {/* Navigation between cargos */}
       <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">

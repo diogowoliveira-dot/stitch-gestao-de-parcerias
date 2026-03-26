@@ -4,8 +4,9 @@ const ETAPAS = [
   { num: 1, label: "Empresa" },
   { num: 2, label: "Cargos" },
   { num: 3, label: "Detalhamento" },
-  { num: 4, label: "Resumo" },
-  { num: 5, label: "Diagnóstico" },
+  { num: 4, label: "Canal" },
+  { num: 5, label: "Resumo" },
+  { num: 6, label: "Diagnóstico" },
 ];
 
 export default function ProgressBar({ etapaAtual }: { etapaAtual: number }) {

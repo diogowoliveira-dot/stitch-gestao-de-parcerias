@@ -6,7 +6,7 @@ import { useDiagAuth, useDiagData } from "@/lib/diagnostico-context";
 export default function DiagDashboard() {
   const router = useRouter();
   const { users } = useDiagAuth();
-  const { diagnosticos, deleteDiagnostico } = useDiagData();
+  const { diagnosticos } = useDiagData();
 
   const totalDiagnosticos = diagnosticos.length;
   const completos = diagnosticos.filter((d) => d.status === "completo").length;
@@ -90,13 +90,6 @@ export default function DiagDashboard() {
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
-                      <button
-                        onClick={(e) => { e.stopPropagation(); deleteDiagnostico(diag.id); }}
-                        className="p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/10 text-slate-500"
-                        title="Excluir"
-                      >
-                        <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
-                      </button>
                       <span className="material-symbols-outlined text-slate-700" style={{ fontSize: 18 }}>chevron_right</span>
                     </div>
                   </div>

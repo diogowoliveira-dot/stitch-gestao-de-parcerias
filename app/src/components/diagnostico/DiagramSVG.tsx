@@ -315,7 +315,7 @@ export function OrganogramaSVG({
 
     operadoraNode = {
       id: "operadora_dwv",
-      cargo: { id: "operadora_dwv", nome: "Operadora de Parceria DWV", existe: true, tarefas: [], metricas: [], ferramentas: ["BI", "CRM", "Ativações", "SLA"], subordinadosDe: null, subordinados: [] },
+      cargo: { id: "operadora_dwv", nome: "Operadora de Parceria DWV", existe: true, tarefas: [], metricas: [], ferramentas: ["BI", "CRM", "Ativações", "SLA"], subordinadosDe: null, subordinados: [], quantidade: 1, kpiPrincipal: [], atividadesDescritivas: '' },
       x: Math.min(opX, diagramLeft + 700),
       y: opY,
       nivel: -1,

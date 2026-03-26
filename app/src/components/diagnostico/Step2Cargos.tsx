@@ -30,6 +30,9 @@ export default function Step2Cargos() {
         ferramentas: [],
         subordinadosDe: null,
         subordinados: [],
+        quantidade: 1,
+        kpiPrincipal: [],
+        atividadesDescritivas: '',
       };
       dispatch({ type: "ADD_CARGO", cargo: newCargo });
     }
@@ -48,6 +51,9 @@ export default function Step2Cargos() {
       ferramentas: [],
       subordinadosDe: null,
       subordinados: [],
+      quantidade: 1,
+      kpiPrincipal: [],
+      atividadesDescritivas: '',
     };
     dispatch({ type: "ADD_CARGO", cargo: newCargo });
     setCargoCustomNome("");

@@ -32,6 +32,17 @@ model Diagnostico {
   criadoPorId  String
   criadoPor    User     @relation(fields: [criadoPorId], references: [id])
 
+  // Novos campos
+  shareHouse            Float?   // % VGV vendido pela House
+  shareParcerias        Float?   // % VGV vendido pelo Canal de Parcerias
+  numImobiliarias       Int?     // Número de imobiliárias parceiras
+  segmentacao           String?  // "nao" | "nao_gostaria" | "sim_parcial" | "sim_total"
+  segmentacaoDescritiva String?  // Texto livre (se Sim)
+  relatoriosDesejados   String?  // JSON array de opções selecionadas
+  relatoriosDescritivo  String?  // Texto livre
+  tabelaZeroParcerias   Boolean? // Canal Parcerias tem acesso à Tabela Zero
+  aiAnalysis            String?  // JSON resultado consolidado da IA
+
   cargos              Cargo[]
   ferramentasGerais   FerramentaGeral[]
   problemasIdentificados ProblemaIdentificado[]
@@ -45,6 +56,12 @@ model Cargo {
   acumulaFuncao   String?
   personalizado   Boolean @default(false)
   subordinadosDe  String? // cargoKey do superior
+
+  // Novos campos
+  quantidade             Int     @default(1) // Quantas pessoas neste cargo
+  kpiPrincipal           String? // JSON array de KPIs
+  atividadesDescritivas  String? // Texto livre descrevendo atividades
+  crmNome                String? // Qual CRM (se selecionou CRM)
 
   diagnosticoId   String
   diagnostico     Diagnostico @relation(fields: [diagnosticoId], references: [id], onDelete: Cascade)

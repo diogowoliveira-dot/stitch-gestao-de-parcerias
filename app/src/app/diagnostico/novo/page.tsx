@@ -6,8 +6,9 @@ import ProgressBar from "@/components/diagnostico/ProgressBar";
 import Step1Identificacao from "@/components/diagnostico/Step1Identificacao";
 import Step2Cargos from "@/components/diagnostico/Step2Cargos";
 import Step3Detalhamento from "@/components/diagnostico/Step3Detalhamento";
-import Step4Resumo from "@/components/diagnostico/Step4Resumo";
-import Step5Diagnostico from "@/components/diagnostico/Step5Diagnostico";
+import Step4Canal from "@/components/diagnostico/Step4Canal";
+import Step5Resumo from "@/components/diagnostico/Step4Resumo";
+import Step6Diagnostico from "@/components/diagnostico/Step5Diagnostico";
 import { useDiagAuth, useDiagData } from "@/lib/diagnostico-context";
 import type { DiagnosticoData } from "@/lib/diagnostico-mock-data";
 
@@ -34,12 +35,20 @@ function NovoDiagnostico() {
         dispatch({
           type: "LOAD",
           data: {
-            etapaAtual: 5,
+            etapaAtual: 6,
             empresa: diag.empresa,
             cargos: diag.cargos,
             cargoAtualIndex: 0,
             problemas: diag.problemasIdentificados,
             outputGerado: true,
+            shareHouse: diag.shareHouse,
+            shareParcerias: diag.shareParcerias,
+            numImobiliarias: diag.numImobiliarias,
+            segmentacao: diag.segmentacao,
+            segmentacaoDescritiva: diag.segmentacaoDescritiva,
+            relatoriosDesejados: diag.relatoriosDesejados,
+            relatoriosDescritivo: diag.relatoriosDescritivo,
+            tabelaZeroParcerias: diag.tabelaZeroParcerias,
           },
         });
       }
@@ -58,7 +67,9 @@ function NovoDiagnostico() {
       case 3:
         return cargosExistentes.every((c) => c.tarefas.length > 0 && c.ferramentas.length > 0);
       case 4:
-        return true;
+        return true; // Canal e Mercado - all optional
+      case 5:
+        return true; // Resumo
       default:
         return false;
     }
@@ -69,7 +80,7 @@ function NovoDiagnostico() {
       // Reset cargo index when moving to step 3
       dispatch({ type: "SET_CARGO_INDEX", index: 0 });
     }
-    if (etapaAtual === 4) {
+    if (etapaAtual === 5) {
       dispatch({ type: "GERAR_PROBLEMAS" });
       dispatch({ type: "GERAR_OUTPUT" });
 
@@ -94,6 +105,14 @@ function NovoDiagnostico() {
           dataCriacao: new Date().toISOString().split("T")[0],
           criadoPor: user.id,
           status: "completo",
+          shareHouse: formState.shareHouse,
+          shareParcerias: formState.shareParcerias,
+          numImobiliarias: formState.numImobiliarias,
+          segmentacao: formState.segmentacao,
+          segmentacaoDescritiva: formState.segmentacaoDescritiva,
+          relatoriosDesejados: formState.relatoriosDesejados,
+          relatoriosDescritivo: formState.relatoriosDescritivo,
+          tabelaZeroParcerias: formState.tabelaZeroParcerias,
         };
         await addDiagnostico(newDiag);
       }
@@ -129,13 +148,14 @@ function NovoDiagnostico() {
           {etapaAtual === 1 && <Step1Identificacao />}
           {etapaAtual === 2 && <Step2Cargos />}
           {etapaAtual === 3 && <Step3Detalhamento />}
-          {etapaAtual === 4 && <Step4Resumo />}
-          {etapaAtual === 5 && <Step5Diagnostico />}
+          {etapaAtual === 4 && <Step4Canal />}
+          {etapaAtual === 5 && <Step5Resumo />}
+          {etapaAtual === 6 && <Step6Diagnostico />}
         </div>
 
         {/* Navigation Buttons */}
         <div className="flex gap-3 pb-8">
-          {etapaAtual > 1 && etapaAtual < 5 && (
+          {etapaAtual > 1 && etapaAtual < 6 && (
             <button
               onClick={handlePrev}
               className="flex-1 py-3.5 rounded-xl text-sm font-medium transition-all text-slate-400 border border-white/[0.06] hover:bg-white/5"
@@ -144,27 +164,27 @@ function NovoDiagnostico() {
             </button>
           )}
 
-          {etapaAtual < 5 && (
+          {etapaAtual < 6 && (
             <button
               onClick={handleNext}
               disabled={!canAdvance()}
               className="flex-1 py-3.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-40"
               style={{
-                background: etapaAtual === 4
+                background: etapaAtual === 5
                   ? "#f59e0b"
                   : "#ec1313",
                 boxShadow: canAdvance()
-                  ? etapaAtual === 4
+                  ? etapaAtual === 5
                     ? "0 4px 16px rgba(245, 158, 11, 0.3)"
                     : "0 4px 16px rgba(236, 19, 19, 0.3)"
                   : "none",
               }}
             >
-              {etapaAtual === 4 ? "Gerar Diagnóstico" : "Avançar"}
+              {etapaAtual === 5 ? "Gerar Diagnóstico" : "Avançar"}
             </button>
           )}
 
-          {etapaAtual === 5 && (
+          {etapaAtual === 6 && (
             <button
               onClick={handleReset}
               className="flex-1 py-3.5 rounded-xl text-sm font-bold text-white transition-all"
