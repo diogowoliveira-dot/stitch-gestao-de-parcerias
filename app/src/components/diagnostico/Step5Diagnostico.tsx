@@ -1,8 +1,6 @@
 "use client";
 import { useState, useMemo, useRef } from "react";
 import { useDiagData } from "@/lib/diagnostico-context";
-import { OrganogramaSVG, FluxogramaSVG } from "./DiagramSVG";
-import DiagramViewer from "./DiagramViewer";
 
 // ── Constants ──────────────────────────────────────────────────
 const PLANO_ANUAL = 57295.20;
@@ -253,16 +251,12 @@ function KpiCard({
 }
 
 // ── Types ──────────────────────────────────────────────────────
-type TabView = "atual" | "dwv";
-type DiagramType = "organograma" | "fluxograma";
 
 // ════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ════════════════════════════════════════════════════════════════
 export default function Step5Diagnostico() {
   const { formState } = useDiagData();
-  const [tab, setTab] = useState<TabView>("atual");
-  const [diagram, setDiagram] = useState<DiagramType>("organograma");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const reportRef = useRef<HTMLDivElement>(null);
@@ -659,113 +653,171 @@ export default function Step5Diagnostico() {
         tag="Sem DWV vs. Com DWV"
         defaultOpen={allExpanded}
       >
-        {/* Tab Selector: Atual vs DWV */}
-        <div className="flex gap-1 p-1 rounded-xl bg-[#121212] border border-white/[0.06]">
-          <button
-            onClick={() => setTab("atual")}
-            className="flex-1 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-1.5"
-            style={{
-              background:
-                tab === "atual" ? "rgba(239, 68, 68, 0.15)" : "transparent",
-              color: tab === "atual" ? "#ef4444" : "#64748b",
-              border:
-                tab === "atual"
-                  ? "1px solid rgba(239, 68, 68, 0.2)"
-                  : "1px solid transparent",
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              warning
-            </span>
-            Situacao Atual
-          </button>
-          <button
-            onClick={() => setTab("dwv")}
-            className="flex-1 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-1.5"
-            style={{
-              background:
-                tab === "dwv" ? "rgba(16, 185, 129, 0.15)" : "transparent",
-              color: tab === "dwv" ? "#10b981" : "#64748b",
-              border:
-                tab === "dwv"
-                  ? "1px solid rgba(16, 185, 129, 0.2)"
-                  : "1px solid transparent",
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              check_circle
-            </span>
-            Com Operadora DWV
-          </button>
-        </div>
-
-        {/* Diagram Type Selector */}
-        <div className="flex items-center justify-between">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setDiagram("organograma")}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium transition-all"
-              style={{
-                background:
-                  diagram === "organograma"
-                    ? "rgba(139, 92, 246, 0.1)"
-                    : "rgba(255, 255, 255, 0.04)",
-                color: diagram === "organograma" ? "#8b5cf6" : "#64748b",
-                border: `1px solid ${
-                  diagram === "organograma"
-                    ? "rgba(139, 92, 246, 0.2)"
-                    : "rgba(255, 255, 255, 0.06)"
-                }`,
-              }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                account_tree
-              </span>
-              Organograma
-            </button>
-            <button
-              onClick={() => setDiagram("fluxograma")}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium transition-all"
-              style={{
-                background:
-                  diagram === "fluxograma"
-                    ? "rgba(139, 92, 246, 0.1)"
-                    : "rgba(255, 255, 255, 0.04)",
-                color: diagram === "fluxograma" ? "#8b5cf6" : "#64748b",
-                border: `1px solid ${
-                  diagram === "fluxograma"
-                    ? "rgba(139, 92, 246, 0.2)"
-                    : "rgba(255, 255, 255, 0.06)"
-                }`,
-              }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                schema
-              </span>
-              Fluxograma
-            </button>
+        {/* --- Organograma Atual (Sem DWV) --- */}
+        <p className="text-[11px] uppercase tracking-[0.07em] text-slate-500 mb-2">Organograma atual — sem DWV</p>
+        <div className="space-y-0">
+          {/* Direção */}
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-slate-500 w-24 text-right shrink-0">Direção</span>
+            <div className="flex flex-wrap gap-1.5">
+              <span className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">Dir. de Parceria</span>
+            </div>
           </div>
-          <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-600">
-            {diagram === "organograma" ? "Organograma" : "Fluxograma"} —{" "}
-            {tab === "atual" ? "Situacao Atual" : "Com Operadora DWV"}
-          </h3>
+          <div className="text-center text-slate-600 text-lg ml-24">↓</div>
+          {/* Gerência */}
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-slate-500 w-24 text-right shrink-0">Gerência</span>
+            <div className="flex flex-wrap gap-1.5">
+              {(() => {
+                const gerCargo = formState.cargos.find(c => c.id.includes('gerente'));
+                const qty = gerCargo?.quantidade || 1;
+                return Array.from({length: qty}).map((_, i) => (
+                  <span key={`ger-${i}`} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">
+                    Ger. Parceria {qty > 1 ? i + 1 : ''}
+                  </span>
+                ));
+              })()}
+              {formState.cargos.find(c => c.id.includes('marketing')) && (
+                <span className="px-3 py-1.5 rounded-lg text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">Marketing</span>
+              )}
+            </div>
+          </div>
+          {/* Executivos */}
+          {(() => {
+            const execCargo = formState.cargos.find(c => c.id.includes('executivo'));
+            if (!execCargo) return null;
+            const qty = execCargo.quantidade || 1;
+            return (
+              <>
+                <div className="text-center text-slate-600 text-lg ml-24">↓</div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[11px] text-slate-500 w-24 text-right shrink-0">Executivos</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {Array.from({length: Math.min(qty, 8)}).map((_, i) => (
+                      <span key={`exec-${i}`} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10">
+                        Exec. {i + 1}
+                      </span>
+                    ))}
+                    {qty > 8 && <span className="px-3 py-1.5 rounded-lg text-xs text-slate-500">+{qty - 8}</span>}
+                  </div>
+                </div>
+              </>
+            );
+          })()}
+          <div className="text-center text-slate-600 text-lg ml-24">↓</div>
+          {/* Base de Corretores */}
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-slate-500 w-24 text-right shrink-0">Base</span>
+            <div className="flex flex-wrap gap-1.5">
+              <span className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10">{fmtN(calcInput.totalBrokers)} cadastrados</span>
+              <span className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">{fmtN(calcInput.activeBrokers)} ativos ({fmtP(r.te)})</span>
+            </div>
+          </div>
         </div>
 
-        {/* Diagram Canvas */}
-        <DiagramViewer resetKey={`${tab}-${diagram}`}>
-          {diagram === "organograma" ? (
-            <OrganogramaSVG
-              cargos={formState.cargos}
-              comDWV={tab === "dwv"}
-              problemas={formState.problemas}
-            />
-          ) : (
-            <FluxogramaSVG cargos={formState.cargos} comDWV={tab === "dwv"} />
-          )}
-        </DiagramViewer>
+        {/* --- Fluxo atual --- */}
+        <p className="text-[11px] uppercase tracking-[0.07em] text-slate-500 mt-5 mb-2">Fluxo atual — canal cego</p>
+        <div className="flex flex-wrap items-center gap-1">
+          {[
+            { t: 'Captação', d: 'Manual. Sem rastreio.' },
+            { t: 'Cadastro', d: 'Planilha. Sem segmentação.' },
+            { t: 'Comunicação', d: 'WhatsApp pessoal.' },
+            { t: 'Proposta', d: 'Sem visibilidade.' },
+            { t: 'Resultado', d: 'Só na mesa de propostas.' },
+          ].map((s, i) => (
+            <div key={i} className="flex items-center gap-1">
+              <div className="px-3 py-2 rounded-lg bg-red-500/5 border border-red-500/15">
+                <div className="text-[11px] font-bold text-red-400">{s.t}</div>
+                <div className="text-[10px] text-slate-500">{s.d}</div>
+              </div>
+              {i < 4 && <span className="text-slate-600 text-sm">→</span>}
+            </div>
+          ))}
+        </div>
+
+        {/* --- Organograma com DWV --- */}
+        <p className="text-[11px] uppercase tracking-[0.07em] text-slate-500 mt-5 mb-2">Organograma com Operadora DWV</p>
+        <div className="space-y-0">
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-slate-500 w-24 text-right shrink-0">Direção</span>
+            <div className="flex flex-wrap gap-1.5">
+              <span className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">Dir. de Parceria</span>
+            </div>
+          </div>
+          <div className="text-center text-slate-600 text-lg ml-24">↓</div>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-slate-500 w-24 text-right shrink-0">Gerência</span>
+            <div className="flex flex-wrap gap-1.5">
+              {(() => {
+                const gerCargo = formState.cargos.find(c => c.id.includes('gerente'));
+                const qty = gerCargo?.quantidade || 1;
+                return Array.from({length: qty}).map((_, i) => (
+                  <span key={`ger2-${i}`} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">
+                    Ger. {qty > 1 ? i + 1 : 'Parceria'}
+                  </span>
+                ));
+              })()}
+              <span className="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Operadora DWV ↔ Gerentes</span>
+            </div>
+          </div>
+          {(() => {
+            const execCargo = formState.cargos.find(c => c.id.includes('executivo'));
+            if (!execCargo) return null;
+            const qty = execCargo.quantidade || 1;
+            return (
+              <>
+                <div className="text-center text-slate-600 text-lg ml-24">↓</div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[11px] text-slate-500 w-24 text-right shrink-0">Executivos</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {Array.from({length: Math.min(qty, 8)}).map((_, i) => (
+                      <span key={`exec2-${i}`} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10">
+                        Exec. {i + 1}
+                      </span>
+                    ))}
+                    <span className="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Suporte Op.</span>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
+          <div className="text-center text-slate-600 text-lg ml-24">↓</div>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-slate-500 w-24 text-right shrink-0">Base Segmentada</span>
+            <div className="flex flex-wrap gap-1.5">
+              <span className="px-3 py-1.5 rounded-lg text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">Ouro — já venderam</span>
+              <span className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-400/10 text-slate-300 border border-slate-400/20">Prata — engajados</span>
+              <span className="px-3 py-1.5 rounded-lg text-xs font-medium bg-orange-800/10 text-orange-400 border border-orange-800/20">Bronze — inativos</span>
+            </div>
+          </div>
+        </div>
+
+        {/* --- Fluxo com DWV --- */}
+        <p className="text-[11px] uppercase tracking-[0.07em] text-slate-500 mt-5 mb-2">Fluxo com Operadora DWV</p>
+        <div className="flex flex-wrap items-center gap-1">
+          {[
+            { t: 'Captação', d: 'Meta Ads → CRM DWV.' },
+            { t: 'Classificação', d: 'Bronze/Prata/Ouro auto.' },
+            { t: 'Ativação', d: 'WhatsApp API + e-mail.' },
+            { t: 'Proposta', d: 'Rastreada em tempo real.' },
+            { t: 'BI Completo', d: 'Exec / Gerente / Diretoria.' },
+          ].map((s, i) => (
+            <div key={i} className="flex items-center gap-1">
+              <div className="px-3 py-2 rounded-lg bg-emerald-500/5 border border-emerald-500/15">
+                <div className="text-[11px] font-bold text-emerald-400">{s.t}</div>
+                <div className="text-[10px] text-slate-500">{s.d}</div>
+              </div>
+              {i < 4 && <span className="text-slate-600 text-sm">→</span>}
+            </div>
+          ))}
+        </div>
+
+        <Commentary>
+          A Operadora DWV não é subordinada — atua <strong>lateralmente</strong> com gerentes e diretores, entregando inteligência de dados que hoje não existe no canal.
+        </Commentary>
 
         {/* Problems Panel (only in "atual" tab) */}
-        {tab === "atual" && formState.problemas.length > 0 && (
+        {formState.problemas.length > 0 && (
           <div
             className="rounded-2xl p-5"
             style={{
@@ -808,7 +860,7 @@ export default function Step5Diagnostico() {
         )}
 
         {/* DWV Benefits (only in "dwv" tab) */}
-        {tab === "dwv" && (
+        {(
           <div
             className="rounded-2xl p-5"
             style={{
