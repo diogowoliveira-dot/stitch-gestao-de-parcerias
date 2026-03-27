@@ -60,83 +60,107 @@ export default function DiagDashboard() {
         </button>
       </div>
 
-      {/* Diagnósticos List */}
-      <div className="mb-6">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4">
-          Diagnósticos Realizados
-        </h2>
+      {/* Diagnósticos List — duas colunas */}
+      {(() => {
+        const reais = diagnosticos.filter((d) => !d.isSimulacao);
+        const simulacoes = diagnosticos.filter((d) => d.isSimulacao);
 
-        {diagnosticos.length === 0 ? (
-          <div className="text-center py-16 rounded-2xl bg-[#121212] border border-white/[0.06]">
-            <span className="material-symbols-outlined text-slate-700 mb-3 block" style={{ fontSize: 48 }}>assignment</span>
-            <p className="text-sm text-slate-500">Nenhum diagnóstico realizado ainda</p>
-            <p className="text-xs mt-1 text-slate-500">Clique em &quot;Novo Diagnóstico&quot; para começar</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {diagnosticos.map((diag) => {
-              const criador = users.find((u) => u.id === diag.criadoPor);
-              return (
-                <div
-                  key={diag.id}
-                  className="rounded-2xl p-5 bg-[#121212] border border-white/[0.06] transition-all hover:border-white/[0.15] cursor-pointer group"
-                  onClick={() => window.location.href = `/diagnostico/form/index.html?ver=${diag.id}`}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-sm font-bold text-white truncate">{diag.empresa.nome}</h3>
-                        <span
-                          className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
-                          style={{
-                            background: diag.status === "completo" ? "rgba(16, 185, 129, 0.1)" : "rgba(245, 158, 11, 0.1)",
-                            color: diag.status === "completo" ? "#10b981" : "#f59e0b",
-                            border: `1px solid ${diag.status === "completo" ? "rgba(16, 185, 129, 0.2)" : "rgba(245, 158, 11, 0.2)"}`,
-                          }}
-                        >
-                          {diag.status === "completo" ? "Completo" : "Rascunho"}
-                        </span>
-                        {diag.isSimulacao && (
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full" style={{ background: "rgba(139, 92, 246, 0.1)", color: "#8b5cf6", border: "1px solid rgba(139, 92, 246, 0.2)" }}>
-                            Simulação
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-500">
-                        {diag.empresa.cidade}/{diag.empresa.estado} &middot; {diag.cargos.filter((c) => c.existe).length} cargos &middot; {diag.problemasIdentificados.length} problemas
-                      </p>
-                      <p className="text-[10px] mt-1 text-slate-600">
-                        {criador?.nome || "—"} &middot; {new Date(diag.dataCriacao).toLocaleDateString("pt-BR")}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {isAdmin && (
-                        <>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); window.location.href = `/diagnostico/form/index.html?editar=${diag.id}`; }}
-                            className="p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
-                            title="Editar"
-                          >
-                            <span className="material-symbols-outlined text-slate-500 hover:text-blue-400" style={{ fontSize: 16 }}>edit</span>
-                          </button>
-                          <button
-                            onClick={(e) => handleDelete(e, diag.id, diag.empresa.nome)}
-                            className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors"
-                            title="Apagar"
-                          >
-                            <span className="material-symbols-outlined text-slate-500 hover:text-red-400" style={{ fontSize: 16 }}>delete</span>
-                          </button>
-                        </>
-                      )}
-                      <span className="material-symbols-outlined text-slate-700" style={{ fontSize: 18 }}>chevron_right</span>
-                    </div>
+        const renderCard = (diag: typeof diagnosticos[0]) => {
+          const criador = users.find((u) => u.id === diag.criadoPor);
+          return (
+            <div
+              key={diag.id}
+              className="rounded-2xl p-4 bg-[#121212] border border-white/[0.06] transition-all hover:border-white/[0.15] cursor-pointer group"
+              onClick={() => window.location.href = `/diagnostico/form/index.html?ver=${diag.id}`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-sm font-bold text-white truncate">{diag.empresa.nome}</h3>
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                      style={{
+                        background: diag.status === "completo" ? "rgba(16, 185, 129, 0.1)" : "rgba(245, 158, 11, 0.1)",
+                        color: diag.status === "completo" ? "#10b981" : "#f59e0b",
+                        border: `1px solid ${diag.status === "completo" ? "rgba(16, 185, 129, 0.2)" : "rgba(245, 158, 11, 0.2)"}`,
+                      }}
+                    >
+                      {diag.status === "completo" ? "Completo" : "Rascunho"}
+                    </span>
                   </div>
+                  <p className="text-xs text-slate-500">
+                    {diag.empresa.cidade}/{diag.empresa.estado} &middot; {diag.cargos.filter((c) => c.existe).length} cargos &middot; {diag.problemasIdentificados.length} problemas
+                  </p>
+                  <p className="text-[10px] mt-1 text-slate-600">
+                    {criador?.nome || "—"} &middot; {new Date(diag.dataCriacao).toLocaleDateString("pt-BR")}
+                  </p>
                 </div>
-              );
-            })}
+                <div className="flex items-center gap-1">
+                  {isAdmin && (
+                    <>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); window.location.href = `/diagnostico/form/index.html?editar=${diag.id}`; }}
+                        className="p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
+                        title="Editar"
+                      >
+                        <span className="material-symbols-outlined text-slate-500 hover:text-blue-400" style={{ fontSize: 16 }}>edit</span>
+                      </button>
+                      <button
+                        onClick={(e) => handleDelete(e, diag.id, diag.empresa.nome)}
+                        className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors"
+                        title="Apagar"
+                      >
+                        <span className="material-symbols-outlined text-slate-500 hover:text-red-400" style={{ fontSize: 16 }}>delete</span>
+                      </button>
+                    </>
+                  )}
+                  <span className="material-symbols-outlined text-slate-700" style={{ fontSize: 18 }}>chevron_right</span>
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Coluna Reais */}
+            <div>
+              <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined" style={{ fontSize: 16, color: "#10b981" }}>verified</span>
+                Diagnósticos Reais ({reais.length})
+              </h2>
+              {reais.length === 0 ? (
+                <div className="text-center py-10 rounded-2xl bg-[#121212] border border-white/[0.06]">
+                  <span className="material-symbols-outlined text-slate-700 mb-2 block" style={{ fontSize: 36 }}>assignment</span>
+                  <p className="text-xs text-slate-500">Nenhum diagnóstico real ainda</p>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
+                  {reais.map(renderCard)}
+                </div>
+              )}
+            </div>
+
+            {/* Coluna Simulações */}
+            <div>
+              <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined" style={{ fontSize: 16, color: "#8b5cf6" }}>science</span>
+                Simulações ({simulacoes.length})
+              </h2>
+              {simulacoes.length === 0 ? (
+                <div className="text-center py-10 rounded-2xl bg-[#121212] border border-white/[0.06]">
+                  <span className="material-symbols-outlined text-slate-700 mb-2 block" style={{ fontSize: 36 }}>science</span>
+                  <p className="text-xs text-slate-500">Nenhuma simulação ainda</p>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
+                  {simulacoes.map(renderCard)}
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </div>
+        );
+      })()}
     </DiagShell>
   );
 }
