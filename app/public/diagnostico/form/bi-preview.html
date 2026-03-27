@@ -26,7 +26,6 @@ body{background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 
 /* KPI cards */
 .kpis-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
-.kpis-row.wide{grid-template-columns:repeat(2,1fr)}
 .kpi-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:20px 22px}
 .kpi-label{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
 .kpi-value{font-size:30px;font-weight:700;line-height:1.1}
@@ -34,33 +33,16 @@ body{background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 .kpi-value.green{color:var(--gr)}
 .kpi-value.amber{color:var(--am)}
 .kpi-sub{font-size:11px;color:var(--mu);margin-top:5px}
-.sample-note{font-size:10px;font-style:italic;color:var(--am);margin-top:4px}
 
 /* Charts */
 .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
 .chart-full{grid-column:1/-1}
 .chart-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:22px}
 .chart-title{font-size:13px;font-weight:500;margin-bottom:16px;color:rgba(255,255,255,0.85)}
+.chart-count{font-size:11px;color:var(--mu);margin-top:-10px;margin-bottom:10px}
 .chart-wrap{position:relative;width:100%}
 .chart-wrap canvas{width:100%!important}
 .chart-empty{text-align:center;padding:30px 10px;color:var(--mu);font-size:13px}
-
-/* Expectation list */
-.expect-list{list-style:none;padding:0}
-.expect-list li{padding:10px 14px;border-bottom:.5px solid var(--b);font-size:13px;color:rgba(255,255,255,0.8);display:flex;align-items:center;gap:10px}
-.expect-list li:last-child{border-bottom:none}
-.expect-list li::before{content:'';width:6px;height:6px;background:var(--red);border-radius:50%;flex-shrink:0}
-
-/* Table */
-.table-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:22px;margin-bottom:24px;overflow-x:auto}
-.table-card h3{font-size:14px;font-weight:500;margin-bottom:16px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{text-align:left;padding:10px 12px;border-bottom:.5px solid var(--b);color:var(--mu);font-weight:500;cursor:pointer;user-select:none;white-space:nowrap}
-thead th:hover{color:#fff}
-thead th .sa{font-size:10px;margin-left:4px;opacity:.4}
-thead th.sorted .sa{opacity:1;color:var(--red)}
-tbody td{padding:9px 12px;border-bottom:.5px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.8)}
-tbody tr:hover td{background:rgba(255,255,255,0.03)}
 
 /* Loading / Error */
 .loading{text-align:center;padding:60px 20px;color:var(--mu);font-size:14px}
@@ -71,7 +53,6 @@ tbody tr:hover td{background:rgba(255,255,255,0.03)}
 /* Responsive */
 @media(max-width:768px){
   .kpis-row{grid-template-columns:1fr 1fr}
-  .kpis-row.wide{grid-template-columns:1fr}
   .charts-grid{grid-template-columns:1fr}
   .kpi-value{font-size:22px}
 }
@@ -98,6 +79,9 @@ tbody tr:hover td{background:rgba(255,255,255,0.03)}
     </div>
   </div>
 
+  <!-- Voltar -->
+  <div style="margin:12px 0"><a href="/diagnostico/dashboard" style="color:var(--mu);font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:6px">&larr; Voltar ao Dashboard</a></div>
+
   <!-- Filters -->
   <div class="filter-bar" id="filterBar" style="display:none">
     <label>Estado:</label>
@@ -118,15 +102,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.03)}
   <div id="dashboard" style="display:none">
     <div class="kpis-row" id="kpiRow1"></div>
     <div class="kpis-row" id="kpiRow2"></div>
-    <div class="kpis-row wide" id="kpiRow3"></div>
     <div class="charts-grid" id="chartsGrid"></div>
-    <div class="table-card">
-      <h3>Lista de Incorporadoras Diagnosticadas</h3>
-      <table>
-        <thead><tr id="tableHead"></tr></thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
   </div>
 </div>
 
@@ -198,31 +174,72 @@ function clearFilters() {
 function render(data) {
   renderKPIs(data);
   renderCharts(data);
-  renderTable(data);
 }
 
 /* ======== KPIs ======== */
 function avg(arr) { return arr.length ? arr.reduce((a, b) => a + Number(b), 0) / arr.length : 0; }
 
+function kpiCard(label, value, colorClass, sub) {
+  return `<div class="kpi-card">
+    <div class="kpi-label">${label}</div>
+    <div class="kpi-value${colorClass ? ' ' + colorClass : ''}">${value}</div>
+    ${sub ? '<div class="kpi-sub">' + sub + '</div>' : ''}
+  </div>`;
+}
+
 function renderKPIs(data) {
   const total = data.length;
+  let row1 = '';
+  let row2 = '';
 
-  // Real data: shareHouse / shareParcerias averages
-  const houses = data.map(d => d.shareHouse).filter(n => n != null && !isNaN(n));
-  const parcs = data.map(d => d.shareParcerias).filter(n => n != null && !isNaN(n));
-  const avgH = houses.length ? Math.round(avg(houses)) : '-';
-  const avgP = parcs.length ? Math.round(avg(parcs)) : '-';
+  /* --- ROW 1 --- */
 
-  // Real data: numImobiliarias average
-  const imobs = data.map(d => d.numImobiliarias).filter(n => n != null && !isNaN(n));
-  const avgImob = imobs.length ? (avg(imobs)).toFixed(1) : '-';
+  // Distribuicao VGV House vs Parcerias
+  const parcsValid = data.filter(d => d.shareParcerias != null && !isNaN(d.shareParcerias));
+  if (parcsValid.length) {
+    const avgH = Math.round(avg(parcsValid.map(d => Number(d.shareHouse || 0))));
+    const avgP = Math.round(avg(parcsValid.map(d => Number(d.shareParcerias))));
+    row1 += kpiCard(
+      'Distribuicao VGV: House vs Parcerias',
+      'House ' + avgH + '% <span style="color:var(--mu);font-size:16px;font-weight:400">|</span> Parcerias ' + avgP + '%',
+      '',
+      'Base: ' + parcsValid.length + ' de ' + total + ' incorporadoras'
+    );
+  }
 
-  // Real data: ferramentasGerais average count
-  const toolCounts = data.map(d => (d.ferramentasGerais || []).length);
-  const avgTools = toolCounts.length ? (avg(toolCounts)).toFixed(1) : '-';
+  // Imobiliarias Parceiras (media)
+  const imobs = data.filter(d => d.numImobiliarias != null && !isNaN(d.numImobiliarias));
+  if (imobs.length) {
+    const avgImob = (avg(imobs.map(d => Number(d.numImobiliarias)))).toFixed(1);
+    row1 += kpiCard(
+      'Imobiliarias Parceiras (media)',
+      avgImob,
+      'amber',
+      'Base: ' + imobs.length + ' de ' + total + ' incorporadoras'
+    );
+  }
 
-  // Real data: Executivos de Parceria (cargos with nome containing "Executivo" and existe=true)
-  const execCounts = data.map(d => {
+  // Total de Diagnosticos
+  row1 += kpiCard('Total de Diagnosticos', total, 'red', '');
+
+  document.getElementById('kpiRow1').innerHTML = row1;
+
+  /* --- ROW 2 --- */
+
+  // Ferramentas por Incorporadora (media)
+  const withTools = data.filter(d => Array.isArray(d.ferramentasGerais));
+  if (withTools.length) {
+    const avgTools = (avg(withTools.map(d => d.ferramentasGerais.length))).toFixed(1);
+    row2 += kpiCard(
+      'Ferramentas por Incorporadora (media)',
+      avgTools,
+      '',
+      'Base: ' + withTools.length + ' de ' + total + ' incorporadoras'
+    );
+  }
+
+  // Executivos de Parceria (media)
+  const execData = data.map(d => {
     const cargos = d.cargos || [];
     let sum = 0;
     cargos.forEach(c => {
@@ -232,69 +249,60 @@ function renderKPIs(data) {
     });
     return sum;
   });
-  const avgExec = execCounts.length ? (avg(execCounts)).toFixed(1) : '-';
+  const withExec = data.filter((d, i) => {
+    const cargos = d.cargos || [];
+    return cargos.some(c => c.nome && c.nome.toLowerCase().includes('executivo'));
+  });
+  if (withExec.length) {
+    const execVals = withExec.map(d => {
+      const cargos = d.cargos || [];
+      let sum = 0;
+      cargos.forEach(c => {
+        if (c.existe && c.nome && c.nome.toLowerCase().includes('executivo')) {
+          sum += (c.quantidade && c.quantidade > 0) ? Number(c.quantidade) : 1;
+        }
+      });
+      return sum;
+    });
+    const avgExec = (avg(execVals)).toFixed(1);
+    row2 += kpiCard(
+      'Executivos de Parceria (media)',
+      avgExec,
+      '',
+      'Base: ' + withExec.length + ' de ' + total + ' incorporadoras'
+    );
+  }
 
-  // Row 1
-  document.getElementById('kpiRow1').innerHTML = `
-    <div class="kpi-card">
-      <div class="kpi-label">Taxa de Engajamento Media</div>
-      <div class="kpi-value red">8.3%</div>
-      <div class="sample-note">(dados de exemplo)</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Distribuicao VGV: House vs Parcerias</div>
-      <div class="kpi-value">House ${avgH}% <span style="color:var(--mu);font-size:16px;font-weight:400">|</span> Parcerias ${avgP}%</div>
-      <div class="kpi-sub">${houses.length} respostas House, ${parcs.length} respostas Parcerias</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Corretores Necessarios (media)</div>
-      <div class="kpi-value">45</div>
-      <div class="sample-note">(dados de exemplo)</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Imobiliarias Parceiras (media)</div>
-      <div class="kpi-value amber">${avgImob}</div>
-      <div class="kpi-sub">${imobs.length} respostas validas</div>
-    </div>
-  `;
+  // Gerentes de Parceria (media)
+  const withGerente = data.filter(d => {
+    const cargos = d.cargos || [];
+    return cargos.some(c => c.existe && c.nome && c.nome.toLowerCase().includes('gerente'));
+  });
+  if (withGerente.length) {
+    const gerenteVals = withGerente.map(d => {
+      const cargos = d.cargos || [];
+      let sum = 0;
+      cargos.forEach(c => {
+        if (c.existe && c.nome && c.nome.toLowerCase().includes('gerente')) {
+          sum += (c.quantidade && c.quantidade > 0) ? Number(c.quantidade) : 1;
+        }
+      });
+      return sum;
+    });
+    const avgGerente = (avg(gerenteVals)).toFixed(1);
+    row2 += kpiCard(
+      'Gerentes de Parceria (media)',
+      avgGerente,
+      '',
+      'Base: ' + withGerente.length + ' de ' + total + ' incorporadoras'
+    );
+  }
 
-  // Row 2
-  document.getElementById('kpiRow2').innerHTML = `
-    <div class="kpi-card">
-      <div class="kpi-label">Base Ociosa (media)</div>
-      <div class="kpi-value red">87%</div>
-      <div class="sample-note">(dados de exemplo)</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Ferramentas por Incorporadora (media)</div>
-      <div class="kpi-value">${avgTools}</div>
-      <div class="kpi-sub">${total} incorporadoras</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Corretores por Executivo (media)</div>
-      <div class="kpi-value">65</div>
-      <div class="sample-note">(dados de exemplo)</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Executivos de Parceria (media)</div>
-      <div class="kpi-value">${avgExec}</div>
-      <div class="kpi-sub">${total} incorporadoras</div>
-    </div>
-  `;
+  // Estados Representados
+  const estados = [...new Set(data.map(d => d.empresa?.estado).filter(Boolean))];
+  row2 += kpiCard('Estados Representados', estados.length, 'green', '');
 
-  // Row 3 (wider cards)
-  document.getElementById('kpiRow3').innerHTML = `
-    <div class="kpi-card">
-      <div class="kpi-label">VGV Medio por Corretor Engajado</div>
-      <div class="kpi-value green">R$ 890.000</div>
-      <div class="sample-note">(dados de exemplo)</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Total de Diagnosticos Reais</div>
-      <div class="kpi-value red">${total}</div>
-      <div class="kpi-sub">diagnosticos reais no periodo</div>
-    </div>
-  `;
+  document.getElementById('kpiRow2').innerHTML = row2;
 }
 
 /* ======== Charts ======== */
@@ -310,22 +318,22 @@ function renderCharts(data) {
   grid.innerHTML = `
     <div class="chart-card chart-full" id="card_ferramentas">
       <div class="chart-title">Ferramentas mais utilizadas</div>
+      <div class="chart-count" id="countFerramentas"></div>
       <div class="chart-wrap"><canvas id="chartFerramentas"></canvas></div>
     </div>
     <div class="chart-card" id="card_desafios">
       <div class="chart-title">Top 5 Principais Desafios</div>
+      <div class="chart-count" id="countDesafios"></div>
       <div class="chart-wrap"><canvas id="chartDesafios"></canvas></div>
     </div>
     <div class="chart-card" id="card_relatorios">
       <div class="chart-title">Relatorios mais desejados</div>
+      <div class="chart-count" id="countRelatorios"></div>
       <div class="chart-wrap"><canvas id="chartRelatorios"></canvas></div>
-    </div>
-    <div class="chart-card" id="card_expectativas">
-      <div class="chart-title">O que mais esperam da DWV</div>
-      <div id="expectList"></div>
     </div>
     <div class="chart-card" id="card_estados">
       <div class="chart-title">Distribuicao por Estado</div>
+      <div class="chart-count" id="countEstados"></div>
       <div class="chart-wrap"><canvas id="chartEstados"></canvas></div>
     </div>
   `;
@@ -333,7 +341,6 @@ function renderCharts(data) {
   buildChartFerramentas(data);
   buildChartDesafios(data);
   buildChartRelatorios(data);
-  buildExpectativas();
   buildChartEstados(data);
 }
 
@@ -359,11 +366,18 @@ function greenGradient(count) {
 
 /* Chart 1: Ferramentas (full width, horizontal bar) */
 function buildChartFerramentas(data) {
+  const withData = data.filter(d => Array.isArray(d.ferramentasGerais) && d.ferramentasGerais.length > 0);
   const counts = {};
   const total = data.length || 1;
   data.forEach(d => (d.ferramentasGerais || []).forEach(f => { if (f) counts[f] = (counts[f] || 0) + 1; }));
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-  if (!sorted.length) return;
+
+  document.getElementById('countFerramentas').textContent = 'Base: ' + withData.length + ' incorporadoras';
+
+  if (!sorted.length) {
+    document.getElementById('card_ferramentas').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes — novos diagnosticos vao popular este grafico</div>';
+    return;
+  }
 
   const labels = sorted.map(e => e[0]);
   const values = sorted.map(e => e[1]);
@@ -401,17 +415,20 @@ function buildChartFerramentas(data) {
     }
   });
 
-  // Set dynamic height based on items
   document.getElementById('chartFerramentas').parentElement.style.height = Math.max(200, sorted.length * 28 + 40) + 'px';
 }
 
 /* Chart 2: Top 5 Desafios (horizontal bar, amber) */
 function buildChartDesafios(data) {
+  const withData = data.filter(d => Array.isArray(d.problemasIdentificados) && d.problemasIdentificados.length > 0);
   const counts = {};
   data.forEach(d => (d.problemasIdentificados || []).forEach(p => { if (p) counts[p] = (counts[p] || 0) + 1; }));
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+  document.getElementById('countDesafios').textContent = 'Base: ' + withData.length + ' incorporadoras';
+
   if (!sorted.length) {
-    document.getElementById('card_desafios').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes</div>';
+    document.getElementById('card_desafios').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes — novos diagnosticos vao popular este grafico</div>';
     return;
   }
   const labels = sorted.map(e => e[0].length > 50 ? e[0].slice(0, 48) + '...' : e[0]);
@@ -449,11 +466,15 @@ function buildChartDesafios(data) {
 
 /* Chart 3: Relatorios desejados (horizontal bar, green) */
 function buildChartRelatorios(data) {
+  const withData = data.filter(d => Array.isArray(d.relatoriosDesejados) && d.relatoriosDesejados.length > 0);
   const counts = {};
   data.forEach(d => (d.relatoriosDesejados || []).forEach(r => { if (r) counts[r] = (counts[r] || 0) + 1; }));
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+  document.getElementById('countRelatorios').textContent = 'Base: ' + withData.length + ' incorporadoras';
+
   if (!sorted.length) {
-    document.getElementById('card_relatorios').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes</div>';
+    document.getElementById('card_relatorios').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes — novos diagnosticos vao popular este grafico</div>';
     return;
   }
   const labels = sorted.map(e => e[0].length > 50 ? e[0].slice(0, 48) + '...' : e[0]);
@@ -489,28 +510,19 @@ function buildChartRelatorios(data) {
   });
 }
 
-/* Chart 4: Expectativas (hardcoded list) */
-function buildExpectativas() {
-  const items = [
-    'Aumentar engajamento de corretores',
-    'Visibilidade do pipeline por executivo',
-    'Segmentacao da base (Ouro/Prata/Bronze)',
-    'Relatorios gerenciais automatizados',
-    'Reduzir tempo de resposta ao corretor'
-  ];
-  document.getElementById('expectList').innerHTML = `
-    <ul class="expect-list">
-      ${items.map(i => '<li>' + i + '</li>').join('')}
-    </ul>
-    <div class="sample-note" style="padding:8px 14px 0">(dados de exemplo)</div>
-  `;
-}
-
-/* Chart 5: Distribuicao por Estado (horizontal bar) */
+/* Chart 4: Distribuicao por Estado (horizontal bar) */
 function buildChartEstados(data) {
+  const withData = data.filter(d => d.empresa?.estado);
   const counts = {};
-  data.forEach(d => { const s = d.empresa?.estado || 'N/I'; counts[s] = (counts[s] || 0) + 1; });
+  data.forEach(d => { const s = d.empresa?.estado; if (s) counts[s] = (counts[s] || 0) + 1; });
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+  document.getElementById('countEstados').textContent = 'Base: ' + withData.length + ' incorporadoras';
+
+  if (!sorted.length) {
+    document.getElementById('card_estados').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes</div>';
+    return;
+  }
 
   chartInstances.estados = new Chart(document.getElementById('chartEstados'), {
     type: 'bar',
@@ -533,51 +545,6 @@ function buildChartEstados(data) {
       }
     }
   });
-}
-
-
-/* ======== Table ======== */
-let sortCol = null, sortAsc = true;
-const columns = [
-  { key: 'nome', label: 'Nome', get: d => d.empresa?.nome || '-' },
-  { key: 'cidade', label: 'Cidade', get: d => d.empresa?.cidade || '-' },
-  { key: 'estado', label: 'Estado', get: d => d.empresa?.estado || '-' },
-  { key: 'consultor', label: 'Consultor', get: d => d.criadoPorNome || '-' },
-  { key: 'data', label: 'Data', get: d => d.dataCriacao ? new Date(d.dataCriacao).toLocaleDateString('pt-BR') : '-', sort: d => d.dataCriacao ? new Date(d.dataCriacao).getTime() : 0 },
-  { key: 'imob', label: 'N. Imobiliarias', get: d => d.numImobiliarias != null ? d.numImobiliarias : '-', sort: d => d.numImobiliarias || 0 }
-];
-
-function renderTable(data) {
-  const head = document.getElementById('tableHead');
-  head.innerHTML = columns.map(c =>
-    `<th data-key="${c.key}" class="${sortCol === c.key ? 'sorted' : ''}">${c.label}<span class="sa">${sortCol === c.key ? (sortAsc ? '&#9650;' : '&#9660;') : '&#9650;'}</span></th>`
-  ).join('');
-
-  head.querySelectorAll('th').forEach(th => {
-    th.addEventListener('click', () => {
-      const key = th.dataset.key;
-      if (sortCol === key) sortAsc = !sortAsc; else { sortCol = key; sortAsc = true; }
-      renderTable(data);
-    });
-  });
-
-  let rows = [...data];
-  if (sortCol) {
-    const col = columns.find(c => c.key === sortCol);
-    const fn = col.sort || col.get;
-    rows.sort((a, b) => {
-      let va = fn(a), vb = fn(b);
-      if (typeof va === 'string') va = va.toLowerCase();
-      if (typeof vb === 'string') vb = vb.toLowerCase();
-      if (va < vb) return sortAsc ? -1 : 1;
-      if (va > vb) return sortAsc ? 1 : -1;
-      return 0;
-    });
-  }
-
-  document.getElementById('tableBody').innerHTML = rows.map(d =>
-    '<tr>' + columns.map(c => `<td>${c.get(d)}</td>`).join('') + '</tr>'
-  ).join('');
 }
 
 init();
