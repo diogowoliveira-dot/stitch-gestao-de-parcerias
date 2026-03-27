@@ -3,50 +3,75 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>BI · Diagnostico Comercial DWV</title>
+<title>BI - Diagnostico Comercial DWV</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#E8392A;--s:#111;--s2:#181818;--mu:rgba(255,255,255,0.45);--gr:#3ab87a;--am:#e0a020;--b:rgba(255,255,255,0.10)}
 body{background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;min-height:100vh}
-:root{--red:#E8392A;--rd:#b02d20;--rf:rgba(232,57,42,0.10);--b:rgba(255,255,255,0.10);--s:#111;--s2:#181818;--mu:rgba(255,255,255,0.45);--gr:#3ab87a;--am:#e0a020}
 .app{max-width:1200px;margin:0 auto;padding:24px 20px 80px}
-.hdr{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+
+/* Header */
+.hdr{display:flex;align-items:center;gap:14px;margin-bottom:6px}
 .logo{width:38px;height:38px;background:var(--red);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.bn{font-size:17px;font-weight:500;letter-spacing:.02em}
-.bs{font-size:12px;color:var(--mu)}
-.filter-bar{display:flex;align-items:center;gap:14px;margin-bottom:28px;flex-wrap:wrap}
+.hdr-text .bn{font-size:17px;font-weight:600;letter-spacing:.02em}
+.hdr-text .bs{font-size:12px;color:var(--mu);margin-top:2px}
+
+/* Filter bar */
+.filter-bar{display:flex;align-items:center;gap:14px;margin:18px 0 28px;flex-wrap:wrap}
 .filter-bar label{font-size:13px;color:var(--mu)}
-.filter-bar select{background:var(--s);border:.5px solid var(--b);border-radius:8px;padding:8px 32px 8px 12px;color:#fff;font-size:13px;font-family:inherit;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.35)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;min-width:160px}
+.filter-bar select{background:var(--s);border:.5px solid var(--b);border-radius:8px;padding:8px 32px 8px 12px;color:#fff;font-size:13px;font-family:inherit;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.35)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;min-width:180px}
 .filter-bar select:focus{border-color:rgba(232,57,42,0.5)}
 .filter-bar select option{background:#1a1a1a}
-.kpis-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+
+/* KPI cards */
+.kpis-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+.kpis-row.wide{grid-template-columns:repeat(2,1fr)}
 .kpi-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:20px 22px}
 .kpi-label{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.kpi-value{font-size:28px;font-weight:600}
-.kpi-value.r{color:var(--red)}
-.kpi-value.g{color:var(--gr)}
-.kpi-value.a{color:var(--am)}
-.kpi-sub{font-size:11px;color:var(--mu);margin-top:4px}
+.kpi-value{font-size:30px;font-weight:700;line-height:1.1}
+.kpi-value.red{color:var(--red)}
+.kpi-value.green{color:var(--gr)}
+.kpi-value.amber{color:var(--am)}
+.kpi-sub{font-size:11px;color:var(--mu);margin-top:5px}
+.sample-note{font-size:10px;font-style:italic;color:var(--am);margin-top:4px}
+
+/* Charts */
 .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+.chart-full{grid-column:1/-1}
 .chart-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:22px}
 .chart-title{font-size:13px;font-weight:500;margin-bottom:16px;color:rgba(255,255,255,0.85)}
 .chart-wrap{position:relative;width:100%}
 .chart-wrap canvas{width:100%!important}
+.chart-empty{text-align:center;padding:30px 10px;color:var(--mu);font-size:13px}
+
+/* Expectation list */
+.expect-list{list-style:none;padding:0}
+.expect-list li{padding:10px 14px;border-bottom:.5px solid var(--b);font-size:13px;color:rgba(255,255,255,0.8);display:flex;align-items:center;gap:10px}
+.expect-list li:last-child{border-bottom:none}
+.expect-list li::before{content:'';width:6px;height:6px;background:var(--red);border-radius:50%;flex-shrink:0}
+
+/* Table */
 .table-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:22px;margin-bottom:24px;overflow-x:auto}
 .table-card h3{font-size:14px;font-weight:500;margin-bottom:16px}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead th{text-align:left;padding:10px 12px;border-bottom:.5px solid var(--b);color:var(--mu);font-weight:500;cursor:pointer;user-select:none;white-space:nowrap}
 thead th:hover{color:#fff}
-thead th .sort-arrow{font-size:10px;margin-left:4px;opacity:.4}
-thead th.sorted .sort-arrow{opacity:1;color:var(--red)}
+thead th .sa{font-size:10px;margin-left:4px;opacity:.4}
+thead th.sorted .sa{opacity:1;color:var(--red)}
 tbody td{padding:9px 12px;border-bottom:.5px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.8)}
 tbody tr:hover td{background:rgba(255,255,255,0.03)}
+
+/* Loading / Error */
 .loading{text-align:center;padding:60px 20px;color:var(--mu);font-size:14px}
 .loading .spinner{display:inline-block;width:24px;height:24px;border:2px solid var(--b);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .error-msg{text-align:center;padding:40px 20px;color:var(--red);font-size:14px}
+
+/* Responsive */
 @media(max-width:768px){
   .kpis-row{grid-template-columns:1fr 1fr}
+  .kpis-row.wide{grid-template-columns:1fr}
   .charts-grid{grid-template-columns:1fr}
   .kpi-value{font-size:22px}
 }
@@ -57,30 +82,40 @@ tbody tr:hover td{background:rgba(255,255,255,0.03)}
 </head>
 <body>
 <div class="app">
+
+  <!-- Header -->
   <div class="hdr">
     <div class="logo">
       <svg viewBox="0 0 22 22" fill="none" width="22" height="22">
-        <rect x="2" y="2" width="18" height="18" rx="4" fill="white" opacity=".15"/>
-        <circle cx="7" cy="7" r="2" fill="white"/>
-        <circle cx="11" cy="11" r="2" fill="white"/>
-        <circle cx="15" cy="15" r="2" fill="white"/>
+        <circle cx="7" cy="7" r="2.2" fill="white"/>
+        <circle cx="11" cy="11" r="2.2" fill="white"/>
+        <circle cx="15" cy="15" r="2.2" fill="white"/>
       </svg>
     </div>
-    <div><div class="bn">DWV</div><div class="bs">BI &middot; Diagnostico Comercial</div></div>
+    <div class="hdr-text">
+      <div class="bn">BI &middot; Diagnostico Comercial</div>
+      <div class="bs">Dados consolidados &middot; Apenas diagnosticos reais</div>
+    </div>
   </div>
 
+  <!-- State filter -->
   <div class="filter-bar" id="filterBar" style="display:none">
     <label>Filtrar por estado:</label>
-    <select id="stateFilter"><option value="">Todos</option></select>
+    <select id="stateFilter"><option value="">Todos os estados</option></select>
   </div>
 
+  <!-- Loading / Error -->
   <div id="loadingEl" class="loading"><div class="spinner"></div><br>Carregando diagnosticos...</div>
   <div id="errorEl" class="error-msg" style="display:none"></div>
+
+  <!-- Dashboard -->
   <div id="dashboard" style="display:none">
-    <div class="kpis-row" id="kpis"></div>
+    <div class="kpis-row" id="kpiRow1"></div>
+    <div class="kpis-row" id="kpiRow2"></div>
+    <div class="kpis-row wide" id="kpiRow3"></div>
     <div class="charts-grid" id="chartsGrid"></div>
-    <div class="table-card" id="tableCard">
-      <h3>Lista de Incorporadoras</h3>
+    <div class="table-card">
+      <h3>Lista de Incorporadoras Diagnosticadas</h3>
       <table>
         <thead><tr id="tableHead"></tr></thead>
         <tbody id="tableBody"></tbody>
@@ -90,267 +125,489 @@ tbody tr:hover td{background:rgba(255,255,255,0.03)}
 </div>
 
 <script>
-const API_URL='https://dwv-diagnostico-comercial.vercel.app/api/diagnostico/diagnosticos';
-let allData=[];
-let chartInstances={};
+const API_URL = '/api/diagnostico/diagnosticos';
+let allData = [];
+let chartInstances = {};
 
-const CHART_COLORS=['#E8392A','#3ab87a','#e0a020','#5b8def','#c75deb','#f0774a','#4ecdc4','#ff6b9d','#a8e6cf','#ffd93d'];
-
-function chartDefaults(){
-  Chart.defaults.color='rgba(255,255,255,0.55)';
-  Chart.defaults.borderColor='rgba(255,255,255,0.06)';
-  Chart.defaults.font.family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
-  Chart.defaults.font.size=11;
-  Chart.defaults.plugins.legend.labels.boxWidth=12;
-  Chart.defaults.plugins.legend.labels.padding=14;
+function setupChartDefaults() {
+  Chart.defaults.color = 'rgba(255,255,255,0.55)';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+  Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.plugins.legend.labels.boxWidth = 12;
+  Chart.defaults.plugins.legend.labels.padding = 14;
 }
 
-async function init(){
-  chartDefaults();
-  try{
-    const res=await fetch(API_URL);
-    if(!res.ok) throw new Error('Erro '+res.status);
-    const json=await res.json();
-    const list=Array.isArray(json)?json:(json.data||json.diagnosticos||[]);
-    allData=list.filter(d=>!d.isSimulacao);
-    if(!allData.length){
-      showError('Nenhum diagnostico real encontrado.');
-      return;
-    }
+async function init() {
+  setupChartDefaults();
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error('Erro ' + res.status);
+    const json = await res.json();
+    const list = Array.isArray(json) ? json : (json.data || json.diagnosticos || []);
+    allData = list.filter(d => !d.isSimulacao);
+    if (!allData.length) { showError('Nenhum diagnostico real encontrado.'); return; }
     populateStateFilter();
-    document.getElementById('loadingEl').style.display='none';
-    document.getElementById('filterBar').style.display='flex';
-    document.getElementById('dashboard').style.display='block';
+    document.getElementById('loadingEl').style.display = 'none';
+    document.getElementById('filterBar').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'block';
     render(allData);
-  }catch(e){
-    showError('Falha ao carregar dados: '+e.message);
+  } catch (e) {
+    showError('Falha ao carregar dados: ' + e.message);
   }
 }
 
-function showError(msg){
-  document.getElementById('loadingEl').style.display='none';
-  const el=document.getElementById('errorEl');
-  el.textContent=msg;
-  el.style.display='block';
+function showError(msg) {
+  document.getElementById('loadingEl').style.display = 'none';
+  const el = document.getElementById('errorEl');
+  el.textContent = msg;
+  el.style.display = 'block';
 }
 
-function populateStateFilter(){
-  const states=[...new Set(allData.map(d=>d.empresa?.estado).filter(Boolean))].sort();
-  const sel=document.getElementById('stateFilter');
-  states.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o)});
-  sel.addEventListener('change',()=>{
-    const v=sel.value;
-    const filtered=v?allData.filter(d=>d.empresa?.estado===v):allData;
-    render(filtered);
+function populateStateFilter() {
+  const states = [...new Set(allData.map(d => d.empresa?.estado).filter(Boolean))].sort();
+  const sel = document.getElementById('stateFilter');
+  states.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; sel.appendChild(o); });
+  sel.addEventListener('change', () => {
+    const v = sel.value;
+    render(v ? allData.filter(d => d.empresa?.estado === v) : allData);
   });
 }
 
-function render(data){
+function render(data) {
   renderKPIs(data);
   renderCharts(data);
   renderTable(data);
 }
 
-function renderKPIs(data){
-  const total=data.length;
-  const states=new Set(data.map(d=>d.empresa?.estado).filter(Boolean));
-  const imobs=data.map(d=>d.numImobiliarias).filter(n=>n!=null&&!isNaN(n));
-  const avgImob=imobs.length?Math.round(imobs.reduce((a,b)=>a+b,0)/imobs.length):0;
-  const withCRM=data.filter(d=>(d.ferramentasGerais||[]).some(f=>f&&f.toUpperCase().includes('CRM'))).length;
-  const pctCRM=total?Math.round(withCRM/total*100):0;
+/* ======== KPIs ======== */
+function avg(arr) { return arr.length ? arr.reduce((a, b) => a + Number(b), 0) / arr.length : 0; }
 
-  document.getElementById('kpis').innerHTML=`
-    <div class="kpi-card"><div class="kpi-label">Total de Diagnosticos</div><div class="kpi-value r">${total}</div><div class="kpi-sub">diagnosticos reais</div></div>
-    <div class="kpi-card"><div class="kpi-label">Estados Representados</div><div class="kpi-value">${states.size}</div><div class="kpi-sub">estados unicos</div></div>
-    <div class="kpi-card"><div class="kpi-label">Media Imobiliarias Parceiras</div><div class="kpi-value a">${avgImob}</div><div class="kpi-sub">${imobs.length} respostas validas</div></div>
-    <div class="kpi-card"><div class="kpi-label">% com CRM</div><div class="kpi-value g">${pctCRM}%</div><div class="kpi-sub">${withCRM} de ${total}</div></div>
+function renderKPIs(data) {
+  const total = data.length;
+
+  // Real data: shareHouse / shareParcerias averages
+  const houses = data.map(d => d.shareHouse).filter(n => n != null && !isNaN(n));
+  const parcs = data.map(d => d.shareParcerias).filter(n => n != null && !isNaN(n));
+  const avgH = houses.length ? Math.round(avg(houses)) : '-';
+  const avgP = parcs.length ? Math.round(avg(parcs)) : '-';
+
+  // Real data: numImobiliarias average
+  const imobs = data.map(d => d.numImobiliarias).filter(n => n != null && !isNaN(n));
+  const avgImob = imobs.length ? (avg(imobs)).toFixed(1) : '-';
+
+  // Real data: ferramentasGerais average count
+  const toolCounts = data.map(d => (d.ferramentasGerais || []).length);
+  const avgTools = toolCounts.length ? (avg(toolCounts)).toFixed(1) : '-';
+
+  // Real data: Executivos de Parceria (cargos with nome containing "Executivo" and existe=true)
+  const execCounts = data.map(d => {
+    const cargos = d.cargos || [];
+    let sum = 0;
+    cargos.forEach(c => {
+      if (c.existe && c.nome && c.nome.toLowerCase().includes('executivo')) {
+        sum += (c.quantidade && c.quantidade > 0) ? Number(c.quantidade) : 1;
+      }
+    });
+    return sum;
+  });
+  const avgExec = execCounts.length ? (avg(execCounts)).toFixed(1) : '-';
+
+  // Row 1
+  document.getElementById('kpiRow1').innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">Taxa de Engajamento Media</div>
+      <div class="kpi-value red">8.3%</div>
+      <div class="sample-note">(dados de exemplo)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Distribuicao VGV: House vs Parcerias</div>
+      <div class="kpi-value">House ${avgH}% <span style="color:var(--mu);font-size:16px;font-weight:400">|</span> Parcerias ${avgP}%</div>
+      <div class="kpi-sub">${houses.length} respostas House, ${parcs.length} respostas Parcerias</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Corretores Necessarios (media)</div>
+      <div class="kpi-value">45</div>
+      <div class="sample-note">(dados de exemplo)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Imobiliarias Parceiras (media)</div>
+      <div class="kpi-value amber">${avgImob}</div>
+      <div class="kpi-sub">${imobs.length} respostas validas</div>
+    </div>
+  `;
+
+  // Row 2
+  document.getElementById('kpiRow2').innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">Base Ociosa (media)</div>
+      <div class="kpi-value red">87%</div>
+      <div class="sample-note">(dados de exemplo)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Ferramentas por Incorporadora (media)</div>
+      <div class="kpi-value">${avgTools}</div>
+      <div class="kpi-sub">${total} incorporadoras</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Corretores por Executivo (media)</div>
+      <div class="kpi-value">65</div>
+      <div class="sample-note">(dados de exemplo)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Executivos de Parceria (media)</div>
+      <div class="kpi-value">${avgExec}</div>
+      <div class="kpi-sub">${total} incorporadoras</div>
+    </div>
+  `;
+
+  // Row 3 (wider cards)
+  document.getElementById('kpiRow3').innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">VGV Medio por Corretor Engajado</div>
+      <div class="kpi-value green">R$ 890.000</div>
+      <div class="sample-note">(dados de exemplo)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Total de Diagnosticos Reais</div>
+      <div class="kpi-value red">${total}</div>
+      <div class="kpi-sub">diagnosticos reais no periodo</div>
+    </div>
   `;
 }
 
-function destroyCharts(){
-  Object.values(chartInstances).forEach(c=>{if(c)c.destroy()});
-  chartInstances={};
+/* ======== Charts ======== */
+function destroyCharts() {
+  Object.values(chartInstances).forEach(c => { if (c && c.destroy) c.destroy(); });
+  chartInstances = {};
 }
 
-function makeCanvas(id){
-  return `<div class="chart-card"><div class="chart-title" id="title_${id}"></div><div class="chart-wrap"><canvas id="${id}"></canvas></div></div>`;
-}
-
-function renderCharts(data){
+function renderCharts(data) {
   destroyCharts();
-  const grid=document.getElementById('chartsGrid');
-  grid.innerHTML=['chartEstado','chartFerramentas','chartCargos','chartDesafios','chartSegmentacao','chartMes','chartConsultor','chartShare'].map(id=>makeCanvas(id)).join('');
+  const grid = document.getElementById('chartsGrid');
 
-  chartDistribuicaoEstado(data);
-  chartFerramentas(data);
-  chartCargos(data);
-  chartDesafios(data);
-  chartSegmentacao(data);
-  chartMes(data);
-  chartConsultor(data);
-  chartShare(data);
+  grid.innerHTML = `
+    <div class="chart-card chart-full" id="card_ferramentas">
+      <div class="chart-title">Ferramentas mais utilizadas</div>
+      <div class="chart-wrap"><canvas id="chartFerramentas"></canvas></div>
+    </div>
+    <div class="chart-card" id="card_desafios">
+      <div class="chart-title">Top 5 Principais Desafios</div>
+      <div class="chart-wrap"><canvas id="chartDesafios"></canvas></div>
+    </div>
+    <div class="chart-card" id="card_relatorios">
+      <div class="chart-title">Relatorios mais desejados</div>
+      <div class="chart-wrap"><canvas id="chartRelatorios"></canvas></div>
+    </div>
+    <div class="chart-card" id="card_expectativas">
+      <div class="chart-title">O que mais esperam da DWV</div>
+      <div id="expectList"></div>
+    </div>
+    <div class="chart-card" id="card_estados">
+      <div class="chart-title">Distribuicao por Estado</div>
+      <div class="chart-wrap"><canvas id="chartEstados"></canvas></div>
+    </div>
+    <div class="chart-card chart-full" id="card_mes">
+      <div class="chart-title">Diagnosticos por Mes</div>
+      <div class="chart-wrap"><canvas id="chartMes"></canvas></div>
+    </div>
+  `;
+
+  buildChartFerramentas(data);
+  buildChartDesafios(data);
+  buildChartRelatorios(data);
+  buildExpectativas();
+  buildChartEstados(data);
+  buildChartMes(data);
 }
 
-function setTitle(id,text){document.getElementById('title_'+id).textContent=text}
-
-function chartDistribuicaoEstado(data){
-  setTitle('chartEstado','Distribuicao por Estado');
-  const counts={};
-  data.forEach(d=>{const s=d.empresa?.estado||'N/I';counts[s]=(counts[s]||0)+1});
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  chartInstances.chartEstado=new Chart(document.getElementById('chartEstado'),{
-    type:'bar',
-    data:{labels:sorted.map(e=>e[0]),datasets:[{data:sorted.map(e=>e[1]),backgroundColor:'#E8392A',borderRadius:4,barThickness:18}]},
-    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'}},y:{grid:{display:false}}}}
-  });
+function redGradient(count) {
+  const base = [
+    '#E8392A','#d63125','#c42b20','#b3251c','#a12018',
+    '#901b14','#7e1610','#6d110d','#5c0c09','#4a0706',
+    '#E8392A','#d63125','#c42b20','#b3251c','#a12018',
+    '#901b14','#7e1610','#6d110d','#5c0c09','#4a0706'
+  ];
+  return base.slice(0, count);
 }
 
-function chartFerramentas(data){
-  setTitle('chartFerramentas','Ferramentas mais utilizadas');
-  const counts={};
-  const total=data.length||1;
-  data.forEach(d=>(d.ferramentasGerais||[]).forEach(f=>{if(f)counts[f]=(counts[f]||0)+1}));
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12);
-  chartInstances.chartFerramentas=new Chart(document.getElementById('chartFerramentas'),{
-    type:'bar',
-    data:{labels:sorted.map(e=>e[0]),datasets:[{data:sorted.map(e=>Math.round(e[1]/total*100)),backgroundColor:'#3ab87a',borderRadius:4,barThickness:16}]},
-    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+'%'}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>v+'%'}},y:{grid:{display:false}}}}
-  });
+function amberGradient(count) {
+  const base = ['#e0a020','#cca030','#b89830','#a49030','#908830'];
+  return base.slice(0, count);
 }
 
-function chartCargos(data){
-  setTitle('chartCargos','Cargos na Estrutura');
-  const targetRoles=['Diretor de Parceria','Gerente de Parceria','Marketing','Executivo de Parceria','Coordenador de Parceria','Analista de Parceria'];
-  const counts={};
-  data.forEach(d=>{
-    (d.cargos||[]).forEach(c=>{
-      if(c.existe){
-        const name=c.nome||'';
-        counts[name]=(counts[name]||0)+1;
+function greenGradient(count) {
+  const base = ['#3ab87a','#35a870','#309866','#2b885c','#267852','#217848','#1c683e','#175834'];
+  return base.slice(0, count);
+}
+
+/* Chart 1: Ferramentas (full width, horizontal bar) */
+function buildChartFerramentas(data) {
+  const counts = {};
+  const total = data.length || 1;
+  data.forEach(d => (d.ferramentasGerais || []).forEach(f => { if (f) counts[f] = (counts[f] || 0) + 1; }));
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  if (!sorted.length) return;
+
+  const labels = sorted.map(e => e[0]);
+  const values = sorted.map(e => e[1]);
+  const pcts = sorted.map(e => Math.round(e[1] / total * 100));
+
+  chartInstances.ferramentas = new Chart(document.getElementById('chartFerramentas'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: redGradient(sorted.length),
+        borderRadius: 4,
+        barThickness: 18
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              return ctx.raw + ' (' + pcts[ctx.dataIndex] + '%)';
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { stepSize: 1 } },
+        y: { grid: { display: false } }
       }
-    });
+    }
   });
-  const labels=Object.keys(counts).length?Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>e[0]):targetRoles;
-  const values=labels.map(l=>counts[l]||0);
-  chartInstances.chartCargos=new Chart(document.getElementById('chartCargos'),{
-    type:'bar',
-    data:{labels,datasets:[{data:values,backgroundColor:'#5b8def',borderRadius:4,barThickness:20}]},
-    options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}}
+
+  // Set dynamic height based on items
+  document.getElementById('chartFerramentas').parentElement.style.height = Math.max(200, sorted.length * 28 + 40) + 'px';
+}
+
+/* Chart 2: Top 5 Desafios (horizontal bar, amber) */
+function buildChartDesafios(data) {
+  const counts = {};
+  data.forEach(d => (d.problemasIdentificados || []).forEach(p => { if (p) counts[p] = (counts[p] || 0) + 1; }));
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  if (!sorted.length) {
+    document.getElementById('card_desafios').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes</div>';
+    return;
+  }
+  const labels = sorted.map(e => e[0].length > 50 ? e[0].slice(0, 48) + '...' : e[0]);
+  const fullLabels = sorted.map(e => e[0]);
+
+  chartInstances.desafios = new Chart(document.getElementById('chartDesafios'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: sorted.map(e => e[1]),
+        backgroundColor: amberGradient(sorted.length),
+        borderRadius: 4,
+        barThickness: 18
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: function(items) { return fullLabels[items[0].dataIndex]; }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { stepSize: 1 } },
+        y: { grid: { display: false } }
+      }
+    }
   });
 }
 
-function chartDesafios(data){
-  setTitle('chartDesafios','Principais Desafios');
-  const counts={};
-  data.forEach(d=>(d.problemasIdentificados||[]).forEach(p=>{if(p)counts[p]=(counts[p]||0)+1}));
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  if(!sorted.length){setTitle('chartDesafios','Principais Desafios (sem dados)');return}
-  chartInstances.chartDesafios=new Chart(document.getElementById('chartDesafios'),{
-    type:'bar',
-    data:{labels:sorted.map(e=>e[0].length>40?e[0].slice(0,38)+'...':e[0]),datasets:[{data:sorted.map(e=>e[1]),backgroundColor:'#e0a020',borderRadius:4,barThickness:16}]},
-    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:items=>{const i=items[0].dataIndex;return Object.entries(counts).sort((a,b)=>b[1]-a[1])[i][0]}}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'}},y:{grid:{display:false}}}}
+/* Chart 3: Relatorios desejados (horizontal bar, green) */
+function buildChartRelatorios(data) {
+  const counts = {};
+  data.forEach(d => (d.relatoriosDesejados || []).forEach(r => { if (r) counts[r] = (counts[r] || 0) + 1; }));
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  if (!sorted.length) {
+    document.getElementById('card_relatorios').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes</div>';
+    return;
+  }
+  const labels = sorted.map(e => e[0].length > 50 ? e[0].slice(0, 48) + '...' : e[0]);
+  const fullLabels = sorted.map(e => e[0]);
+
+  chartInstances.relatorios = new Chart(document.getElementById('chartRelatorios'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: sorted.map(e => e[1]),
+        backgroundColor: greenGradient(sorted.length),
+        borderRadius: 4,
+        barThickness: 18
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: function(items) { return fullLabels[items[0].dataIndex]; }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { stepSize: 1 } },
+        y: { grid: { display: false } }
+      }
+    }
   });
 }
 
-function chartSegmentacao(data){
-  setTitle('chartSegmentacao','Segmentacao de Corretores');
-  const cats={'Sim':0,'Nao':0,'Parcialmente':0,'Nao informado':0};
-  data.forEach(d=>{
-    const s=d.segmentacao;
-    if(!s||s==='null') cats['Nao informado']++;
-    else if(s.toLowerCase().includes('parcial')) cats['Parcialmente']++;
-    else if(s.toLowerCase()==='sim'||s.toLowerCase()==='yes') cats['Sim']++;
-    else if(s.toLowerCase()==='nao'||s.toLowerCase()==='no'||s.toLowerCase()==='não') cats['Nao']++;
-    else cats['Nao informado']++;
-  });
-  chartInstances.chartSegmentacao=new Chart(document.getElementById('chartSegmentacao'),{
-    type:'doughnut',
-    data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats),backgroundColor:['#3ab87a','#E8392A','#e0a020','rgba(255,255,255,0.15)'],borderWidth:0}]},
-    options:{responsive:true,cutout:'60%',plugins:{legend:{position:'bottom'}}}
+/* Chart 4: Expectativas (hardcoded list) */
+function buildExpectativas() {
+  const items = [
+    'Aumentar engajamento de corretores',
+    'Visibilidade do pipeline por executivo',
+    'Segmentacao da base (Ouro/Prata/Bronze)',
+    'Relatorios gerenciais automatizados',
+    'Reduzir tempo de resposta ao corretor'
+  ];
+  document.getElementById('expectList').innerHTML = `
+    <ul class="expect-list">
+      ${items.map(i => '<li>' + i + '</li>').join('')}
+    </ul>
+    <div class="sample-note" style="padding:8px 14px 0">(dados de exemplo)</div>
+  `;
+}
+
+/* Chart 5: Distribuicao por Estado (horizontal bar) */
+function buildChartEstados(data) {
+  const counts = {};
+  data.forEach(d => { const s = d.empresa?.estado || 'N/I'; counts[s] = (counts[s] || 0) + 1; });
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+  chartInstances.estados = new Chart(document.getElementById('chartEstados'), {
+    type: 'bar',
+    data: {
+      labels: sorted.map(e => e[0]),
+      datasets: [{
+        data: sorted.map(e => e[1]),
+        backgroundColor: '#E8392A',
+        borderRadius: 4,
+        barThickness: 18
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { stepSize: 1 } },
+        y: { grid: { display: false } }
+      }
+    }
   });
 }
 
-function chartMes(data){
-  setTitle('chartMes','Diagnosticos por Mes');
-  const months={};
-  data.forEach(d=>{
-    if(!d.dataCriacao) return;
-    const dt=new Date(d.dataCriacao);
-    const key=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0');
-    months[key]=(months[key]||0)+1;
+/* Chart 6: Diagnosticos por Mes (line chart, full width) */
+function buildChartMes(data) {
+  const months = {};
+  data.forEach(d => {
+    if (!d.dataCriacao) return;
+    const dt = new Date(d.dataCriacao);
+    const key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0');
+    months[key] = (months[key] || 0) + 1;
   });
-  const sorted=Object.entries(months).sort((a,b)=>a[0].localeCompare(b[0]));
-  if(!sorted.length){setTitle('chartMes','Diagnosticos por Mes (sem dados)');return}
-  const labels=sorted.map(e=>{const [y,m]=e[0].split('-');return m+'/'+y});
-  chartInstances.chartMes=new Chart(document.getElementById('chartMes'),{
-    type:'line',
-    data:{labels,datasets:[{data:sorted.map(e=>e[1]),borderColor:'#E8392A',backgroundColor:'rgba(232,57,42,0.1)',tension:.3,fill:true,pointBackgroundColor:'#E8392A',pointRadius:4}]},
-    options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'}},y:{grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}}
+  const sorted = Object.entries(months).sort((a, b) => a[0].localeCompare(b[0]));
+  if (!sorted.length) {
+    document.getElementById('card_mes').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes</div>';
+    return;
+  }
+  const labels = sorted.map(e => {
+    const [y, m] = e[0].split('-');
+    const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    return monthNames[parseInt(m) - 1] + '/' + y;
+  });
+
+  chartInstances.mes = new Chart(document.getElementById('chartMes'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: sorted.map(e => e[1]),
+        borderColor: '#E8392A',
+        backgroundColor: 'rgba(232,57,42,0.08)',
+        tension: 0.35,
+        fill: true,
+        pointBackgroundColor: '#E8392A',
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true, ticks: { stepSize: 1 } }
+      }
+    }
   });
 }
 
-function chartConsultor(data){
-  setTitle('chartConsultor','Diagnosticos por Consultor');
-  const counts={};
-  data.forEach(d=>{const n=d.criadoPorNome||'Desconhecido';counts[n]=(counts[n]||0)+1});
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  chartInstances.chartConsultor=new Chart(document.getElementById('chartConsultor'),{
-    type:'bar',
-    data:{labels:sorted.map(e=>e[0]),datasets:[{data:sorted.map(e=>e[1]),backgroundColor:'#c75deb',borderRadius:4,barThickness:20}]},
-    options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}}
-  });
-}
-
-function chartShare(data){
-  setTitle('chartShare','Share House vs Parcerias (media)');
-  const houses=data.map(d=>d.shareHouse).filter(n=>n!=null&&!isNaN(n));
-  const parcs=data.map(d=>d.shareParcerias).filter(n=>n!=null&&!isNaN(n));
-  const avgH=houses.length?Math.round(houses.reduce((a,b)=>a+Number(b),0)/houses.length):0;
-  const avgP=parcs.length?Math.round(parcs.reduce((a,b)=>a+Number(b),0)/parcs.length):0;
-  chartInstances.chartShare=new Chart(document.getElementById('chartShare'),{
-    type:'doughnut',
-    data:{labels:['Share House (%)','Share Parcerias (%)'],datasets:[{data:[avgH,avgP],backgroundColor:['#5b8def','#E8392A'],borderWidth:0}]},
-    options:{responsive:true,cutout:'60%',plugins:{legend:{position:'bottom'}}}
-  });
-}
-
-/* ---- Table ---- */
-let sortCol=null,sortAsc=true;
-const columns=[
-  {key:'nome',label:'Incorporadora',get:d=>d.empresa?.nome||'-'},
-  {key:'cidade',label:'Cidade',get:d=>d.empresa?.cidade||'-'},
-  {key:'estado',label:'Estado',get:d=>d.empresa?.estado||'-'},
-  {key:'data',label:'Data',get:d=>d.dataCriacao?new Date(d.dataCriacao).toLocaleDateString('pt-BR'):'-',sort:d=>d.dataCriacao?new Date(d.dataCriacao).getTime():0},
-  {key:'consultor',label:'Consultor',get:d=>d.criadoPorNome||'-'},
-  {key:'imob',label:'N Imobiliarias',get:d=>d.numImobiliarias!=null?d.numImobiliarias:'-',sort:d=>d.numImobiliarias||0}
+/* ======== Table ======== */
+let sortCol = null, sortAsc = true;
+const columns = [
+  { key: 'nome', label: 'Nome', get: d => d.empresa?.nome || '-' },
+  { key: 'cidade', label: 'Cidade', get: d => d.empresa?.cidade || '-' },
+  { key: 'estado', label: 'Estado', get: d => d.empresa?.estado || '-' },
+  { key: 'consultor', label: 'Consultor', get: d => d.criadoPorNome || '-' },
+  { key: 'data', label: 'Data', get: d => d.dataCriacao ? new Date(d.dataCriacao).toLocaleDateString('pt-BR') : '-', sort: d => d.dataCriacao ? new Date(d.dataCriacao).getTime() : 0 },
+  { key: 'imob', label: 'N. Imobiliarias', get: d => d.numImobiliarias != null ? d.numImobiliarias : '-', sort: d => d.numImobiliarias || 0 }
 ];
 
-function renderTable(data){
-  const head=document.getElementById('tableHead');
-  head.innerHTML=columns.map(c=>`<th data-key="${c.key}" class="${sortCol===c.key?'sorted':''}">${c.label}<span class="sort-arrow">${sortCol===c.key?(sortAsc?'&#9650;':'&#9660;'):'&#9650;'}</span></th>`).join('');
-  head.querySelectorAll('th').forEach(th=>{
-    th.addEventListener('click',()=>{
-      const key=th.dataset.key;
-      if(sortCol===key) sortAsc=!sortAsc; else{sortCol=key;sortAsc=true}
+function renderTable(data) {
+  const head = document.getElementById('tableHead');
+  head.innerHTML = columns.map(c =>
+    `<th data-key="${c.key}" class="${sortCol === c.key ? 'sorted' : ''}">${c.label}<span class="sa">${sortCol === c.key ? (sortAsc ? '&#9650;' : '&#9660;') : '&#9650;'}</span></th>`
+  ).join('');
+
+  head.querySelectorAll('th').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.key;
+      if (sortCol === key) sortAsc = !sortAsc; else { sortCol = key; sortAsc = true; }
       renderTable(data);
     });
   });
 
-  let rows=[...data];
-  if(sortCol){
-    const col=columns.find(c=>c.key===sortCol);
-    const fn=col.sort||col.get;
-    rows.sort((a,b)=>{
-      let va=fn(a),vb=fn(b);
-      if(typeof va==='string') va=va.toLowerCase();
-      if(typeof vb==='string') vb=vb.toLowerCase();
-      if(va<vb) return sortAsc?-1:1;
-      if(va>vb) return sortAsc?1:-1;
+  let rows = [...data];
+  if (sortCol) {
+    const col = columns.find(c => c.key === sortCol);
+    const fn = col.sort || col.get;
+    rows.sort((a, b) => {
+      let va = fn(a), vb = fn(b);
+      if (typeof va === 'string') va = va.toLowerCase();
+      if (typeof vb === 'string') vb = vb.toLowerCase();
+      if (va < vb) return sortAsc ? -1 : 1;
+      if (va > vb) return sortAsc ? 1 : -1;
       return 0;
     });
   }
 
-  document.getElementById('tableBody').innerHTML=rows.map(d=>'<tr>'+columns.map(c=>`<td>${c.get(d)}</td>`).join('')+'</tr>').join('');
+  document.getElementById('tableBody').innerHTML = rows.map(d =>
+    '<tr>' + columns.map(c => `<td>${c.get(d)}</td>`).join('') + '</tr>'
+  ).join('');
 }
 
 init();
