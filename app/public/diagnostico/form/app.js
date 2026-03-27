@@ -162,7 +162,8 @@ function resetD(){
     shareHouse:0,shareParcerias:0,
     // Cargos dinâmicos
     cargos:{},// {id: {existe:bool, qtd:number, kpi:'', atividades:''}}
-    numEmpreendimentos:0,
+    numEmpreendimentos:0,numPreLancamento:0,numLancamento:0,numEstoque:0,focoVendas:'',
+    totalImoveisVenda:0,propostasMensais:0,fechamentosMensais:0,
     hasCRM:false,crmName:'',crmContratoNome:'',toolCosts:{},
     meetingGoals:'',challenges:[],challengesText:'',
     testedActions:false,testedResults:'',
@@ -215,7 +216,8 @@ function startDiag(sim){
     D.testedActions=true;D.testedResults='Grupos de WhatsApp por empreendimento, sem controle de leitura.';
     D.brokerSegmentation='nao';D.desiredReports=['corretores_engajados','imob_ofertando','impacto_exec'];
     D.tabelaZero=true;D.tabelaZeroAccess=['canal_parcerias'];D.tabelaZeroObs='Apenas corretores Ouro.';
-    D.numEmpreendimentos=4;
+    D.numEmpreendimentos=4;D.numPreLancamento=1;D.numLancamento=2;D.numEstoque=1;D.focoVendas='Lançamentos';
+    D.totalImoveisVenda=380;D.propostasMensais=45;D.fechamentosMensais=12;
     D.hasEventos='sim_esporadico';
     D.hasIncentivo='no';
     D.concorrente='Construtora Alpha — forte presença no segmento médio-alto com comissionamento agressivo.';
@@ -246,7 +248,7 @@ function save(){
   const gr=name=>{const e=document.querySelector(`input[name=${name}]:checked`);return e?e.value:''};
   const gca=name=>Array.from(document.querySelectorAll(`input[name=${name}]:checked`)).map(e=>e.value);
   if(currentStep===0){D.companyName=g('cN');D.cidade=g('cidadeField');D.estado=g('estadoField');D.responsibleName=g('rN');D.responsibleRole=g('rR');}
-  else if(currentStep===1){D.totalVGV=parseCur(g('tVGV'));D.vgvGoal=parseCur(g('vGoal'));D.avgTicket=parseCur(g('avgT'));D.numEmpreendimentos=parseInt(g('numEmpreendimentos'))||0;}
+  else if(currentStep===1){D.totalVGV=parseCur(g('tVGV'));D.vgvGoal=parseCur(g('vGoal'));D.avgTicket=parseCur(g('avgT'));D.numEmpreendimentos=parseInt(g('numEmpreendimentos'))||0;D.numPreLancamento=parseInt(g('numPreLanc'))||0;D.numLancamento=parseInt(g('numLanc'))||0;D.numEstoque=parseInt(g('numEstoque'))||0;D.focoVendas=g('focoVendas');D.totalImoveisVenda=parseInt(g('totalImoveisVenda'))||0;D.propostasMensais=parseInt(g('propostasMensais'))||0;D.fechamentosMensais=parseInt(g('fechamentosMensais'))||0;}
   else if(currentStep===2){
     D.totalBrokers=parseInt(g('tBr'))||0;D.activeBrokers=parseInt(g('aBr'))||0;
     D.brokersExclusivity=g('bExcl');
@@ -388,7 +390,25 @@ function body(){
       <input type="text" id="avgT" placeholder="0" oninput="this.value=fmtCI(this.value)"/>
       <div class="hint">Valor médio por unidade — usado para estimar volume necessário.</div></div>
     <div class="field"><label>Quantos empreendimentos ativos para venda?</label>
-      <input type="number" id="numEmpreendimentos" placeholder="0" min="0"/></div>`;
+      <input type="number" id="numEmpreendimentos" placeholder="0" min="0"/></div>
+    <div class="g3">
+      <div class="field"><label>Pré-lançamento (Tab. Zero)</label>
+        <input type="number" id="numPreLanc" placeholder="0" min="0"/></div>
+      <div class="field"><label>Lançamentos</label>
+        <input type="number" id="numLanc" placeholder="0" min="0"/></div>
+      <div class="field"><label>Estoque</label>
+        <input type="number" id="numEstoque" placeholder="0" min="0"/></div>
+    </div>
+    <div class="field"><label>Foco de vendas atualmente</label>
+      <select id="focoVendas"><option value="">Selecione</option><option value="Pre-lancamento">Pré-lançamento</option><option value="Lancamentos">Lançamentos</option><option value="Estoque">Estoque</option><option value="Todos">Todos igualmente</option></select></div>
+    <div class="g3">
+      <div class="field"><label>Total de imóveis à venda</label>
+        <input type="number" id="totalImoveisVenda" placeholder="0" min="0"/></div>
+      <div class="field"><label>Propostas recebidas / mês</label>
+        <input type="number" id="propostasMensais" placeholder="0" min="0"/></div>
+      <div class="field"><label>Fechamentos / mês</label>
+        <input type="number" id="fechamentosMensais" placeholder="0" min="0"/></div>
+    </div>`;
 
   if(currentStep===2)return`
     <div class="g2">
@@ -549,6 +569,9 @@ function restore(){
     s('vGoal',D.vgvGoal?D.vgvGoal.toLocaleString('pt-BR'):'');
     s('avgT',D.avgTicket?D.avgTicket.toLocaleString('pt-BR'):'');
     s('numEmpreendimentos',D.numEmpreendimentos||'');
+    s('numPreLanc',D.numPreLancamento||'');s('numLanc',D.numLancamento||'');s('numEstoque',D.numEstoque||'');
+    s('focoVendas',D.focoVendas||'');
+    s('totalImoveisVenda',D.totalImoveisVenda||'');s('propostasMensais',D.propostasMensais||'');s('fechamentosMensais',D.fechamentosMensais||'');
   }
   else if(currentStep===2){
     s('tBr',D.totalBrokers||'');s('aBr',D.activeBrokers||'');s('bExcl',D.brokersExclusivity);
@@ -628,7 +651,8 @@ function calc(data){
     unidadesParaMeta: d.avgTicket > 0 ? Math.ceil(gap / d.avgTicket) : null,
     custoCorretorAtivo: (d.activeBrokers > 0 && totalToolCost > 0) ? Math.round(totalToolCost / d.activeBrokers) : null,
     custoCorretorAtivoMeta: (nc > 0 && totalToolCost > 0) ? Math.round(totalToolCost / nc) : null,
-    reducaoCusto: (d.activeBrokers > 0 && nc > 0 && totalToolCost > 0) ? Math.round((1 - d.activeBrokers / nc) * 100) : null
+    reducaoCusto: (d.activeBrokers > 0 && nc > 0 && totalToolCost > 0) ? Math.round((1 - d.activeBrokers / nc) * 100) : null,
+    taxaConversao: d.propostasMensais > 0 ? (d.fechamentosMensais / d.propostasMensais) * 100 : null
   };
 }
 
@@ -893,7 +917,20 @@ async function showResults(){
           ${D.numEmpreendimentos > 0 ? `<div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
             <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Empreendimentos Ativos</div>
             <div style="font-size:26px;font-weight:500;color:#fff">${D.numEmpreendimentos}</div>
-            <div style="font-size:11px;color:var(--mu);margin-top:4px">em comercialização</div>
+            <div style="font-size:10px;color:var(--mu);margin-top:4px">${D.numPreLancamento?D.numPreLancamento+' pré-lanç':''}${D.numPreLancamento&&D.numLancamento?' · ':''}${D.numLancamento?D.numLancamento+' lanç':''}${(D.numPreLancamento||D.numLancamento)&&D.numEstoque?' · ':''}${D.numEstoque?D.numEstoque+' estoque':''}</div>
+            ${D.focoVendas?'<div style="font-size:10px;color:var(--am);margin-top:2px">Foco: '+D.focoVendas+'</div>':''}
+          </div>` : ''}
+
+          ${D.totalImoveisVenda > 0 ? `<div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Imóveis à Venda</div>
+            <div style="font-size:26px;font-weight:500;color:#fff">${fmtN(D.totalImoveisVenda)}</div>
+            <div style="font-size:11px;color:var(--mu);margin-top:4px">unidades disponíveis</div>
+          </div>` : ''}
+
+          ${D.propostasMensais > 0 ? `<div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Propostas / mês</div>
+            <div style="font-size:26px;font-weight:500;color:var(--am)">${fmtN(D.propostasMensais)}</div>
+            <div style="font-size:11px;color:var(--mu);margin-top:4px">${D.fechamentosMensais} fechamentos${r.taxaConversao!==null?' · '+fmtP(r.taxaConversao)+' conversão':''}</div>
           </div>` : ''}
 
           <div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
