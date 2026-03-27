@@ -32,6 +32,13 @@ model Diagnostico {
   criadoPorId  String
   criadoPor    User     @relation(fields: [criadoPorId], references: [id])
 
+  // Dados comerciais (VGV, corretores)
+  totalVGV              Float?   // VGV vendido nos últimos 12 meses
+  vgvGoal               Float?   // Meta de VGV
+  avgTicket             Float?   // Ticket médio
+  totalBrokers          Int?     // Total de corretores na base
+  activeBrokers         Int?     // Corretores que venderam (12m)
+
   // Novos campos
   shareHouse            Float?   // % VGV vendido pela House
   shareParcerias        Float?   // % VGV vendido pelo Canal de Parcerias

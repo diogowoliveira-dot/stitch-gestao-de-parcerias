@@ -58,6 +58,11 @@ export async function GET() {
     relatoriosDesejados: d.relatoriosDesejados ? JSON.parse(d.relatoriosDesejados) : [],
     relatoriosDescritivo: d.relatoriosDescritivo,
     tabelaZeroParcerias: d.tabelaZeroParcerias,
+    totalVGV: d.totalVGV,
+    vgvGoal: d.vgvGoal,
+    avgTicket: d.avgTicket,
+    totalBrokers: d.totalBrokers,
+    activeBrokers: d.activeBrokers,
     aiAnalysis: d.aiAnalysis,
     isSimulacao: d.isSimulacao,
   }));
@@ -130,6 +135,26 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ id: diag.id });
+}
+
+// PUT update diagnostico
+export async function PUT(req: NextRequest) {
+  const data = await req.json();
+  const { id, ...fields } = data;
+  if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+
+  const updateData: Record<string, unknown> = {};
+  if (fields.totalVGV !== undefined) updateData.totalVGV = fields.totalVGV;
+  if (fields.vgvGoal !== undefined) updateData.vgvGoal = fields.vgvGoal;
+  if (fields.avgTicket !== undefined) updateData.avgTicket = fields.avgTicket;
+  if (fields.totalBrokers !== undefined) updateData.totalBrokers = fields.totalBrokers;
+  if (fields.activeBrokers !== undefined) updateData.activeBrokers = fields.activeBrokers;
+  if (fields.shareHouse !== undefined) updateData.shareHouse = fields.shareHouse;
+  if (fields.shareParcerias !== undefined) updateData.shareParcerias = fields.shareParcerias;
+  if (fields.numImobiliarias !== undefined) updateData.numImobiliarias = fields.numImobiliarias;
+
+  await prisma.diagnostico.update({ where: { id }, data: updateData });
+  return NextResponse.json({ ok: true });
 }
 
 // DELETE diagnostico
