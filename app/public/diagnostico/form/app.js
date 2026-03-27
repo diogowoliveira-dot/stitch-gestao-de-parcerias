@@ -162,11 +162,13 @@ function resetD(){
     shareHouse:0,shareParcerias:0,
     // Cargos dinâmicos
     cargos:{},// {id: {existe:bool, qtd:number, kpi:'', atividades:''}}
+    numEmpreendimentos:0,
     hasCRM:false,crmName:'',crmContratoNome:'',toolCosts:{},
     meetingGoals:'',challenges:[],challengesText:'',
     testedActions:false,testedResults:'',
     brokerSegmentation:'',brokerSegDescritivo:'',
     desiredReports:[],desiredReportsDescritivo:'',
+    hasEventos:'',hasIncentivo:'',concorrente:'',expectativa12m:'',
     tabelaZero:false,tabelaZeroAccess:[],tabelaZeroObs:''
   };
   CARGOS_CANAL.forEach(c=>D.cargos[c.id]={existe:false,qtd:1,kpi:'',atividades:''});
@@ -213,6 +215,11 @@ function startDiag(sim){
     D.testedActions=true;D.testedResults='Grupos de WhatsApp por empreendimento, sem controle de leitura.';
     D.brokerSegmentation='nao';D.desiredReports=['corretores_engajados','imob_ofertando','impacto_exec'];
     D.tabelaZero=true;D.tabelaZeroAccess=['canal_parcerias'];D.tabelaZeroObs='Apenas corretores Ouro.';
+    D.numEmpreendimentos=4;
+    D.hasEventos='sim_esporadico';
+    D.hasIncentivo='no';
+    D.concorrente='Construtora Alpha — forte presença no segmento médio-alto com comissionamento agressivo.';
+    D.expectativa12m='Aumentar engajamento para 25%, ter visibilidade do pipeline por executivo.';
   }
   document.getElementById('startScreen').style.display='none';
   document.getElementById('formWrap').style.display='block';
@@ -239,7 +246,7 @@ function save(){
   const gr=name=>{const e=document.querySelector(`input[name=${name}]:checked`);return e?e.value:''};
   const gca=name=>Array.from(document.querySelectorAll(`input[name=${name}]:checked`)).map(e=>e.value);
   if(currentStep===0){D.companyName=g('cN');D.cidade=g('cidadeField');D.estado=g('estadoField');D.responsibleName=g('rN');D.responsibleRole=g('rR');}
-  else if(currentStep===1){D.totalVGV=parseCur(g('tVGV'));D.vgvGoal=parseCur(g('vGoal'));D.avgTicket=parseCur(g('avgT'));}
+  else if(currentStep===1){D.totalVGV=parseCur(g('tVGV'));D.vgvGoal=parseCur(g('vGoal'));D.avgTicket=parseCur(g('avgT'));D.numEmpreendimentos=parseInt(g('numEmpreendimentos'))||0;}
   else if(currentStep===2){
     D.totalBrokers=parseInt(g('tBr'))||0;D.activeBrokers=parseInt(g('aBr'))||0;
     D.brokersExclusivity=g('bExcl');
@@ -266,6 +273,10 @@ function save(){
     D.testedActions=gr('tested')==='yes';D.testedResults=g('testRes');
     D.brokerSegmentation=gr('bSeg');D.brokerSegDescritivo=g('segDescritivo')||'';
     D.desiredReports=gca('reports');D.desiredReportsDescritivo=g('repDescritivo')||'';
+    D.hasEventos=gr('hasEventos');
+    D.hasIncentivo=gr('hasIncentivo');
+    D.concorrente=g('concorrente');
+    D.expectativa12m=g('expectativa12m');
   }
   else if(currentStep===5){
     D.tabelaZero=gr('tz')==='yes';D.tabelaZeroAccess=gca('tzAccess');
@@ -375,7 +386,9 @@ function body(){
       <input type="text" id="vGoal" placeholder="0" oninput="this.value=fmtCI(this.value)"/></div>
     <div class="field"><label>Ticket médio por unidade (R$)</label>
       <input type="text" id="avgT" placeholder="0" oninput="this.value=fmtCI(this.value)"/>
-      <div class="hint">Valor médio por unidade — usado para estimar volume necessário.</div></div>`;
+      <div class="hint">Valor médio por unidade — usado para estimar volume necessário.</div></div>
+    <div class="field"><label>Quantos empreendimentos ativos para venda?</label>
+      <input type="number" id="numEmpreendimentos" placeholder="0" min="0"/></div>`;
 
   if(currentStep===2)return`
     <div class="g2">
@@ -489,7 +502,22 @@ function body(){
         <label class="ro"><input type="radio" name="tested" value="no"/> Não</label>
       </div></div>
     <div id="testResField" style="display:none" class="field"><label>Quais foram os resultados?</label>
-      <textarea id="testRes" placeholder="Descreva as ações e os resultados..."></textarea></div>`;
+      <textarea id="testRes" placeholder="Descreva as ações e os resultados..."></textarea></div>
+    <div class="field"><label>Realiza eventos ou treinamentos para corretores?</label>
+      <div class="rg" style="margin-top:8px">
+        <label class="ro"><input type="radio" name="hasEventos" value="sim_frequente"/> Sim, com frequência</label>
+        <label class="ro"><input type="radio" name="hasEventos" value="sim_esporadico"/> Sim, esporádico</label>
+        <label class="ro"><input type="radio" name="hasEventos" value="nao"/> Não</label>
+      </div></div>
+    <div class="field"><label>Possui programa de incentivo/comissionamento diferenciado?</label>
+      <div class="rg h" style="margin-top:8px">
+        <label class="ro"><input type="radio" name="hasIncentivo" value="yes"/> Sim</label>
+        <label class="ro"><input type="radio" name="hasIncentivo" value="no"/> Não</label>
+      </div></div>
+    <div class="field"><label>Principal concorrente na região</label>
+      <textarea id="concorrente" placeholder="Ex: Construtora X — forte presença no segmento médio..."></textarea></div>
+    <div class="field"><label>Expectativa com a DWV em 12 meses</label>
+      <textarea id="expectativa12m" placeholder="Ex: Aumentar engajamento, ter visibilidade do pipeline..."></textarea></div>`;
 
   if(currentStep===5)return`
     <div class="field"><label>Trabalha com Tabela Zero (pré-lançamento)?</label>
@@ -520,6 +548,7 @@ function restore(){
     s('tVGV',D.totalVGV?D.totalVGV.toLocaleString('pt-BR'):'');
     s('vGoal',D.vgvGoal?D.vgvGoal.toLocaleString('pt-BR'):'');
     s('avgT',D.avgTicket?D.avgTicket.toLocaleString('pt-BR'):'');
+    s('numEmpreendimentos',D.numEmpreendimentos||'');
   }
   else if(currentStep===2){
     s('tBr',D.totalBrokers||'');s('aBr',D.activeBrokers||'');s('bExcl',D.brokersExclusivity);
@@ -541,6 +570,10 @@ function restore(){
     sr('tested',D.testedActions?'yes':'no');s('testRes',D.testedResults);
     sr('bSeg',D.brokerSegmentation);s('segDescritivo',D.brokerSegDescritivo||'');
     sca('reports',D.desiredReports);s('repDescritivo',D.desiredReportsDescritivo||'');
+    sr('hasEventos',D.hasEventos);
+    sr('hasIncentivo',D.hasIncentivo);
+    s('concorrente',D.concorrente);
+    s('expectativa12m',D.expectativa12m);
   }
   else if(currentStep===5){
     sr('tz',D.tabelaZero?'yes':'no');sca('tzAccess',D.tabelaZeroAccess);
@@ -588,7 +621,14 @@ function calc(data){
     vgvPorCorretor,corretoresAdicionar,
     planoAnual,planoMensal,
     retornoPorCorretor,corretoresParaPagarPlano,retornoTotal,
-    totalToolCost,nTools,unids
+    totalToolCost,nTools,unids,
+    corretoresPorExec: d.cargos.executivo?.existe ? Math.round(d.totalBrokers / (d.cargos.executivo?.qtd || 1)) : null,
+    ociosidade: d.totalBrokers > 0 ? 100 - te : 0,
+    corretoresOciosos: d.totalBrokers - d.activeBrokers,
+    unidadesParaMeta: d.avgTicket > 0 ? Math.ceil(gap / d.avgTicket) : null,
+    custoCorretorAtivo: (d.activeBrokers > 0 && totalToolCost > 0) ? Math.round(totalToolCost / d.activeBrokers) : null,
+    custoCorretorAtivoMeta: (nc > 0 && totalToolCost > 0) ? Math.round(totalToolCost / nc) : null,
+    reducaoCusto: (d.activeBrokers > 0 && nc > 0 && totalToolCost > 0) ? Math.round((1 - d.activeBrokers / nc) * 100) : null
   };
 }
 
@@ -645,6 +685,19 @@ async function showResults(){
         <div class="kpi"><div class="kl">Meta de VGV</div><div class="kv r">${fmt(D.vgvGoal)}</div><div class="ks">Gap de ${fmt(r.gap)}</div></div>
         <div class="kpi"><div class="kl">Taxa de Engajamento</div><div class="kv ${teColor}">${fmtP(r.te)}</div><div class="ks">${teLabel} · ${fmtN(D.activeBrokers)} de ${fmtN(D.totalBrokers)}</div></div>
         <div class="kpi"><div class="kl">Corretores a Ativar</div><div class="kv r">${fmtN(r.corretoresAdicionar)}</div><div class="ks">Meta da DWV</div></div>
+      </div>
+      ${D.responsibleName ? `<div style="font-size:12px;color:var(--mu);margin-bottom:10px">Responsável: <strong style="color:#fff">${D.responsibleName}</strong>${D.responsibleRole ? ' · ' + D.responsibleRole : ''}</div>` : ''}
+      ${D.hasHouse ? `<div style="margin-bottom:10px">
+        <div style="font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Proporção VGV por canal</div>
+        <div style="display:flex;height:18px;border-radius:6px;overflow:hidden;background:var(--s2)">
+          <div style="width:${D.shareHouse||0}%;background:rgba(59,130,246,0.5);display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:500">${D.shareHouse||0}% House</div>
+          <div style="width:${D.shareParcerias||0}%;background:rgba(232,57,42,0.5);display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:500">${D.shareParcerias||0}% Parcerias</div>
+        </div>
+      </div>` : ''}
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+        <div class="badge" style="background:rgba(224,160,32,0.1);border-color:rgba(224,160,32,0.3);color:var(--am)">Metas: ${D.meetingGoals === 'yes' ? 'Batendo' : D.meetingGoals === 'partial' ? 'Parcialmente' : 'Abaixo'}</div>
+        <div class="badge" style="background:rgba(224,160,32,0.1);border-color:rgba(224,160,32,0.3);color:var(--am)">Exclusividade: ${{exclusive:'Exclusivos','non-exclusive':'Não exclusivos',mixed:'Misto'}[D.brokersExclusivity] || 'N/A'}</div>
+        ${D.hasImob ? `<div class="badge" style="background:rgba(224,160,32,0.1);border-color:rgba(224,160,32,0.3);color:var(--am)">${D.numImobiliarias||''} imobiliárias parceiras</div>` : ''}
       </div>
       <div class="verdict">
         A <strong>${D.companyName||'incorporadora'}</strong> tem <strong>${fmtN(D.totalBrokers)} corretores</strong> cadastrados, mas apenas <strong>${fmtN(D.activeBrokers)} (${fmtP(r.te)})</strong> venderam — engajamento <strong>${teLabel.toLowerCase()}</strong>. Para atingir <strong>${fmt(D.vgvGoal)}</strong>, a DWV precisa ativar mais <strong>${fmtN(r.corretoresAdicionar)} corretores</strong>. Cada corretor ativado representa em média <strong>${fmt(r.vgvPorCorretor)}</strong> em VGV.${chalLabels.length>0?` Principais desafios: <strong>${chalLabels.slice(0,3).join(', ')}</strong>.`:''}
@@ -722,18 +775,49 @@ async function showResults(){
 
         <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin:20px 0 10px">Organograma com Operadora DWV</div>
         <div class="org">
-          ${dirLevel?`<div class="ol"><div class="olab">Direção</div><div class="obs-boxes"><div class="ob hi">Dir. de Parceria</div></div></div><div class="oarr">↓</div>`:''}
-          <div class="ol"><div class="olab">Gerência · Operadora DWV (lateral)</div>
+          ${D.cargos.diretor?.existe ? `<div class="ol"><div class="olab">Direção</div><div class="obs-boxes"><div class="ob hi">Dir. de Parceria</div></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">
+              <div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Relatórios de performance da equipe</div>
+              <div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Análises de mercado</div>
+            </div>
+          </div><div class="oarr">↓</div>` : ''}
+          ${D.cargos.gerente?.existe ? `<div class="ol"><div class="olab">Gerência · Operadora DWV (lateral)</div>
             <div class="obs-boxes">
-              ${D.cargos.gerente?.existe?Array(Math.min(D.cargos.gerente.qtd,10)).fill(0).map((_,i)=>'<div class="ob hi">Ger. '+(D.cargos.gerente.qtd>1?i+1:'Parceria')+'</div>').join(''):''}
+              ${Array(Math.min(D.cargos.gerente.qtd,10)).fill(0).map((_,i)=>'<div class="ob hi">Ger. '+(D.cargos.gerente.qtd>1?i+1:'Parceria')+'</div>').join('')}
               ${mktLevel}
               <div class="ob gn">Operadora DWV ↔ Gerentes</div>
             </div>
-          </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">
+              <div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Definição de estratégias</div>
+              <div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Relatórios gerenciais</div>
+              ${!D.cargos.diretor?.existe ? '<div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Relatórios de performance da equipe</div><div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Análises de mercado</div>' : ''}
+            </div>
+          </div>` : (!D.cargos.diretor?.existe && !D.cargos.gerente?.existe) ? `<div class="ol"><div class="olab">Responsável · Operadora DWV (lateral)</div>
+            <div class="obs-boxes">
+              <div class="ob hi">${D.responsibleName || 'Responsável'}</div>
+              ${mktLevel}
+              <div class="ob gn">Operadora DWV ↔</div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">
+              <div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Relatórios de performance da equipe</div>
+              <div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Análises de mercado</div>
+              <div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Definição de estratégias</div>
+              <div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Relatórios gerenciais</div>
+            </div>
+          </div>` : `<div class="ol"><div class="olab">Gerência · Operadora DWV (lateral)</div>
+            <div class="obs-boxes">
+              ${mktLevel}
+              <div class="ob gn">Operadora DWV</div>
+            </div>
+          </div>`}
           ${D.cargos.executivo?.existe?`
           <div class="oarr">↓</div>
           <div class="ol"><div class="olab">Executivos · Suporte Operadora</div>
             <div class="obs-boxes">${Array(Math.min(D.cargos.executivo.qtd,10)).fill(0).map((_,i)=>'<div class="ob">Exec. '+(i+1)+'</div>').join('')}<div class="ob gn">Suporte Op.</div></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">
+              <div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Organização de carteiras</div>
+              <div class="badge" style="background:rgba(58,184,122,0.1);border-color:rgba(58,184,122,0.3);color:var(--gr);font-size:10px">Ativações</div>
+            </div>
           </div>`:''}
           <div class="oarr">↓</div>
           <div class="ol"><div class="olab">Base Segmentada pela DWV</div>
@@ -742,6 +826,16 @@ async function showResults(){
               <div class="ob si">Prata — engajados</div>
               <div class="ob br">Bronze — inativos</div>
             </div>
+          </div>
+        </div>
+
+        <div style="background:var(--s);border:.5px solid var(--b);border-radius:10px;padding:14px 16px;margin:14px 0">
+          <div style="font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:500">Entregas DWV por nível</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.7">
+            ${D.cargos.diretor?.existe ? '<strong style="color:#fff">Diretor:</strong> Relatórios de performance da equipe, Análises de mercado<br/>' : ''}
+            ${D.cargos.gerente?.existe ? '<strong style="color:#fff">Gerente:</strong> Definição de estratégias, Relatórios gerenciais' + (!D.cargos.diretor?.existe ? ', Relatórios de performance da equipe, Análises de mercado' : '') + '<br/>' : ''}
+            ${!D.cargos.diretor?.existe && !D.cargos.gerente?.existe ? '<strong style="color:#fff">' + (D.responsibleName || 'Responsável') + ':</strong> Relatórios de performance, Análises de mercado, Definição de estratégias, Relatórios gerenciais<br/>' : ''}
+            ${D.cargos.executivo?.existe ? '<strong style="color:#fff">Executivo:</strong> Organização de carteiras, Ativações' : ''}
           </div>
         </div>
 
@@ -768,8 +862,95 @@ async function showResults(){
       </div>
     </div>
 
-    <!-- 7: ROI — lógica de corretores -->
-    <div class="db"><div class="dh" onclick="tog(this)"><h3>7 · Retorno sobre Investimento DWV</h3><div class="dhr"><span class="dtag g">${fmtN(r.corretoresAdicionar)} corretores · ${fmt(r.retornoTotal)}</span><span class="chev">▾</span></div></div>
+    <!-- 7: INDICADORES OPERACIONAIS -->
+    <div class="db"><div class="dh" onclick="tog(this)"><h3>7 · Indicadores Operacionais</h3><div class="dhr"><span class="dtag a">Visão operacional</span><span class="chev">▾</span></div></div>
+      <div class="dbody">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+          ${r.corretoresPorExec !== null ? `<div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Corretores por Executivo</div>
+            <div style="font-size:26px;font-weight:500;color:var(--red)">${fmtN(r.corretoresPorExec)}</div>
+            <div style="font-size:11px;color:var(--mu);margin-top:4px">${fmtN(D.totalBrokers)} corretores / ${D.cargos.executivo.qtd} executivos</div>
+          </div>` : ''}
+
+          ${r.custoCorretorAtivo !== null ? `<div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Custo por Corretor Ativo</div>
+            <div style="font-size:26px;font-weight:500;color:var(--red)">${fmt(r.custoCorretorAtivo)}</div>
+            <div style="font-size:11px;color:var(--mu);margin-top:4px">${fmt(r.totalToolCost)} / ${fmtN(D.activeBrokers)} ativos</div>
+          </div>` : ''}
+
+          <div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Ociosidade da Base</div>
+            <div style="font-size:26px;font-weight:500;color:var(--red)">${fmtP(r.ociosidade)}</div>
+            <div style="font-size:11px;color:var(--mu);margin-top:4px">${fmtN(r.corretoresOciosos)} corretores inativos</div>
+          </div>
+
+          ${r.unidadesParaMeta !== null ? `<div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Unidades p/ Atingir Meta</div>
+            <div style="font-size:26px;font-weight:500;color:var(--am)">${fmtN(r.unidadesParaMeta)}</div>
+            <div style="font-size:11px;color:var(--mu);margin-top:4px">Gap ${fmt(r.gap)} / Ticket ${fmt(D.avgTicket)}</div>
+          </div>` : ''}
+
+          ${D.numEmpreendimentos > 0 ? `<div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Empreendimentos Ativos</div>
+            <div style="font-size:26px;font-weight:500;color:#fff">${D.numEmpreendimentos}</div>
+            <div style="font-size:11px;color:var(--mu);margin-top:4px">em comercialização</div>
+          </div>` : ''}
+
+          <div style="background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Eventos / Treinamentos</div>
+            <div style="font-size:20px;font-weight:500;color:${D.hasEventos === 'sim_frequente' ? 'var(--gr)' : D.hasEventos === 'sim_esporadico' ? 'var(--am)' : 'var(--red)'}">${D.hasEventos === 'sim_frequente' ? 'Frequente' : D.hasEventos === 'sim_esporadico' ? 'Esporádico' : 'Não realiza'}</div>
+            <div style="font-size:11px;color:var(--mu);margin-top:4px">${D.hasEventos === 'nao' || !D.hasEventos ? 'oportunidade DWV' : ''}</div>
+          </div>
+        </div>
+
+        ${r.totalToolCost > 5000 ? `
+        <div style="background:rgba(58,184,122,0.06);border:.5px solid rgba(58,184,122,0.15);border-radius:10px;padding:16px 18px;margin-bottom:12px">
+          <div style="font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;font-weight:500">Projeção: custo por corretor ativo com a DWV</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div style="text-align:center">
+              <div style="font-size:11px;color:var(--mu);margin-bottom:4px">Hoje (${fmtN(D.activeBrokers)} ativos)</div>
+              <div style="font-size:20px;font-weight:500;color:var(--red)">${fmt(r.custoCorretorAtivo)}</div>
+              <div style="font-size:11px;color:var(--mu)">por corretor/ano</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:11px;color:var(--mu);margin-bottom:4px">Meta DWV (${fmtN(r.nc)} ativos)</div>
+              <div style="font-size:20px;font-weight:500;color:var(--am)">${fmt(r.custoCorretorAtivoMeta)}</div>
+              <div style="font-size:11px;color:var(--mu)">por corretor/ano</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:11px;color:var(--mu);margin-bottom:4px">Redução</div>
+              <div style="font-size:20px;font-weight:500;color:var(--gr)">-${r.reducaoCusto}%</div>
+              <div style="font-size:11px;color:var(--mu)">no custo por ativo</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:10px;line-height:1.6">Ao atingir a meta de engajamento com a DWV, o custo por corretor ativo cai de <strong style="color:#fff">${fmt(r.custoCorretorAtivo)}</strong> para <strong style="color:var(--gr)">${fmt(r.custoCorretorAtivoMeta)}</strong> — mais eficiência com o mesmo investimento em ferramentas.</div>
+        </div>` : r.totalToolCost > 0 && r.totalToolCost <= 5000 ? `
+        <div style="background:rgba(58,184,122,0.06);border:.5px solid rgba(58,184,122,0.15);border-radius:10px;padding:14px 16px;margin-bottom:12px">
+          <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6">A DWV substitui ferramentas fragmentadas por uma plataforma unificada — o ganho é em <strong style="color:var(--gr)">produtividade</strong>, não em economia.</div>
+        </div>` : `
+        <div style="background:rgba(58,184,122,0.06);border:.5px solid rgba(58,184,122,0.15);border-radius:10px;padding:14px 16px;margin-bottom:12px">
+          <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6">A incorporadora não possui ferramentas dedicadas ao canal de parcerias — a DWV será a <strong style="color:var(--gr)">primeira plataforma integrada</strong> para gestão do canal.</div>
+        </div>`}
+
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
+          <div class="badge" style="background:rgba(224,160,32,0.1);border-color:rgba(224,160,32,0.3);color:var(--am)">Programa de incentivo: ${D.hasIncentivo === 'yes' ? 'Sim' : 'Não possui'}</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          ${D.concorrente ? `<div style="background:var(--s);border:.5px solid var(--b);border-radius:10px;padding:14px 16px">
+            <div style="font-size:10px;color:var(--am);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;font-weight:500">Principal concorrente na região</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.65">${D.concorrente}</div>
+          </div>` : ''}
+          ${D.expectativa12m ? `<div style="background:var(--s);border:.5px solid var(--b);border-radius:10px;padding:14px 16px">
+            <div style="font-size:10px;color:var(--am);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;font-weight:500">Expectativa com a DWV em 12 meses</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.65">${D.expectativa12m}</div>
+          </div>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <!-- 8: ROI — lógica de corretores -->
+    <div class="db"><div class="dh" onclick="tog(this)"><h3>8 · Retorno sobre Investimento DWV</h3><div class="dhr"><span class="dtag g">${fmtN(r.corretoresAdicionar)} corretores · ${fmt(r.retornoTotal)}</span><span class="chev">▾</span></div></div>
       <div class="dbody">
 
         <div class="g2" style="margin-bottom:16px">
