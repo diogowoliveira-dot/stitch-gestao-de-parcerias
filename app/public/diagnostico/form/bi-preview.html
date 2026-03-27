@@ -219,6 +219,21 @@ function renderKPIs(data) {
     );
   }
 
+  // Taxa de Engajamento Media
+  const withBrokers = data.filter(d => d.totalBrokers > 0 && d.activeBrokers != null);
+  if (withBrokers.length) {
+    const tes = withBrokers.map(d => (d.activeBrokers / d.totalBrokers) * 100);
+    const avgTE = (tes.reduce((a,b) => a+b, 0) / tes.length).toFixed(1);
+    row1 += kpiCard('Taxa de Engajamento Media', avgTE + '%', 'red', 'Base: ' + withBrokers.length + ' de ' + total + ' incorporadoras');
+  }
+
+  // Ociosidade da Base
+  if (withBrokers.length) {
+    const ocios = withBrokers.map(d => 100 - (d.activeBrokers / d.totalBrokers) * 100);
+    const avgOcio = (ocios.reduce((a,b) => a+b, 0) / ocios.length).toFixed(1);
+    row1 += kpiCard('Base Ociosa (media)', avgOcio + '%', 'red', 'Base: ' + withBrokers.length + ' de ' + total + ' incorporadoras');
+  }
+
   // Total de Diagnosticos
   row1 += kpiCard('Total de Diagnosticos', total, 'red', '');
 
@@ -296,6 +311,34 @@ function renderKPIs(data) {
       '',
       'Base: ' + withGerente.length + ' de ' + total + ' incorporadoras'
     );
+  }
+
+  // Corretores por Executivo (media)
+  const withBothExec = data.filter(d => {
+    const hasExec = (d.cargos || []).some(c => c.existe && c.nome && c.nome.toLowerCase().includes('executivo'));
+    return hasExec && d.totalBrokers > 0;
+  });
+  if (withBothExec.length) {
+    const ratios = withBothExec.map(d => {
+      let execs = 0;
+      (d.cargos || []).forEach(c => {
+        if (c.existe && c.nome && c.nome.toLowerCase().includes('executivo'))
+          execs += (c.quantidade > 0) ? Number(c.quantidade) : 1;
+      });
+      return execs > 0 ? d.totalBrokers / execs : 0;
+    }).filter(r => r > 0);
+    if (ratios.length) {
+      const avgRatio = Math.round(ratios.reduce((a,b) => a+b, 0) / ratios.length);
+      row2 += kpiCard('Corretores por Executivo (media)', avgRatio, 'amber', 'Base: ' + ratios.length + ' de ' + total + ' incorporadoras');
+    }
+  }
+
+  // VGV Medio por Corretor Engajado
+  const withVGVBrokers = data.filter(d => d.totalVGV > 0 && d.activeBrokers > 0);
+  if (withVGVBrokers.length) {
+    const vgvPerBroker = withVGVBrokers.map(d => d.totalVGV / d.activeBrokers);
+    const avgVGV = Math.round(vgvPerBroker.reduce((a,b) => a+b, 0) / vgvPerBroker.length);
+    row2 += kpiCard('VGV Medio por Corretor Engajado', 'R$ ' + avgVGV.toLocaleString('pt-BR'), 'green', 'Base: ' + withVGVBrokers.length + ' de ' + total + ' incorporadoras');
   }
 
   // Estados Representados
