@@ -46,7 +46,7 @@ const TOOLS_DEF=[
 ];
 
 // Plano Operadora DWV
-const PLANO_ANUAL  = 57295.20;
+const PLANO_ANUAL  = 63096.20;
 const PLANO_MENSAL = 4774.60;
 
 // ── AUTH & SESSION ────────────────────────────────────────────
