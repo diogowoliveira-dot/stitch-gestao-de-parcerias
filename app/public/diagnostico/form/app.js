@@ -1040,6 +1040,46 @@ async function showResults(){
       </div>
     </div>
 
+    <!-- 9: DORES, SEGMENTAÇÃO E RELATÓRIOS -->
+    <div class="db"><div class="dh" onclick="tog(this)"><h3>9 · Dores, Segmentação e Relatórios</h3><div class="dhr"><span class="dtag a">Canal de Parcerias</span><span class="chev">▾</span></div></div>
+      <div class="dbody">
+
+        <!-- Principais Desafios -->
+        ${chalLabels.length>0?`<div style="margin-bottom:16px">
+          <div style="font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:500">Principais desafios no canal de parcerias</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            ${chalLabels.map(l=>'<div class="badge hi">'+l+'</div>').join('')}
+          </div>
+          ${D.challengesText?'<div style="background:var(--s);border:.5px solid var(--b);border-radius:10px;padding:14px 16px;margin-top:10px"><div style="font-size:10px;color:var(--am);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;font-weight:500">Contexto descrito pelo cliente</div><div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.65">'+D.challengesText+'</div></div>':''}
+        </div>`:''}
+
+        <!-- Segmentação -->
+        <div style="margin-bottom:16px">
+          <div style="font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:500">Segmentação dos corretores da base</div>
+          <div style="background:var(--s);border:.5px solid var(--b);border-radius:10px;padding:14px 16px">
+            <div style="font-size:15px;font-weight:500;color:${{nao:'var(--red)',nao_gostaria:'var(--am)',sim_parcial:'var(--am)',sim_total:'var(--gr)'}[D.brokerSegmentation]||'var(--mu)'}">${{nao:'Não segmenta',nao_gostaria:'Não, mas gostaria de segmentar',sim_parcial:'Sim, parcialmente',sim_total:'Sim, totalmente'}[D.brokerSegmentation]||'Não informado'}</div>
+            ${D.brokerSegDescritivo?'<div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:8px;line-height:1.6">'+D.brokerSegDescritivo+'</div>':''}
+          </div>
+        </div>
+
+        <!-- Relatórios desejados -->
+        ${rptLabels.length>0||D.desiredReportsDescritivo?`<div style="margin-bottom:16px">
+          <div style="font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:500">Relatórios mais desejados sobre o canal de parcerias</div>
+          ${rptLabels.length>0?'<ul style="margin:0 0 10px 16px;padding:0">'+rptLabels.map(l=>'<li style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.7;list-style:disc">'+l+'</li>').join('')+'</ul>':''}
+          ${D.desiredReportsDescritivo?'<div style="background:var(--s);border:.5px solid var(--b);border-radius:10px;padding:14px 16px"><div style="font-size:10px;color:var(--gr);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;font-weight:500">Observações do cliente</div><div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.65">'+D.desiredReportsDescritivo+'</div></div>':''}
+          <div style="font-size:13px;color:var(--gr);margin-top:10px;font-weight:500">Todos disponíveis na plataforma DWV.</div>
+        </div>`:''}
+
+        <!-- Ações testadas -->
+        ${D.testedActions==='yes'&&D.testedResults?`<div>
+          <div style="font-size:11px;color:var(--am);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:500">Ações já testadas pelo cliente</div>
+          <div style="background:var(--s);border:.5px solid rgba(224,160,32,0.25);border-radius:10px;padding:14px 16px">
+            <div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.65">${D.testedResults}</div>
+          </div>
+        </div>`:''}
+      </div>
+    </div>
+
     <div class="acts">
       <button class="bto" onclick="window.location.href='/diagnostico/dashboard'">← Dashboard</button>
       <button class="bto" onclick="copyPipefy()">Copiar para Pipefy</button>
