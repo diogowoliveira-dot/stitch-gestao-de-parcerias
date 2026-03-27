@@ -98,10 +98,16 @@ tbody tr:hover td{background:rgba(255,255,255,0.03)}
     </div>
   </div>
 
-  <!-- State filter -->
+  <!-- Filters -->
   <div class="filter-bar" id="filterBar" style="display:none">
-    <label>Filtrar por estado:</label>
-    <select id="stateFilter"><option value="">Todos os estados</option></select>
+    <label>Estado:</label>
+    <select id="stateFilter"><option value="">Todos</option></select>
+    <label style="margin-left:10px">Periodo:</label>
+    <input type="date" id="dateFrom" style="background:var(--s);border:.5px solid var(--b);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;font-family:inherit;outline:none" />
+    <span style="color:var(--mu);font-size:13px">ate</span>
+    <input type="date" id="dateTo" style="background:var(--s);border:.5px solid var(--b);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;font-family:inherit;outline:none" />
+    <button onclick="applyFilters()" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit">Filtrar</button>
+    <button onclick="clearFilters()" style="background:transparent;color:var(--mu);border:.5px solid var(--b);border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit">Limpar</button>
   </div>
 
   <!-- Loading / Error -->
@@ -168,10 +174,26 @@ function populateStateFilter() {
   const states = [...new Set(allData.map(d => d.empresa?.estado).filter(Boolean))].sort();
   const sel = document.getElementById('stateFilter');
   states.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; sel.appendChild(o); });
-  sel.addEventListener('change', () => {
-    const v = sel.value;
-    render(v ? allData.filter(d => d.empresa?.estado === v) : allData);
+  sel.addEventListener('change', () => applyFilters());
   });
+}
+
+function applyFilters() {
+  const state = document.getElementById('stateFilter').value;
+  const from = document.getElementById('dateFrom').value;
+  const to = document.getElementById('dateTo').value;
+  let filtered = allData;
+  if (state) filtered = filtered.filter(d => d.empresa?.estado === state);
+  if (from) filtered = filtered.filter(d => (d.dataCriacao || '').slice(0,10) >= from);
+  if (to) filtered = filtered.filter(d => (d.dataCriacao || '').slice(0,10) <= to);
+  render(filtered);
+}
+
+function clearFilters() {
+  document.getElementById('stateFilter').value = '';
+  document.getElementById('dateFrom').value = '';
+  document.getElementById('dateTo').value = '';
+  render(allData);
 }
 
 function render(data) {
@@ -307,10 +329,6 @@ function renderCharts(data) {
       <div class="chart-title">Distribuicao por Estado</div>
       <div class="chart-wrap"><canvas id="chartEstados"></canvas></div>
     </div>
-    <div class="chart-card chart-full" id="card_mes">
-      <div class="chart-title">Diagnosticos por Mes</div>
-      <div class="chart-wrap"><canvas id="chartMes"></canvas></div>
-    </div>
   `;
 
   buildChartFerramentas(data);
@@ -318,7 +336,6 @@ function renderCharts(data) {
   buildChartRelatorios(data);
   buildExpectativas();
   buildChartEstados(data);
-  buildChartMes(data);
 }
 
 function redGradient(count) {
@@ -519,52 +536,6 @@ function buildChartEstados(data) {
   });
 }
 
-/* Chart 6: Diagnosticos por Mes (line chart, full width) */
-function buildChartMes(data) {
-  const months = {};
-  data.forEach(d => {
-    if (!d.dataCriacao) return;
-    const dt = new Date(d.dataCriacao);
-    const key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0');
-    months[key] = (months[key] || 0) + 1;
-  });
-  const sorted = Object.entries(months).sort((a, b) => a[0].localeCompare(b[0]));
-  if (!sorted.length) {
-    document.getElementById('card_mes').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes</div>';
-    return;
-  }
-  const labels = sorted.map(e => {
-    const [y, m] = e[0].split('-');
-    const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-    return monthNames[parseInt(m) - 1] + '/' + y;
-  });
-
-  chartInstances.mes = new Chart(document.getElementById('chartMes'), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        data: sorted.map(e => e[1]),
-        borderColor: '#E8392A',
-        backgroundColor: 'rgba(232,57,42,0.08)',
-        tension: 0.35,
-        fill: true,
-        pointBackgroundColor: '#E8392A',
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.04)' } },
-        y: { grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true, ticks: { stepSize: 1 } }
-      }
-    }
-  });
-}
 
 /* ======== Table ======== */
 let sortCol = null, sortAsc = true;
