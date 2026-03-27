@@ -13,9 +13,10 @@ interface DiagShellProps {
 }
 
 const NAV_ITEMS = [
-  { href: "/diagnostico/dashboard", icon: "space_dashboard", label: "Início" },
-  { href: "/diagnostico/novo", icon: "add_circle", label: "Novo" },
-  { href: "/diagnostico/usuarios", icon: "group", label: "Usuários" },
+  { href: "/diagnostico/dashboard", icon: "space_dashboard", label: "Início", adminOnly: false },
+  { href: "/diagnostico/bi", icon: "monitoring", label: "BI", adminOnly: true },
+  { href: "/diagnostico/novo", icon: "add_circle", label: "Novo", adminOnly: false },
+  { href: "/diagnostico/usuarios", icon: "group", label: "Usuários", adminOnly: true },
 ];
 
 export default function DiagShell({ children, title, subtitle, icon, showBack, actions }: DiagShellProps) {
@@ -76,7 +77,7 @@ export default function DiagShell({ children, title, subtitle, icon, showBack, a
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.06]" style={{ background: "rgba(0, 0, 0, 0.95)", backdropFilter: "blur(20px)" }}>
         <div className="max-w-6xl mx-auto flex">
           {NAV_ITEMS.map((item) => {
-            if (item.href === "/diagnostico/usuarios" && !isAdmin) return null;
+            if (item.adminOnly && !isAdmin) return null;
             const isActive = pathname === item.href || (item.href !== "/diagnostico/dashboard" && pathname.startsWith(item.href));
             return (
               <button
