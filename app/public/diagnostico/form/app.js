@@ -1160,7 +1160,89 @@ function copyPipefy(){
   const chalTxt=D.challenges.map(k=>CHAL_LABELS[k]||k).join(', ')||'Não informado';
   const rptTxt=D.desiredReports.map(k=>RPT_LABELS[k]||k).join(', ')||'Não informado';
   const toolTxt=TOOLS_DEF.filter(t=>D[t.k]).map(t=>t.l+(D.toolCosts[t.k]?' (R$'+D.toolCosts[t.k].toLocaleString('pt-BR')+'/mês)':'')).join(', ')||'Nenhuma';
-  const txt=`${isSim?'⚠ SIMULAÇÃO COM DADOS NÃO REAIS\n\n':''}DIAGNÓSTICO COMERCIAL DWV\n${D.companyName} · ${D.location}\nResponsável: ${D.responsibleName} (${D.responsibleRole})\n\n— MÉTRICAS —\nVGV Atual: ${fmt(D.totalVGV)}\nMeta VGV: ${fmt(D.vgvGoal)}\nGap: ${fmt(r.gap)}\nCorretores totais: ${fmtN(D.totalBrokers)}\nCorretores ativos: ${fmtN(D.activeBrokers)}\nTaxa de Engajamento: ${fmtP(r.te)}\nDelta/Milhão: ${r.dc.toFixed(2)}\nVGV por corretor ativo: ${fmt(r.vgvPorCorretor)}\n\n— META DWV —\nCorretores a ativar: ${fmtN(r.corretoresAdicionar)}\nCorretores p/ pagar o plano: ${r.corretoresParaPagarPlano||'—'}\nRetorno se meta atingida: ${fmt(r.retornoTotal)}\n\n— PLANO DWV —\nPlano Operadora: ${fmt(r.planoAnual)}/ano (12x ${fmt(r.planoMensal)}/mês)\n\n— ROTAS —\nRota A (Engajamento): TE de ${fmtP(r.te)} → ${fmtP(r.nteNeeded)}\nRota B (Base): ${fmtN(D.totalBrokers)} → ${fmtN(r.nct)} corretores\nRota C (Produtividade): DC de ${r.dc.toFixed(2)} → ${r.dcNovo.toFixed(2)}/M\n\n— TECNOLOGIA —\nCRM: ${D.hasCRM?D.crmName:'Não'}\nFerramentas (${r.nTools}): ${toolTxt}\nCusto anual ferramentas: ${fmt(r.totalToolCost)}\n\n— DESAFIOS —\n${chalTxt}\n\n— RELATÓRIOS DESEJADOS —\n${rptTxt}\n\nTabela Zero: ${D.tabelaZero?'Sim — '+D.tabelaZeroAccess.map(k=>TZ_LABELS[k]).join(', '):'Não'}${D.observations?'\n\nObservações: '+D.observations:''}`;
+  const cargosTxt=CARGOS_CANAL.filter(c=>D.cargos[c.id]?.existe).map(c=>`${c.nome} (${D.cargos[c.id].qtd}) — KPI: ${D.cargos[c.id].kpi||'N/I'} — Atividades: ${D.cargos[c.id].atividades||'N/I'}`).join('\n');
+  const segTxt={nao:'Não segmenta',nao_gostaria:'Não, mas gostaria',sim_parcial:'Sim, parcialmente',sim_total:'Sim, totalmente'}[D.brokerSegmentation]||'Não informado';
+  const eventosTxt={sim_frequente:'Sim, com frequência',sim_esporadico:'Sim, esporádico',nao:'Não realiza'}[D.hasEventos]||'Não informado';
+  const txt=`${isSim?'⚠ SIMULAÇÃO COM DADOS NÃO REAIS\n\n':''}DIAGNÓSTICO COMERCIAL DWV
+${D.companyName} · ${D.cidade}/${D.estado}
+Responsável: ${D.responsibleName} (${D.responsibleRole})
+
+— MÉTRICAS PRINCIPAIS —
+VGV Atual (12m): ${fmt(D.totalVGV)}
+Meta VGV: ${fmt(D.vgvGoal)}
+Gap: ${fmt(r.gap)}
+Ticket médio: ${fmt(D.avgTicket)}
+Corretores totais: ${fmtN(D.totalBrokers)}
+Corretores ativos (12m): ${fmtN(D.activeBrokers)}
+Taxa de Engajamento: ${fmtP(r.te)}
+Delta/Milhão: ${r.dc.toFixed(2)}
+VGV por corretor ativo: ${fmt(r.vgvPorCorretor)}
+Exclusividade: ${D.brokersExclusivity==='exclusive'?'Exclusivos':D.brokersExclusivity==='non-exclusive'?'Não exclusivos':'Misto'}
+${D.hasHouse?'House: '+D.shareHouse+'% do VGV':''}
+${D.hasParc?'Parcerias: '+D.shareParcerias+'% do VGV':''}
+${D.hasImob?'Imobiliárias parceiras: '+D.numImobiliarias:''}
+
+— EMPREENDIMENTOS —
+Ativos: ${D.numEmpreendimentos||'N/I'}${D.numPreLancamento?' ('+D.numPreLancamento+' pré-lanç, '+D.numLancamento+' lanç, '+D.numEstoque+' estoque)':''}
+Foco de vendas: ${D.focoVendas||'N/I'}
+Imóveis à venda: ${D.totalImoveisVenda?fmtN(D.totalImoveisVenda):'N/I'}
+Propostas/mês: ${D.propostasMensais?fmtN(D.propostasMensais):'N/I'}
+Fechamentos/mês: ${D.fechamentosMensais?fmtN(D.fechamentosMensais):'N/I'}
+${r.taxaConversao!==null?'Taxa de conversão: '+fmtP(r.taxaConversao):''}
+
+— ESTRUTURA DO CANAL —
+${cargosTxt||'Nenhum cargo informado'}
+
+— INDICADORES OPERACIONAIS —
+${r.corretoresPorExec!==null?'Corretores por executivo: '+fmtN(r.corretoresPorExec):''}
+Ociosidade da base: ${fmtP(r.ociosidade)} (${fmtN(r.corretoresOciosos)} inativos)
+${r.custoCorretorAtivo!==null?'Custo por corretor ativo: '+fmt(r.custoCorretorAtivo)+'/ano':''}
+${r.unidadesParaMeta!==null?'Unidades para atingir meta: '+fmtN(r.unidadesParaMeta):''}
+
+— META DWV —
+Corretores a ativar: ${fmtN(r.corretoresAdicionar)}
+Corretores p/ pagar o plano: ${r.corretoresParaPagarPlano||'—'}
+Retorno se meta atingida: ${fmt(r.retornoTotal)}
+
+— ROTAS ESTRATÉGICAS —
+Rota A (Engajamento): TE de ${fmtP(r.te)} → ${fmtP(r.nteNeeded)}
+Rota B (Base): ${fmtN(D.totalBrokers)} → ${fmtN(r.nct)} corretores
+Rota C (Produtividade): DC de ${r.dc.toFixed(2)} → ${r.dcNovo.toFixed(2)}/M
+
+— PLANO DWV —
+Plano Operadora: ${fmt(r.planoAnual)}/ano (12x ${fmt(r.planoMensal)}/mês)
+
+— TECNOLOGIA —
+CRM parceiros: ${D.hasCRM?D.crmName:'Não'}
+${D.crmContratoNome?'CRM contratos: '+D.crmContratoNome:''}
+Ferramentas (${r.nTools}): ${toolTxt}
+Custo anual ferramentas: ${fmt(r.totalToolCost)}
+
+— DESAFIOS —
+${chalTxt}
+${D.challengesText?'Detalhe: '+D.challengesText:''}
+
+— AÇÕES JÁ TESTADAS —
+${D.testedActions?D.testedResults||'Sim, sem detalhes':'Não testou ações'}
+
+— SEGMENTAÇÃO —
+${segTxt}${D.brokerSegDescritivo?' — '+D.brokerSegDescritivo:''}
+
+— RELATÓRIOS DESEJADOS —
+${rptTxt}
+${D.desiredReportsDescritivo?'Obs: '+D.desiredReportsDescritivo:''}
+
+— EVENTOS E INCENTIVOS —
+Eventos/treinamentos: ${eventosTxt}
+Programa de incentivo: ${D.hasIncentivo==='yes'?'Sim':'Não'}
+
+— MERCADO —
+${D.concorrente?'Principal concorrente: '+D.concorrente:''}
+${D.expectativa12m?'Expectativa 12 meses: '+D.expectativa12m:''}
+
+— TABELA ZERO —
+${D.tabelaZero?'Sim — Acesso: '+D.tabelaZeroAccess.map(k=>TZ_LABELS[k]).join(', '):'Não utiliza'}
+${D.tabelaZeroObs?'Obs: '+D.tabelaZeroObs:''}`;
   navigator.clipboard.writeText(txt).then(()=>alert('Copiado! Cole no card do Pipefy.')).catch(()=>alert('Não foi possível copiar automaticamente.'));
 }
 
@@ -1233,7 +1315,7 @@ ${isSim?'<div class="sim-w">⚠ SIMULAÇÃO COM DADOS NÃO REAIS — Este diagn�
 <div class="hdr">
   <div>
     <h1>Diagnóstico Comercial DWV</h1>
-    <div style="font-size:11px;color:#666;margin-top:3px">${D.companyName} · ${D.location} · Responsável: ${D.responsibleName} (${D.responsibleRole})</div>
+    <div style="font-size:11px;color:#666;margin-top:3px">${D.companyName} · ${D.cidade}/${D.estado} · Responsável: ${D.responsibleName}${D.responsibleRole?' ('+D.responsibleRole+')':''}</div>
     <div style="font-size:10px;color:#aaa;margin-top:2px">Gerado em ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})}</div>
   </div>
   <div class="logo-b">DWV</div>
@@ -1268,12 +1350,10 @@ ${isSim?'<div class="sim-w">⚠ SIMULAÇÃO COM DADOS NÃO REAIS — Este diagn�
 <div class="box">
   <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Sem DWV</div>
   <div class="org">
-    <div class="org-lev"><div class="org-lab">Direção</div><div class="rob-boxes"><div class="rob hi">Dir. de Parceria</div></div></div>
-    <div class="oarr">↓</div>
-    <div class="org-lev"><div class="org-lab">Gerência</div><div class="rob-boxes">${parcBoxesPDF||'<div class="rob">—</div>'}</div></div>
-    ${D.parcExecutives>0?`<div class="oarr">↓</div><div class="org-lev"><div class="org-lab">Executivos</div><div class="rob-boxes">${execBoxesPDF}</div></div>`:''}
-    <div class="oarr">↓</div>
-    <div class="org-lev"><div class="org-lab">Base</div><div class="rob-boxes"><div class="rob">${fmtN(D.totalBrokers)} cadastrados</div><div class="rob hi">${fmtN(D.activeBrokers)} ativos (${fmtP(r.te)})</div></div></div>
+    ${D.cargos.diretor?.existe?`<div class="org-lev"><div class="org-lab">Direção</div><div class="rob-boxes">${Array(D.cargos.diretor.qtd).fill(0).map((_,i)=>'<div class="rob hi">Dir. Parceria'+(D.cargos.diretor.qtd>1?' '+(i+1):'')+'</div>').join('')}</div>${D.cargos.diretor.kpi?'<div style="font-size:9px;color:#c09000;margin-top:2px">KPI: '+D.cargos.diretor.kpi+'</div>':''}</div><div class="oarr">↓</div>`:''}
+    ${D.cargos.gerente?.existe||D.cargos.marketing?.existe?`<div class="org-lev"><div class="org-lab">Gerência / Marketing</div><div class="rob-boxes">${D.cargos.gerente?.existe?Array(D.cargos.gerente.qtd).fill(0).map((_,i)=>'<div class="rob hi">Ger. '+(D.cargos.gerente.qtd>1?(i+1):'Parceria')+'</div>').join(''):''}${D.cargos.marketing?.existe?'<div class="rob" style="border-color:#7c3aed;color:#7c3aed;background:#f5f3ff">Marketing'+(D.cargos.marketing.qtd>1?' ×'+D.cargos.marketing.qtd:'')+'</div>':''}</div>${D.cargos.gerente?.kpi?'<div style="font-size:9px;color:#c09000;margin-top:2px">KPI Gerente: '+D.cargos.gerente.kpi+'</div>':''}</div><div class="oarr">↓</div>`:''}
+    ${D.cargos.executivo?.existe?`<div class="org-lev"><div class="org-lab">Executivos</div><div class="rob-boxes">${execBoxesPDF}</div>${D.cargos.executivo.kpi?'<div style="font-size:9px;color:#c09000;margin-top:2px">KPI: '+D.cargos.executivo.kpi+'</div>':''}</div><div class="oarr">↓</div>`:''}
+    <div class="org-lev"><div class="org-lab">Base</div><div class="rob-boxes"><div class="rob">${fmtN(D.totalBrokers)} cadastrados</div><div class="rob hi">${fmtN(D.activeBrokers)} ativos (${fmtP(r.te)})</div>${D.hasImob?'<div class="rob">'+D.numImobiliarias+' imob. parceiras</div>':''}</div></div>
   </div>
   <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px">Fluxo atual — canal cego</div>
   <div class="flow">
@@ -1285,12 +1365,11 @@ ${isSim?'<div class="sim-w">⚠ SIMULAÇÃO COM DADOS NÃO REAIS — Este diagn�
   </div>
   <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px">Com Operadora DWV</div>
   <div class="org">
-    <div class="org-lev"><div class="org-lab">Direção</div><div class="rob-boxes"><div class="rob hi">Dir. de Parceria</div></div></div>
+    ${D.cargos.diretor?.existe?`<div class="org-lev"><div class="org-lab">Direção</div><div class="rob-boxes"><div class="rob hi">Dir. de Parceria</div><div class="rob gn">Relatórios de performance</div><div class="rob gn">Análises de mercado</div></div></div><div class="oarr">↓</div>`:''}
+    <div class="org-lev"><div class="org-lab">Gerência · Operadora DWV (lateral)</div><div class="rob-boxes">${D.cargos.gerente?.existe?Array(D.cargos.gerente.qtd).fill(0).map((_,i)=>'<div class="rob hi">Ger. '+(D.cargos.gerente.qtd>1?(i+1):'Parceria')+'</div>').join(''):''}${D.cargos.marketing?.existe?'<div class="rob" style="border-color:#7c3aed;color:#7c3aed;background:#f5f3ff">Marketing</div>':''}<div class="rob gn">Definição de estratégias</div><div class="rob gn">Relatórios gerenciais</div>${!D.cargos.diretor?.existe?'<div class="rob gn">Relatórios de performance</div><div class="rob gn">Análises de mercado</div>':''}</div></div>
+    ${D.cargos.executivo?.existe?`<div class="oarr">↓</div><div class="org-lev"><div class="org-lab">Executivos + Suporte Operadora</div><div class="rob-boxes">${execBoxesPDF}<div class="rob gn">Organização de carteiras</div><div class="rob gn">Ativações</div></div></div>`:''}
     <div class="oarr">↓</div>
-    <div class="org-lev"><div class="org-lab">Gerência · Operadora DWV (lateral)</div><div class="rob-boxes">${parcBoxesPDF}<div class="rob gn">Operadora DWV ↔</div></div></div>
-    ${D.parcExecutives>0?`<div class="oarr">↓</div><div class="org-lev"><div class="org-lab">Executivos + Suporte</div><div class="rob-boxes">${execBoxesPDF}<div class="rob gn">Suporte Op.</div></div></div>`:''}
-    <div class="oarr">↓</div>
-    <div class="org-lev"><div class="org-lab">Base Segmentada</div><div class="rob-boxes"><div class="rob go">Ouro</div><div class="rob si">Prata</div><div class="rob br">Bronze</div></div></div>
+    <div class="org-lev"><div class="org-lab">Base Segmentada pela DWV</div><div class="rob-boxes"><div class="rob go">Ouro</div><div class="rob si">Prata</div><div class="rob br">Bronze</div></div></div>
   </div>
   <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px">Fluxo com DWV</div>
   <div class="flow">
@@ -1310,13 +1389,35 @@ ${isSim?'<div class="sim-w">⚠ SIMULAÇÃO COM DADOS NÃO REAIS — Este diagn�
   <div class="hl" style="margin-top:8px">A DWV substitui <strong>${nTools} ferramentas desconectadas</strong> em um único ambiente integrado.</div>
 </div>
 
+<h2>Indicadores Operacionais</h2>
+<div class="g3">
+  ${r.corretoresPorExec!==null?`<div class="roi-card"><div class="roi-l">Corretores por Executivo</div><div class="roi-n">${fmtN(r.corretoresPorExec)}</div><div style="font-size:10px;color:#888">${fmtN(D.totalBrokers)} / ${D.cargos.executivo.qtd} exec.</div></div>`:''}
+  ${r.custoCorretorAtivo!==null?`<div class="roi-card"><div class="roi-l">Custo / Corretor Ativo</div><div class="roi-n">${fmt(r.custoCorretorAtivo)}</div><div style="font-size:10px;color:#888">por ano</div></div>`:''}
+  <div class="roi-card"><div class="roi-l">Ociosidade da Base</div><div class="roi-n">${fmtP(r.ociosidade)}</div><div style="font-size:10px;color:#888">${fmtN(r.corretoresOciosos)} inativos</div></div>
+  ${r.unidadesParaMeta!==null?`<div class="roi-card"><div class="roi-l">Unidades p/ Meta</div><div class="roi-n" style="color:#e0a020">${fmtN(r.unidadesParaMeta)}</div><div style="font-size:10px;color:#888">Gap / Ticket médio</div></div>`:''}
+  ${D.numEmpreendimentos>0?`<div class="roi-card"><div class="roi-l">Empreendimentos</div><div class="roi-n" style="color:#111">${D.numEmpreendimentos}</div><div style="font-size:10px;color:#888">${D.numPreLancamento?D.numPreLancamento+' pré-lanç':''}${D.numPreLancamento&&D.numLancamento?' · ':''}${D.numLancamento?D.numLancamento+' lanç':''}${(D.numPreLancamento||D.numLancamento)&&D.numEstoque?' · ':''}${D.numEstoque?D.numEstoque+' estoque':''}</div>${D.focoVendas?'<div style="font-size:10px;color:#c09000;margin-top:2px">Foco: '+D.focoVendas+'</div>':''}</div>`:''}
+  ${D.propostasMensais>0?`<div class="roi-card"><div class="roi-l">Propostas / mês</div><div class="roi-n" style="color:#e0a020">${fmtN(D.propostasMensais)}</div><div style="font-size:10px;color:#888">${D.fechamentosMensais} fech.${r.taxaConversao!==null?' · '+fmtP(r.taxaConversao)+' conv.':''}</div></div>`:''}
+</div>
+${D.totalImoveisVenda>0?`<p style="font-size:11px;color:#666;margin-top:6px">Total de imóveis à venda: <strong>${fmtN(D.totalImoveisVenda)}</strong> unidades</p>`:''}
+${r.custoCorretorAtivo!==null&&r.totalToolCost>5000?`<div class="gl" style="margin-top:8px"><p style="font-size:11px">Projeção com DWV: custo por ativo cai de <strong>${fmt(r.custoCorretorAtivo)}</strong> para <strong style="color:#2e9e60">${fmt(r.custoCorretorAtivoMeta)}</strong> (-${r.reducaoCusto}%) ao atingir meta de engajamento.</p></div>`:''}
+
 <h2>Dores e Desafios</h2>
 <div class="box">
   <p><strong>Desafios:</strong> ${chalTxt}</p>
   ${D.challengesText?`<p style="margin-top:6px"><strong>Contexto:</strong> ${D.challengesText}</p>`:''}
-  ${D.testedActions&&D.testedResults?`<p style="margin-top:6px"><strong>Ações testadas:</strong> ${D.testedResults}</p>`:''}
+  ${D.testedActions&&D.testedResults?`<p style="margin-top:6px"><strong>Ações já testadas:</strong> ${D.testedResults}</p>`:''}
   <p style="margin-top:6px"><strong>Relatórios desejados:</strong> ${rptTxt}</p>
+  ${D.desiredReportsDescritivo?`<p style="margin-top:4px;font-size:11px;color:#666"><em>${D.desiredReportsDescritivo}</em></p>`:''}
+  <p style="margin-top:6px"><strong>Segmentação:</strong> ${{nao:'Não segmenta',nao_gostaria:'Não, mas gostaria',sim_parcial:'Sim, parcialmente',sim_total:'Sim, totalmente'}[D.brokerSegmentation]||'N/I'}${D.brokerSegDescritivo?' — '+D.brokerSegDescritivo:''}</p>
+  <p style="margin-top:6px"><strong>Eventos/treinamentos:</strong> ${{sim_frequente:'Sim, com frequência',sim_esporadico:'Sim, esporádico',nao:'Não realiza'}[D.hasEventos]||'N/I'}</p>
+  <p style="margin-top:4px"><strong>Programa de incentivo:</strong> ${D.hasIncentivo==='yes'?'Sim':'Não'}</p>
 </div>
+
+${D.concorrente||D.expectativa12m?`<h2>Mercado e Expectativas</h2>
+<div class="box">
+  ${D.concorrente?`<p><strong>Principal concorrente:</strong> ${D.concorrente}</p>`:''}
+  ${D.expectativa12m?`<p style="margin-top:6px"><strong>Expectativa com a DWV em 12 meses:</strong> ${D.expectativa12m}</p>`:''}
+</div>`:''}
 
 <h2>Retorno sobre Investimento DWV</h2>
 <div class="gl">
@@ -1340,13 +1441,20 @@ ${isSim?'<div class="sim-w">⚠ SIMULAÇÃO COM DADOS NÃO REAIS — Este diagn�
   <p style="margin-top:12px;font-size:12px;line-height:1.65">${corMinTxt} Se a DWV conseguir ativar todos os <strong>${fmtN(r.corretoresAdicionar)} corretores necessários</strong>, o retorno é de <strong>${fmt(r.retornoTotal)}</strong> em VGV adicional.${r.totalToolCost>0?' Somando a economia de '+fmt(r.totalToolCost)+'/ano ao consolidar as ferramentas, o retorno total supera esse valor.':''}${D.tabelaZero?' Com Tabela Zero ('+tzTxt+'), corretores Ouro têm acesso antecipado — aumentando produtividade por ativo.':''}</p>
 </div>
 
+<h2>Equipe do Canal de Parcerias</h2>
+<table>
+  <tr><th>Cargo</th><th>Qtd</th><th>KPI</th><th>Atividades</th></tr>
+  ${CARGOS_CANAL.filter(c=>D.cargos[c.id]?.existe).map(c=>`<tr><td style="font-weight:600">${c.nome}</td><td>${D.cargos[c.id].qtd}</td><td>${D.cargos[c.id].kpi||'—'}</td><td style="font-size:10px">${D.cargos[c.id].atividades||'—'}</td></tr>`).join('')}
+</table>
+
 <div style="margin-top:12px">
   <table><tr><th colspan="2">Estrutura · Canal Parcerias</th></tr>
-    <tr><td>Exclusividade</td><td>${{exclusive:'Exclusivos',non_exclusive:'Não exclusivos',mixed:'Misto'}[D.brokersExclusivity]||'—'}</td></tr>
-    <tr><td>Segmentação de corretores</td><td>${segTxt}</td></tr>
-    <tr><td>Imobiliárias parceiras</td><td>${D.hasImob?'Sim':'Não'}</td></tr>
+    <tr><td>Exclusividade</td><td>${{exclusive:'Exclusivos','non-exclusive':'Não exclusivos',mixed:'Misto'}[D.brokersExclusivity]||'—'}</td></tr>
+    <tr><td>Canais</td><td>${D.hasHouse?'House ('+D.shareHouse+'%)':''}${D.hasHouse&&D.hasParc?' · ':''}${D.hasParc?'Parcerias ('+D.shareParcerias+'%)':''}</td></tr>
+    <tr><td>Imobiliárias parceiras</td><td>${D.hasImob?D.numImobiliarias+' imobiliárias':'Não'}</td></tr>
     <tr><td>Tabela Zero</td><td>${D.tabelaZero?'Sim — '+tzTxt:'Não'}</td></tr>
     ${D.tabelaZeroObs?`<tr><td>Obs. Tabela Zero</td><td>${D.tabelaZeroObs}</td></tr>`:''}
+    ${D.crmContratoNome?`<tr><td>CRM de contratos</td><td>${D.crmContratoNome}</td></tr>`:''}
   </table>
 </div>
 
