@@ -175,7 +175,6 @@ function populateStateFilter() {
   const sel = document.getElementById('stateFilter');
   states.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; sel.appendChild(o); });
   sel.addEventListener('change', () => applyFilters());
-  });
 }
 
 function applyFilters() {
