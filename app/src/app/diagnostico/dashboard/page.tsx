@@ -58,6 +58,13 @@ export default function DiagDashboard() {
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>science</span>
           Simulação (dados não reais)
         </button>
+        <button
+          onClick={() => window.location.href = "/diagnostico/form/index.html?tutorial=true"}
+          className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-slate-400 transition-all hover:bg-white/5 border border-white/[0.06]"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 20 }}>help</span>
+          Tutorial
+        </button>
       </div>
 
       {/* Diagnósticos List — duas colunas */}

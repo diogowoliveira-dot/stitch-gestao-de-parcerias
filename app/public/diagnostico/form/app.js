@@ -1862,6 +1862,12 @@ function _backFromTutorial(){
 
   const params=new URLSearchParams(window.location.search);
 
+  if(params.get('tutorial')==='true'){
+    showStart();
+    showTutorial();
+    return;
+  }
+
   if(params.get('simulacao')==='true'){
     startDiag(true);
     return;
