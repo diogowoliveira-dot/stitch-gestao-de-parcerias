@@ -183,6 +183,7 @@ function showStart(){
   document.getElementById('formWrap').style.display='none';
   document.getElementById('results').style.display='none';
   document.getElementById('dashboard').style.display='none';
+  document.getElementById('tutorial').style.display='none';
   document.getElementById('startScreen').innerHTML=`
     <div class="start">
       <h1>Diagnóstico Comercial</h1>
@@ -191,7 +192,10 @@ function showStart(){
         <button class="btn-start btn-real" onclick="startDiag(false)">Iniciar Diagnóstico Real</button>
         <button class="btn-start btn-sim" onclick="startDiag(true)">▷ Simulação com dados não reais</button>
       </div>
-      <div><button class="dash-link" onclick="window.location.href='/diagnostico/dashboard'">← Voltar ao Dashboard</button></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px">
+        <button class="dash-link" onclick="window.location.href='/diagnostico/dashboard'">← Voltar ao Dashboard</button>
+        <button class="dash-link" onclick="showTutorial()">? Tutorial</button>
+      </div>
     </div>`;
 }
 
@@ -1544,6 +1548,311 @@ function populateFromAPI(rec){
   D.desiredReports=rec.relatoriosDesejados||[];
   D.desiredReportsDescritivo=rec.relatoriosDescritivo||'';
   isSim=rec.isSimulacao||false;
+}
+
+// ── TUTORIAL ──────────────────────────────────────────────────
+let _tutorialFrom='start'; // rastreia de onde veio para voltar corretamente
+
+function showTutorial(){
+  // Detecta seção visível para saber para onde voltar
+  if(document.getElementById('results').style.display==='block') _tutorialFrom='results';
+  else if(document.getElementById('formWrap').style.display==='block') _tutorialFrom='form';
+  else if(document.getElementById('dashboard').style.display==='block') _tutorialFrom='dashboard';
+  else _tutorialFrom='start';
+
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('formWrap').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('dashboard').style.display='none';
+
+  const tut=document.getElementById('tutorial');
+  tut.style.display='block';
+
+  // Gera a data de atualização do sistema a partir de constantes-chave
+  const sysVersion=`PLANO_ANUAL=${PLANO_ANUAL} | STEPS=${STEPS.length} | TOOLS=${TOOLS_DEF.length} | CHAL=${Object.keys(CHAL_LABELS).length}`;
+
+  // Constrói as etapas dinamicamente de STEPS
+  const stepsHtml=STEPS.map((s,i)=>`
+    <div class="tut-step">
+      <div class="tut-step-num">${s.tag}</div>
+      <div class="tut-step-ttl">${s.title}</div>
+      <div class="tut-step-desc">${s.desc}</div>
+    </div>`).join('');
+
+  // Ferramentas de TOOLS_DEF
+  const toolsHtml=TOOLS_DEF.map(t=>`<div class="tut-tool">${t.l}</div>`).join('');
+
+  // Desafios de CHAL_LABELS
+  const chalsHtml=Object.values(CHAL_LABELS).map(l=>`<div class="tut-chal">${l}</div>`).join('');
+
+  // Relatórios de RPT_LABELS
+  const rptsHtml=Object.values(RPT_LABELS).map(l=>`<li style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.7;list-style:disc;margin-left:14px">${l}</li>`).join('');
+
+  // Cargos de CARGOS_CANAL
+  const cargosHtml=CARGOS_CANAL.map(c=>`<div class="tut-chal">${c.nome} <span style="color:var(--mu);font-size:10px">(Nível ${c.nivel})</span></div>`).join('');
+
+  // Seções do relatório (fixas mas com valores dinâmicos onde aplicável)
+  const reportSections=[
+    ['Resumo Executivo','KPIs: VGV atual, meta, taxa de engajamento, corretores a ativar. Responsável, canais, badges de contexto e parágrafo de diagnóstico.','Leitura rápida do estado do canal. Os 4 KPIs do topo são o resumo da situação.'],
+    ['1 · Taxa de Engajamento (TE)','Fórmula: TE = (ativos / total) × 100. Classifica o canal em Crítica (<15%), Regular (15–30%) ou Boa (>30%).','Termômetro central do canal. Quanto menor, maior o desperdício de base.'],
+    ['2 · Delta de Corretores/M (DC)','DC = ativos / (VGV / 1M). Indica quantos corretores são necessários por R$ 1 milhão em VGV.','Índice de produtividade. O inverso é o VGV médio por corretor ativo — base do ROI.'],
+    ['3 · Corretores para a Meta (NC)','NC = (meta / 1M) × DC. Número exato de ativos necessários para atingir o VGV meta.','A diferença entre NC e ativos atuais é a meta de ativação da DWV.'],
+    ['4 · 3 Rotas Estratégicas','Rota A: aumentar TE. Rota B: crescer a base. Rota C: aumentar produtividade por corretor.','Apresenta os 3 caminhos com valores numéricos. A Rota A é sempre o foco da DWV.'],
+    ['5 · Organograma e Fluxos','Mapa visual do canal sem DWV vs. com DWV. Inclui KPIs por cargo, fluxo de vendas e entregas DWV por nível.','Regra de cascata: entregas sobem para o nível disponível (Diretor → Gerente → Responsável).'],
+    ['6 · Tecnologia e Ferramentas','Lista as ferramentas em uso, custo anual total e quantas a DWV substitui.','Custo zero = DWV será a primeira plataforma. Custo baixo = argumento de produtividade. Custo alto = argumento de economia.'],
+    ['7 · Indicadores Operacionais','Corretores/executivo, custo/corretor ativo, ociosidade, unidades para meta, empreendimentos, propostas/fechamentos, eventos.','Seis métricas que traduzem a operação do canal em números concretos.'],
+    ['8 · Retorno sobre Investimento','Plano DWV ('+new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2}).format(PLANO_ANUAL)+'/ano), ponto de equilíbrio em corretores, retorno total se meta atingida.','Com 1 corretor ativado o plano já se paga. Argumento central de fechamento.'],
+    ['9 · Dores, Segmentação e Relatórios','Desafios declarados com contexto, nível de segmentação atual, relatórios desejados e ações já testadas.','Personaliza a proposta. Mostrar que a DWV entrega exatamente os relatórios pedidos é altamente convincente.'],
+  ];
+  const reportHtml=reportSections.map(([title,desc,tip])=>`
+    <div class="tut-rpt-row">
+      <div class="tut-rpt-hdr"><span>${title}</span></div>
+      <div class="tut-rpt-body">
+        <div style="margin-bottom:6px">${desc}</div>
+        <div style="padding:7px 10px;background:rgba(58,184,122,0.06);border:.5px solid rgba(58,184,122,0.15);border-radius:6px;font-size:11px;color:rgba(255,255,255,0.55)">💡 ${tip}</div>
+      </div>
+    </div>`).join('');
+
+  tut.innerHTML=`
+    <div class="tut-hdr">
+      <div>
+        <div class="tut-title">Tutorial · Diagnóstico Comercial DWV</div>
+        <div class="tut-sub">Fórmula de Aceleração · Canal de Parcerias</div>
+      </div>
+      <button class="bto" onclick="_backFromTutorial()">← Voltar</button>
+    </div>
+
+    <div class="tut-toc">
+      <div class="tut-toc-title">Conteúdo</div>
+      <ul class="tut-toc-list">
+        <li><a href="#t1"><span class="tut-toc-num">01</span> O que é o Diagnóstico</a></li>
+        <li><a href="#t2"><span class="tut-toc-num">02</span> As ${STEPS.length} etapas do formulário</a></li>
+        <li><a href="#t3"><span class="tut-toc-num">03</span> Fórmula de Aceleração</a></li>
+        <li><a href="#t4"><span class="tut-toc-num">04</span> As ${reportSections.length} seções do relatório</a></li>
+        <li><a href="#t5"><span class="tut-toc-num">05</span> Ferramentas e desafios mapeados</a></li>
+        <li><a href="#t6"><span class="tut-toc-num">06</span> Plano DWV e ROI</a></li>
+        <li><a href="#t7"><span class="tut-toc-num">07</span> Exportação e fluxo pós-diagnóstico</a></li>
+        <li><a href="#t8"><span class="tut-toc-num">08</span> Checklist do consultor</a></li>
+      </ul>
+    </div>
+
+    <!-- 01 -->
+    <a class="tut-sec-anchor" id="t1"></a>
+    <div class="tut-sec">
+      <div class="tut-sec-hdr">
+        <div class="tut-sec-num">01</div>
+        <div><div class="tut-sec-ttl">O que é o Diagnóstico Comercial</div><div class="tut-sec-desc">Propósito, escopo e o que o sistema entrega.</div></div>
+      </div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.75;margin-bottom:12px">
+        O <strong>Diagnóstico Comercial DWV</strong> mapeia em profundidade o Canal de Parcerias de uma incorporadora — identificando gaps de engajamento, calculando o potencial de crescimento e apresentando as <strong>3 rotas estratégicas</strong> para atingir as metas de VGV. É a ferramenta de entrada da Operadora DWV no processo comercial.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px">
+        <div style="background:var(--s);border:.5px solid var(--b);border-radius:10px;padding:14px">
+          <div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Quem aplica</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.8)">Equipe DWV em processo de prospecção ou onboarding de nova incorporadora</div>
+        </div>
+        <div style="background:var(--s);border:.5px solid var(--b);border-radius:10px;padding:14px">
+          <div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Quem responde</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.8)">Diretor ou Gerente de Parcerias da incorporadora, em reunião presencial ou remota</div>
+        </div>
+      </div>
+      <div class="tut-callout amber">
+        <strong>Modo Simulação:</strong> use para demonstrações, treinamento interno e apresentações. Diagnósticos de simulação ficam separados dos reais no Dashboard e identificados visualmente.
+      </div>
+    </div>
+
+    <hr class="tut-divider"/>
+
+    <!-- 02 -->
+    <a class="tut-sec-anchor" id="t2"></a>
+    <div class="tut-sec">
+      <div class="tut-sec-hdr">
+        <div class="tut-sec-num">02</div>
+        <div><div class="tut-sec-ttl">As ${STEPS.length} etapas do formulário</div><div class="tut-sec-desc">Progressivo — só avança quando os campos obrigatórios estão preenchidos.</div></div>
+      </div>
+      <div class="tut-steps">${stepsHtml}</div>
+      <div class="tut-callout blue">
+        <strong>Tempo estimado:</strong> 30–45 minutos. Campos com <span style="color:var(--red)">*</span> são obrigatórios. O relatório é gerado automaticamente ao concluir a etapa ${STEPS.length}.
+      </div>
+    </div>
+
+    <hr class="tut-divider"/>
+
+    <!-- 03 -->
+    <a class="tut-sec-anchor" id="t3"></a>
+    <div class="tut-sec">
+      <div class="tut-sec-hdr">
+        <div class="tut-sec-num">03</div>
+        <div><div class="tut-sec-ttl">Fórmula de Aceleração — as 3 métricas</div><div class="tut-sec-desc">Todo o diagnóstico é construído sobre três métricas interdependentes.</div></div>
+      </div>
+
+      <div class="tut-metric">
+        <div class="tut-metric-name">① Taxa de Engajamento (TE) <span class="tut-tag r">Principal</span></div>
+        <div class="tut-formula">TE = (Corretores ativos / Total de corretores) × 100</div>
+        <div class="tut-metric-desc">Percentual da base que realizou pelo menos uma venda nos últimos 12 meses. Termômetro central do canal.</div>
+        <div class="tut-levels">
+          <div class="tut-lp r">Crítica — abaixo de 15%</div>
+          <div class="tut-lp a">Regular — 15% a 30%</div>
+          <div class="tut-lp g">Boa — acima de 30%</div>
+        </div>
+        <div class="tut-metric-ex"><strong style="color:var(--gr)">Exemplo:</strong> 58 ativos / 420 total × 100 = <strong style="color:var(--gr)">13,8% → Crítica</strong></div>
+      </div>
+
+      <div class="tut-metric">
+        <div class="tut-metric-name">② Delta de Corretores/M (DC) <span class="tut-tag a">Produtividade</span></div>
+        <div class="tut-formula">DC = Corretores ativos / (VGV atual / R$ 1.000.000)</div>
+        <div class="tut-metric-desc">Corretores necessários para gerar R$ 1M em VGV. O inverso (1/DC) é o VGV médio por corretor ativo — base do cálculo de ROI.</div>
+        <div class="tut-metric-ex"><strong style="color:var(--gr)">Exemplo:</strong> 58 / (48M / 1M) = <strong style="color:var(--gr)">1,21 corr/M → R$ 827.586/corretor</strong></div>
+      </div>
+
+      <div class="tut-metric">
+        <div class="tut-metric-name">③ Corretores para a Meta (NC) <span class="tut-tag g">Meta</span></div>
+        <div class="tut-formula">NC = (VGV meta / R$ 1.000.000) × DC atual</div>
+        <div class="tut-metric-desc">Quantos corretores ativos são necessários para atingir a meta de VGV. A diferença entre NC e ativos atuais é a meta de ativação da DWV.</div>
+        <div class="tut-metric-ex"><strong style="color:var(--gr)">Exemplo:</strong> (80M / 1M) × 1,21 = <strong style="color:var(--gr)">97 necessários → ativar mais 39</strong></div>
+      </div>
+    </div>
+
+    <hr class="tut-divider"/>
+
+    <!-- 04 -->
+    <a class="tut-sec-anchor" id="t4"></a>
+    <div class="tut-sec">
+      <div class="tut-sec-hdr">
+        <div class="tut-sec-num">04</div>
+        <div><div class="tut-sec-ttl">As ${reportSections.length} seções do relatório</div><div class="tut-sec-desc">Geradas automaticamente ao concluir o formulário. Cada seção e o que observar.</div></div>
+      </div>
+      ${reportHtml}
+    </div>
+
+    <hr class="tut-divider"/>
+
+    <!-- 05 -->
+    <a class="tut-sec-anchor" id="t5"></a>
+    <div class="tut-sec">
+      <div class="tut-sec-hdr">
+        <div class="tut-sec-num">05</div>
+        <div><div class="tut-sec-ttl">Ferramentas e desafios mapeados</div><div class="tut-sec-desc">Opções disponíveis no formulário — ${TOOLS_DEF.length} ferramentas e ${Object.keys(CHAL_LABELS).length} desafios.</div></div>
+      </div>
+
+      <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">${TOOLS_DEF.length} ferramentas disponíveis</div>
+      <div class="tut-tools">${toolsHtml}</div>
+
+      <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin:14px 0 8px">${Object.keys(CHAL_LABELS).length} desafios mapeados</div>
+      <div class="tut-chals">${chalsHtml}</div>
+
+      <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin:14px 0 8px">${Object.keys(RPT_LABELS).length} relatórios desejados</div>
+      <ul style="padding:0;margin:0">${rptsHtml}</ul>
+
+      <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin:14px 0 8px">${CARGOS_CANAL.length} cargos do canal</div>
+      <div class="tut-chals">${cargosHtml}</div>
+    </div>
+
+    <hr class="tut-divider"/>
+
+    <!-- 06 -->
+    <a class="tut-sec-anchor" id="t6"></a>
+    <div class="tut-sec">
+      <div class="tut-sec-hdr">
+        <div class="tut-sec-num">06</div>
+        <div><div class="tut-sec-ttl">Plano DWV e ROI</div><div class="tut-sec-desc">Os números do contrato usados no diagnóstico.</div></div>
+      </div>
+      <div class="tut-roi">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div>
+            <div style="font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Plano anual</div>
+            <div style="font-size:22px;font-weight:600">${new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2}).format(PLANO_ANUAL)}</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Mensalidade</div>
+            <div style="font-size:22px;font-weight:600">${new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2}).format(PLANO_MENSAL)}/mês</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6">
+          O diagnóstico calcula automaticamente o <strong style="color:#fff">ponto de equilíbrio</strong> (quantos corretores mínimos para pagar o plano) e o <strong style="color:#fff">retorno total</strong> se a meta de ativação for atingida. Com 1 corretor ativado pela DWV gerando a produtividade média do canal, o plano anual já se paga.
+        </div>
+      </div>
+      <div class="tut-callout amber">
+        <strong>Lógica condicional de custo de ferramentas:</strong><br/>
+        Custo zero → "DWV será a primeira plataforma integrada"<br/>
+        Custo até R$ 5.000/ano → argumento de produtividade<br/>
+        Custo acima de R$ 5.000/ano → projeção de redução de custo por corretor ativo
+      </div>
+    </div>
+
+    <hr class="tut-divider"/>
+
+    <!-- 07 -->
+    <a class="tut-sec-anchor" id="t7"></a>
+    <div class="tut-sec">
+      <div class="tut-sec-hdr">
+        <div class="tut-sec-num">07</div>
+        <div><div class="tut-sec-ttl">Exportação e fluxo pós-diagnóstico</div><div class="tut-sec-desc">O que fazer após concluir o formulário.</div></div>
+      </div>
+      <div class="tut-steps">
+        <div class="tut-step">
+          <div class="tut-step-num">Exportação</div>
+          <div class="tut-step-ttl">⬇ Baixar PDF</div>
+          <div class="tut-step-desc">Gera documento completo formatado para envio ao cliente. Inclui todas as seções do relatório.</div>
+        </div>
+        <div class="tut-step">
+          <div class="tut-step-num">Exportação</div>
+          <div class="tut-step-ttl">Copiar para Pipefy</div>
+          <div class="tut-step-desc">Copia todos os dados em texto formatado para colar no card do cliente no CRM interno.</div>
+        </div>
+        <div class="tut-step">
+          <div class="tut-step-num">Histórico</div>
+          <div class="tut-step-ttl">Dashboard</div>
+          <div class="tut-step-desc">Todos os diagnósticos ficam salvos. Reais e simulações separados em colunas.</div>
+        </div>
+      </div>
+      <div class="tut-callout green">
+        <strong>Fluxo recomendado:</strong> 1. Gerar PDF e enviar ao cliente · 2. Copiar para o Pipefy · 3. Usar ROI como base da proposta comercial formal
+      </div>
+    </div>
+
+    <hr class="tut-divider"/>
+
+    <!-- 08 -->
+    <a class="tut-sec-anchor" id="t8"></a>
+    <div class="tut-sec">
+      <div class="tut-sec-hdr">
+        <div class="tut-sec-num">08</div>
+        <div><div class="tut-sec-ttl">Checklist do consultor</div><div class="tut-sec-desc">O que confirmar antes de encerrar o diagnóstico.</div></div>
+      </div>
+      <div class="tut-checklist">
+        <div class="tut-check-item">TE identificada e classificada (Crítica / Regular / Boa)</div>
+        <div class="tut-check-item">Número exato de corretores a ativar calculado (NC − ativos)</div>
+        <div class="tut-check-item">Ponto de equilíbrio ROI comunicado ao cliente</div>
+        <div class="tut-check-item">Organograma mapeado com cargos, KPIs e atividades preenchidos</div>
+        <div class="tut-check-item">Ferramentas selecionadas com custos informados</div>
+        <div class="tut-check-item">Desafios e relatórios desejados registrados</div>
+        <div class="tut-check-item">PDF gerado e enviado ao cliente</div>
+        <div class="tut-check-item">Dados copiados para o Pipefy</div>
+        <div class="tut-check-item">Diagnóstico salvo e visível no Dashboard</div>
+      </div>
+      <div class="tut-callout red">
+        <strong>Sinais de alerta:</strong>
+        TE abaixo de 10% = canal em colapso · Sem nenhum cargo de execução = estrutura mínima · Sem CRM algum = processo 100% manual · "Não bate metas" + TE crítica = urgência alta
+      </div>
+    </div>
+
+    <div style="margin-top:40px;padding-top:16px;border-top:.5px solid var(--b);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div style="font-size:11px;color:var(--mu)">DWV · Tutorial · versão sincronizada com o sistema</div>
+      <button class="bto" onclick="_backFromTutorial()">← Voltar</button>
+    </div>
+  `;
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function _backFromTutorial(){
+  document.getElementById('tutorial').style.display='none';
+  if(_tutorialFrom==='results'){document.getElementById('results').style.display='block';}
+  else if(_tutorialFrom==='form'){document.getElementById('formWrap').style.display='block';}
+  else if(_tutorialFrom==='dashboard'){document.getElementById('dashboard').style.display='block';}
+  else{showStart();}
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // ── INIT ──────────────────────────────────────────────────────
