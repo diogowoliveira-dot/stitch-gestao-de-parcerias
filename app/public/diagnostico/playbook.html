@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>DWV · Playbook — Diagnóstico Comercial</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;min-height:100vh;line-height:1.6}
+:root{--red:#E8392A;--rd:#b02d20;--rf:rgba(232,57,42,0.10);--b:rgba(255,255,255,0.10);--s:#111;--s2:#181818;--mu:rgba(255,255,255,0.45);--gr:#3ab87a;--am:#e0a020}
+
+/* LAYOUT */
+.wrap{max-width:900px;margin:0 auto;padding:40px 24px 100px}
+
+/* HEADER */
+.pb-hdr{display:flex;align-items:center;gap:16px;margin-bottom:48px;padding-bottom:24px;border-bottom:.5px solid var(--b)}
+.logo{width:44px;height:44px;background:var(--red);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pb-title{font-size:26px;font-weight:600;letter-spacing:-.01em}
+.pb-sub{font-size:13px;color:var(--mu);margin-top:3px}
+
+/* TOC */
+.toc{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:22px 26px;margin-bottom:48px}
+.toc-title{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:14px;font-weight:600}
+.toc-list{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.toc-list li a{font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;display:flex;align-items:center;gap:8px}
+.toc-list li a:hover{color:#fff}
+.toc-num{font-size:11px;color:var(--red);font-weight:600;min-width:18px}
+
+/* SECTIONS */
+.pb-section{margin-bottom:60px}
+.pb-section-anchor{display:block;height:0;margin-top:-20px;padding-top:20px}
+.sec-hdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+.sec-num{width:36px;height:36px;background:var(--rf);border:.5px solid rgba(232,57,42,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--red);flex-shrink:0;margin-top:2px}
+.sec-ttl{font-size:21px;font-weight:600;letter-spacing:-.01em}
+.sec-desc{font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px;line-height:1.6}
+
+/* CALLOUT */
+.callout{border-radius:12px;padding:16px 20px;margin:16px 0;font-size:13px;line-height:1.7}
+.callout.blue{background:rgba(59,130,246,0.08);border:.5px solid rgba(59,130,246,0.2);color:rgba(255,255,255,0.8)}
+.callout.green{background:rgba(58,184,122,0.08);border:.5px solid rgba(58,184,122,0.2);color:rgba(255,255,255,0.8)}
+.callout.amber{background:rgba(224,160,32,0.08);border:.5px solid rgba(224,160,32,0.2);color:rgba(255,255,255,0.8)}
+.callout.red{background:var(--rf);border:.5px solid rgba(232,57,42,0.2);color:rgba(255,255,255,0.8)}
+.callout strong{color:#fff}
+
+/* STEP CARDS */
+.steps-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0}
+.step-card{background:var(--s);border:.5px solid var(--b);border-radius:12px;padding:16px}
+.step-num{font-size:10px;color:var(--red);letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.step-ttl{font-size:14px;font-weight:600;margin-bottom:6px}
+.step-desc{font-size:12px;color:var(--mu);line-height:1.55}
+.step-fields{margin-top:10px;display:flex;flex-direction:column;gap:4px}
+.step-field{font-size:11px;color:rgba(255,255,255,0.6);padding:4px 8px;background:rgba(255,255,255,0.04);border-radius:5px;display:flex;align-items:center;gap:6px}
+.step-field::before{content:'›';color:var(--red);font-weight:700}
+
+/* SCREEN MOCK */
+.screen{background:#0d0d0d;border:.5px solid var(--b);border-radius:14px;overflow:hidden;margin:16px 0}
+.screen-bar{background:#161616;padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:.5px solid var(--b)}
+.dot{width:8px;height:8px;border-radius:50%}
+.d-r{background:#f45;}.d-y{background:#f90;}.d-g{background:#2e9;}
+.screen-url{font-size:11px;color:var(--mu);margin-left:8px;font-family:monospace}
+.screen-body{padding:20px}
+
+/* KPI ROW */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.kpi{background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:12px 14px}
+.kl{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.kv{font-size:18px;font-weight:600}
+.kv.r{color:var(--red)}.kv.g{color:var(--gr)}.kv.a{color:var(--am)}
+.ks{font-size:10px;color:var(--mu);margin-top:2px}
+
+/* FORMULA BOX */
+.formula{background:#090909;border:.5px solid rgba(255,255,255,0.06);border-radius:8px;padding:10px 16px;font-size:13px;font-family:monospace;color:rgba(255,255,255,0.7);margin:8px 0 12px}
+
+/* METRIC CARDS */
+.metric-card{background:var(--s);border:.5px solid var(--b);border-radius:12px;padding:18px 20px;margin:10px 0}
+.metric-name{font-size:15px;font-weight:600;margin-bottom:6px}
+.metric-formula{font-size:12px;font-family:monospace;color:var(--red);margin-bottom:8px;padding:6px 10px;background:rgba(232,57,42,0.06);border-radius:6px}
+.metric-desc{font-size:13px;color:rgba(255,255,255,0.75);line-height:1.65}
+.metric-example{margin-top:10px;padding:10px 12px;background:rgba(58,184,122,0.06);border:.5px solid rgba(58,184,122,0.15);border-radius:8px;font-size:12px;color:rgba(255,255,255,0.7)}
+.metric-example strong{color:var(--gr)}
+
+/* LEVEL PILLS */
+.level-row{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.level-pill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500}
+.lp-red{background:rgba(232,57,42,0.12);border:.5px solid rgba(232,57,42,0.3);color:var(--red)}
+.lp-am{background:rgba(224,160,32,0.12);border:.5px solid rgba(224,160,32,0.3);color:var(--am)}
+.lp-gr{background:rgba(58,184,122,0.12);border:.5px solid rgba(58,184,122,0.3);color:var(--gr)}
+
+/* ROUTES */
+.routes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+.rc{background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px}
+.rcn{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-bottom:6px}
+.rct{font-size:13px;font-weight:600;margin-bottom:4px}
+.rcv{font-size:20px;font-weight:600;color:var(--red);margin-bottom:4px}
+.rcd{font-size:11px;color:var(--mu);line-height:1.5}
+
+/* ORG */
+.org-demo{background:var(--s);border:.5px solid var(--b);border-radius:12px;padding:18px;margin:12px 0}
+.org-lev{margin-bottom:8px}
+.org-lab{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.org-boxes{display:flex;flex-wrap:wrap;gap:6px}
+.ob{background:var(--s2);border:.5px solid var(--b);border-radius:7px;padding:5px 12px;font-size:12px;color:rgba(255,255,255,0.8)}
+.ob.hi{border-color:rgba(232,57,42,0.4);color:var(--red)}
+.ob.gn{border-color:rgba(58,184,122,0.4);color:var(--gr)}
+.ob.go{border-color:rgba(212,168,0,0.5);color:#d4a800}
+.ob.si{border-color:rgba(170,170,170,0.4);color:#aaa}
+.ob.br{border-color:rgba(180,120,60,0.4);color:#b47830}
+.org-arr{color:var(--mu);font-size:12px;margin:2px 0 2px 5px}
+
+/* INDICATOR GRID */
+.ind-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+.ind-card{background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center}
+.ind-lbl{font-size:10px;color:var(--mu);margin-bottom:6px}
+.ind-val{font-size:24px;font-weight:600}
+.ind-sub{font-size:10px;color:var(--mu);margin-top:4px}
+
+/* ROI SECTION */
+.roi-box{background:rgba(58,184,122,0.06);border:.5px solid rgba(58,184,122,0.2);border-radius:12px;padding:18px 20px;margin:12px 0}
+.roi-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+.roi-card{background:var(--s2);border:.5px solid var(--b);border-radius:10px;padding:14px;text-align:center}
+.roi-lbl{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.roi-val{font-size:22px;font-weight:600}
+
+/* BADGES */
+.badge-row{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.badge{font-size:12px;padding:4px 11px;border-radius:20px;background:rgba(255,255,255,0.06);border:.5px solid var(--b);color:rgba(255,255,255,0.7)}
+.badge.hi{background:var(--rf);border-color:rgba(232,57,42,0.3);color:var(--red)}
+.badge.gn{background:rgba(58,184,122,0.08);border-color:rgba(58,184,122,0.25);color:var(--gr)}
+
+/* DIVIDER */
+.divider{border:none;border-top:.5px solid var(--b);margin:40px 0}
+
+/* TAG */
+.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.tag.r{background:var(--rf);color:var(--red)}
+.tag.g{background:rgba(58,184,122,0.1);color:var(--gr)}
+.tag.a{background:rgba(224,160,32,0.1);color:var(--am)}
+
+/* DETAIL LIST */
+.detail-list{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.dl-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--s);border:.5px solid var(--b);border-radius:9px}
+.dl-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.dl-body{}
+.dl-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.dl-desc{font-size:12px;color:rgba(255,255,255,0.6);line-height:1.55}
+
+/* SECTION REPORT PREVIEW */
+.rpt-section{border:.5px solid var(--b);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.rpt-hdr{padding:13px 18px;background:var(--s);display:flex;justify-content:space-between;align-items:center}
+.rpt-hdr h4{font-size:13px;font-weight:500}
+.rpt-body{padding:16px 18px;background:#0d0d0d;border-top:.5px solid var(--b)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}
+.tbl th{text-align:left;padding:8px 10px;border-bottom:.5px solid var(--b);font-size:10px;color:var(--mu);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.tbl td{padding:8px 10px;border-bottom:.5px solid rgba(255,255,255,0.04);vertical-align:top;color:rgba(255,255,255,0.82)}
+.tbl tr:last-child td{border-bottom:none}
+
+@media(max-width:640px){
+  .steps-grid,.routes,.kpis,.ind-grid,.roi-grid,.toc-list{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="pb-hdr">
+  <div class="logo">
+    <svg viewBox="0 0 22 22" fill="none" width="22" height="22">
+      <rect x="2" y="2" width="18" height="18" rx="4" fill="white" opacity=".15"/>
+      <circle cx="7" cy="7" r="2" fill="white"/>
+      <circle cx="11" cy="11" r="2" fill="white"/>
+      <circle cx="15" cy="15" r="2" fill="white"/>
+    </svg>
+  </div>
+  <div>
+    <div class="pb-title">Playbook · Diagnóstico Comercial DWV</div>
+    <div class="pb-sub">Guia completo de utilização — Fórmula de Aceleração · Canal de Parcerias</div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">Conteúdo</div>
+  <ul class="toc-list">
+    <li><a href="#s1"><span class="toc-num">01</span> O que é o Diagnóstico</a></li>
+    <li><a href="#s2"><span class="toc-num">02</span> Para quem é e quando usar</a></li>
+    <li><a href="#s3"><span class="toc-num">03</span> As 6 etapas do formulário</a></li>
+    <li><a href="#s4"><span class="toc-num">04</span> Fórmula de Aceleração — métricas</a></li>
+    <li><a href="#s5"><span class="toc-num">05</span> Relatório: seções 1–4</a></li>
+    <li><a href="#s6"><span class="toc-num">06</span> Relatório: seção 5 — Organograma</a></li>
+    <li><a href="#s7"><span class="toc-num">07</span> Relatório: seções 6–7 — Ferramentas e Indicadores</a></li>
+    <li><a href="#s8"><span class="toc-num">08</span> Relatório: seção 8 — ROI</a></li>
+    <li><a href="#s9"><span class="toc-num">09</span> Relatório: seção 9 — Dores e Contexto</a></li>
+    <li><a href="#s10"><span class="toc-num">10</span> Exportação: PDF e Pipefy</a></li>
+    <li><a href="#s11"><span class="toc-num">11</span> Interpretação e próximos passos</a></li>
+  </ul>
+</div>
+
+<!-- ── 01 ─────────────────────────────────────────── -->
+<a class="pb-section-anchor" id="s1"></a>
+<div class="pb-section">
+  <div class="sec-hdr">
+    <div class="sec-num">01</div>
+    <div><div class="sec-ttl">O que é o Diagnóstico Comercial DWV</div>
+    <div class="sec-desc">Entenda o propósito, o escopo e o que o diagnóstico entrega.</div></div>
+  </div>
+
+  <p style="font-size:14px;color:rgba(255,255,255,0.8);line-height:1.75;margin-bottom:16px">
+    O <strong>Diagnóstico Comercial DWV</strong> é a ferramenta de entrada da Operadora DWV no processo de parceria com uma incorporadora. Ele mapeia em profundidade o <strong>Canal de Parcerias</strong> — a estrutura que conecta a incorporadora aos corretores externos — para identificar gaps de engajamento, calcular o potencial de crescimento e apresentar as <strong>3 rotas estratégicas</strong> para atingir as metas de VGV.
+  </p>
+
+  <div class="callout blue">
+    <strong>Em uma frase:</strong> o diagnóstico transforma dados brutos da incorporadora (corretores, VGV, equipe, ferramentas) em inteligência acionável — e em uma proposta comercial fundamentada em números reais.
+  </div>
+
+  <div class="detail-list" style="margin-top:20px">
+    <div class="dl-item">
+      <div class="dl-icon">📊</div>
+      <div class="dl-body"><div class="dl-title">Calcula a Taxa de Engajamento (TE)</div><div class="dl-desc">Percentual da base de corretores que efetivamente vendeu nos últimos 12 meses — o indicador central do canal.</div></div>
+    </div>
+    <div class="dl-item">
+      <div class="dl-icon">🎯</div>
+      <div class="dl-body"><div class="dl-title">Identifica o gap de corretores para a meta</div><div class="dl-desc">Calcula exatamente quantos corretores adicionais precisam ser ativados para atingir o VGV desejado.</div></div>
+    </div>
+    <div class="dl-item">
+      <div class="dl-icon">🗺️</div>
+      <div class="dl-body"><div class="dl-title">Apresenta 3 rotas estratégicas</div><div class="dl-desc">Aumentar engajamento, crescer a base ou aumentar produtividade — com valores numéricos precisos para cada caminho.</div></div>
+    </div>
+    <div class="dl-item">
+      <div class="dl-icon">💰</div>
+      <div class="dl-body"><div class="dl-title">Calcula o ROI do contrato DWV</div><div class="dl-desc">Mostra quantos corretores mínimos precisam ser ativados para o plano se pagar — e o retorno total se a meta for atingida.</div></div>
+    </div>
+    <div class="dl-item">
+      <div class="dl-icon">🏗️</div>
+      <div class="dl-body"><div class="dl-title">Mapeia organograma e ferramentas</div><div class="dl-desc">Documenta a estrutura de cargos do canal e as ferramentas em uso — base para o plano de implementação DWV.</div></div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ── 02 ─────────────────────────────────────────── -->
+<a class="pb-section-anchor" id="s2"></a>
+<div class="pb-section">
+  <div class="sec-hdr">
+    <div class="sec-num">02</div>
+    <div><div class="sec-ttl">Para quem é e quando usar</div>
+    <div class="sec-desc">Contexto de aplicação do diagnóstico.</div></div>
+  </div>
+
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">Quem aplica</div>
+      <div class="step-ttl">Equipe DWV</div>
+      <div class="step-desc">Consultores e executivos da Operadora DWV que estão em processo de prospecção ou onboarding de uma nova incorporadora parceira.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Quem responde</div>
+      <div class="step-ttl">Incorporadora</div>
+      <div class="step-desc">Diretor ou Gerente de Parcerias, ou quem for responsável pelo Canal de Parcerias na incorporadora. Pode ser aplicado em reunião presencial ou remota.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Quando usar</div>
+      <div class="step-ttl">Pré-contrato</div>
+      <div class="step-desc">Antes da assinatura do contrato — o diagnóstico é a base da proposta comercial. Pode ser refeito anualmente para acompanhar a evolução.</div>
+    </div>
+  </div>
+
+  <div class="callout amber" style="margin-top:16px">
+    <strong>Modo Simulação:</strong> o sistema permite criar diagnósticos com dados fictícios para fins de demonstração, treinamento interno ou apresentações. Diagnósticos de simulação ficam identificados visualmente e separados dos diagnósticos reais no Dashboard.
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ── 03 ─────────────────────────────────────────── -->
+<a class="pb-section-anchor" id="s3"></a>
+<div class="pb-section">
+  <div class="sec-hdr">
+    <div class="sec-num">03</div>
+    <div><div class="sec-ttl">As 6 etapas do formulário</div>
+    <div class="sec-desc">Cada etapa coleta um bloco de informações específico. O formulário é progressivo — só avança quando os dados obrigatórios estão preenchidos.</div></div>
+  </div>
+
+  <!-- Tela simulada do formulário -->
+  <div class="screen">
+    <div class="screen-bar"><div class="dot d-r"></div><div class="dot d-y"></div><div class="dot d-g"></div><span class="screen-url">dwvapp.com.br/diagnostico/form/</span></div>
+    <div class="screen-body">
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <div style="background:var(--red);border-radius:5px;padding:4px 10px;font-size:11px;font-weight:600">1</div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:5px;padding:4px 10px;font-size:11px;color:var(--mu)">2</div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:5px;padding:4px 10px;font-size:11px;color:var(--mu)">3</div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:5px;padding:4px 10px;font-size:11px;color:var(--mu)">4</div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:5px;padding:4px 10px;font-size:11px;color:var(--mu)">5</div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:5px;padding:4px 10px;font-size:11px;color:var(--mu)">6</div>
+      </div>
+      <div style="font-size:11px;color:var(--red);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Etapa 1 de 6</div>
+      <div style="font-size:18px;font-weight:600;margin-bottom:4px">Dados da Incorporadora</div>
+      <div style="font-size:13px;color:var(--mu);margin-bottom:16px">Empresa, responsável e localização.</div>
+      <div style="background:var(--s);border:.5px solid var(--b);border-radius:8px;padding:10px 14px;font-size:12px;color:rgba(255,255,255,0.6)">Nome da Incorporadora *</div>
+    </div>
+  </div>
+
+  <div class="steps-grid" style="margin-top:20px">
+    <div class="step-card">
+      <div class="step-num">Etapa 1 de 6</div>
+      <div class="step-ttl">Dados da Incorporadora</div>
+      <div class="step-desc">Identificação da empresa e do responsável pelo canal de parcerias.</div>
+      <div class="step-fields">
+        <div class="step-field">Nome da incorporadora</div>
+        <div class="step-field">Responsável + cargo</div>
+        <div class="step-field">Cidade e estado</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Etapa 2 de 6</div>
+      <div class="step-ttl">Histórico de Vendas</div>
+      <div class="step-desc">VGV realizado, metas e portfólio ativo de empreendimentos.</div>
+      <div class="step-fields">
+        <div class="step-field">VGV últimos 12 meses *</div>
+        <div class="step-field">Meta de VGV *</div>
+        <div class="step-field">Ticket médio por unidade</div>
+        <div class="step-field">Empreendimentos ativos</div>
+        <div class="step-field">Pré-lançamento / Lançamento / Estoque</div>
+        <div class="step-field">Foco de vendas atual</div>
+        <div class="step-field">Imóveis à venda / Propostas / Fechamentos</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Etapa 3 de 6</div>
+      <div class="step-ttl">Estrutura Comercial</div>
+      <div class="step-desc">Equipe, canais ativos, imobiliárias e organograma do canal.</div>
+      <div class="step-fields">
+        <div class="step-field">Total de corretores na base *</div>
+        <div class="step-field">Corretores que venderam (12m) *</div>
+        <div class="step-field">Exclusividade dos corretores</div>
+        <div class="step-field">Canais: House / Parcerias / Imobiliárias</div>
+        <div class="step-field">% VGV por canal</div>
+        <div class="step-field">Cargos: Diretor / Gerente / Mkt / Exec.</div>
+        <div class="step-field">KPI e atividades por cargo</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Etapa 4 de 6</div>
+      <div class="step-ttl">Tecnologia e Ferramentas</div>
+      <div class="step-desc">Ferramentas em uso no canal de parceiros e seus custos mensais.</div>
+      <div class="step-fields">
+        <div class="step-field">CRM voltado para parceiros?</div>
+        <div class="step-field">13 ferramentas disponíveis</div>
+        <div class="step-field">Custo mensal por ferramenta</div>
+        <div class="step-field">CRM de contratos (qual?)</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Etapa 5 de 6</div>
+      <div class="step-ttl">Dores e Desafios</div>
+      <div class="step-desc">Obstáculos do canal, segmentação, relatórios desejados e contexto competitivo.</div>
+      <div class="step-fields">
+        <div class="step-field">Está batendo metas de VGV?</div>
+        <div class="step-field">Principais desafios (9 opções)</div>
+        <div class="step-field">Segmentação de corretores</div>
+        <div class="step-field">Relatórios desejados (3 opções)</div>
+        <div class="step-field">Ações já testadas</div>
+        <div class="step-field">Eventos e treinamentos</div>
+        <div class="step-field">Programa de incentivo</div>
+        <div class="step-field">Principal concorrente na região</div>
+        <div class="step-field">Expectativa com a DWV em 12 meses</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Etapa 6 de 6</div>
+      <div class="step-ttl">Tabela Zero</div>
+      <div class="step-desc">Estratégia de pré-lançamento e quem tem acesso antecipado ao produto.</div>
+      <div class="step-fields">
+        <div class="step-field">Usa Tabela Zero (pré-lançamento)?</div>
+        <div class="step-field">Quem tem acesso antecipado?</div>
+        <div class="step-field">Observações sobre a estratégia</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout green" style="margin-top:8px">
+    <strong>Dica operacional:</strong> o formulário pode ser preenchido em conjunto com o cliente durante uma reunião de 30–45 minutos. Os campos marcados com <span style="color:var(--red)">*</span> são obrigatórios para avançar. O relatório é gerado automaticamente ao concluir a etapa 6.
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ── 04 ─────────────────────────────────────────── -->
+<a class="pb-section-anchor" id="s4"></a>
+<div class="pb-section">
+  <div class="sec-hdr">
+    <div class="sec-num">04</div>
+    <div><div class="sec-ttl">Fórmula de Aceleração — as 3 métricas centrais</div>
+    <div class="sec-desc">Todo o diagnóstico é construído sobre três métricas que se relacionam entre si.</div></div>
+  </div>
+
+  <div class="metric-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+      <div class="metric-name">① Taxa de Engajamento (TE)</div>
+      <span class="tag r">Indicador principal</span>
+    </div>
+    <div class="metric-formula">TE = (Corretores ativos / Total de corretores) × 100</div>
+    <div class="metric-desc">
+      Mede o percentual da base de corretores que efetivamente realizou pelo menos uma venda nos últimos 12 meses. É o termômetro do canal — quanto menor, maior o desperdício de base e a dependência de poucos corretores.
+    </div>
+    <div class="level-row">
+      <div class="level-pill lp-red">Crítica: abaixo de 15%</div>
+      <div class="level-pill lp-am">Regular: 15% a 30%</div>
+      <div class="level-pill lp-gr">Boa: acima de 30%</div>
+    </div>
+    <div class="metric-example">
+      <strong>Exemplo — Vértice Incorporadora:</strong> 58 corretores venderam de uma base de 420.<br/>
+      TE = (58 / 420) × 100 = <strong>13,8% → nível Crítico</strong>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+      <div class="metric-name">② Delta de Corretores por Milhão (DC)</div>
+      <span class="tag a">Produtividade</span>
+    </div>
+    <div class="metric-formula">DC = Corretores ativos / (VGV atual / R$ 1.000.000)</div>
+    <div class="metric-desc">
+      Mede quantos corretores ativos são necessários para gerar R$ 1 milhão em VGV. Funciona como um índice de produtividade da base — quanto menor o DC, mais produtivo cada corretor é. O inverso (1/DC) é o VGV médio por corretor ativo, usado para calcular o ROI.
+    </div>
+    <div class="metric-example">
+      <strong>Exemplo — Vértice Incorporadora:</strong> 58 ativos / (R$ 48M / 1M) = <strong>1,21 corretores/M</strong><br/>
+      VGV médio por corretor ativo = R$ 48M / 58 = <strong>R$ 827.586/corretor</strong>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+      <div class="metric-name">③ Corretores Necessários para a Meta (NC)</div>
+      <span class="tag g">Meta</span>
+    </div>
+    <div class="metric-formula">NC = (VGV meta / R$ 1.000.000) × DC atual</div>
+    <div class="metric-desc">
+      Calcula quantos corretores ativos são necessários para atingir a meta de VGV, mantendo a produtividade atual. A diferença entre NC e o número atual de ativos é o número de corretores que a DWV precisa ativar — o objetivo central do contrato.
+    </div>
+    <div class="metric-example">
+      <strong>Exemplo — Vértice Incorporadora:</strong> (R$ 80M / 1M) × 1,21 = <strong>97 corretores ativos necessários</strong><br/>
+      Hoje tem 58 → DWV precisa ativar mais <strong>39 corretores</strong>
+    </div>
+  </div>
+
+  <div class="callout blue" style="margin-top:8px">
+    <strong>Importante:</strong> as três métricas (TE, DC, NC) se retroalimentam. Melhorar apenas uma delas já gera impacto no resultado — por isso o diagnóstico apresenta as 3 rotas estratégicas, que são os caminhos independentes para atingir a meta de VGV.
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ── 05 ─────────────────────────────────────────── -->
+<a class="pb-section-anchor" id="s5"></a>
+<div class="pb-section">
+  <div class="sec-hdr">
+    <div class="sec-num">05</div>
+    <div><div class="sec-ttl">Relatório — Seções 1 a 4</div>
+    <div class="sec-desc">Resumo executivo, as 3 métricas calculadas e as 3 rotas estratégicas.</div></div>
+  </div>
+
+  <!-- Resumo Executivo -->
+  <div style="font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:10px;margin-top:4px">Resumo Executivo · exemplo: Vértice Incorporadora</div>
+  <div style="background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:20px;margin-bottom:20px">
+    <div style="font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;font-weight:600">Resumo Executivo · Vértice Incorporadora · Florianópolis/SC</div>
+    <div style="font-size:12px;color:var(--mu);margin-bottom:12px">Responsável: <strong style="color:#fff">Ricardo Menezes</strong> · Diretor de Parcerias</div>
+    <div class="kpis">
+      <div class="kpi"><div class="kl">VGV Atual (12m)</div><div class="kv">R$ 48.000.000</div><div class="ks">Canal parcerias</div></div>
+      <div class="kpi"><div class="kl">Meta de VGV</div><div class="kv r">R$ 80.000.000</div><div class="ks">Gap de R$ 32.000.000</div></div>
+      <div class="kpi"><div class="kl">Taxa de Engajamento</div><div class="kv r">13,8%</div><div class="ks">Crítica · 58 de 420</div></div>
+      <div class="kpi"><div class="kl">Corretores a Ativar</div><div class="kv r">39</div><div class="ks">Meta da DWV</div></div>
+    </div>
+    <div class="badge-row">
+      <div class="badge" style="background:rgba(224,160,32,0.1);border-color:rgba(224,160,32,0.3);color:var(--am)">Metas: Parcialmente</div>
+      <div class="badge">Não exclusivos</div>
+      <div class="badge">12 imobiliárias parceiras</div>
+      <div class="badge">Ticket médio: R$ 620.000</div>
+    </div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.7;margin-top:12px;padding-top:12px;border-top:.5px solid var(--b)">
+      A <strong>Vértice Incorporadora</strong> tem <strong>420 corretores</strong> cadastrados, mas apenas <strong>58 (13,8%)</strong> venderam — engajamento <strong>crítico</strong>. Para atingir <strong>R$ 80.000.000</strong>, a DWV precisa ativar mais <strong>39 corretores</strong>. Cada corretor ativado representa em média <strong>R$ 827.586</strong> em VGV.
+    </div>
+  </div>
+
+  <div class="callout blue">
+    <strong>O que ler no Resumo Executivo:</strong> os 4 KPIs do topo sintetizam todo o diagnóstico. O gap de VGV e o número de corretores a ativar são os números que guiam a conversa comercial. O parágrafo de verdict conecta todos os dados em uma narrativa.
+  </div>
+
+  <!-- Seções 1-3 -->
+  <div style="margin-top:24px;font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:12px">Seções 1, 2 e 3 · Métricas calculadas</div>
+
+  <div class="rpt-section">
+    <div class="rpt-hdr"><h4>1 · Taxa de Engajamento (TE)</h4><span class="tag r">Crítica · 13,8%</span></div>
+    <div class="rpt-body">
+      <div class="formula">TE = (58 / 420) × 100 = 13,8%</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.75)">Apenas 13,8% da base vendeu nos últimos 12 meses. Nível crítico — a maioria da base está inativa.</div>
+      <div class="callout amber" style="margin-top:10px">Como interpretar: abaixo de 15% indica que o canal está operando com menos de 1 em cada 7 corretores ativos. A DWV atua diretamente nesse indicador com ativações via WhatsApp API, campanhas e segmentação de carteira.</div>
+    </div>
+  </div>
+
+  <div class="rpt-section">
+    <div class="rpt-hdr"><h4>2 · Delta de Corretores por Milhão (DC)</h4><span class="tag a">1,21 corretores/M</span></div>
+    <div class="rpt-body">
+      <div class="formula">DC = 58 / (R$ 48.000.000 / 1M) = 1,21 corretores/M</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.75)">São necessários 1,21 corretores ativos para gerar R$ 1 milhão em VGV. Cada corretor ativado vale em média <strong>R$ 827.586</strong>.</div>
+      <div class="callout blue" style="margin-top:10px">Como interpretar: o DC é o "câmbio" do canal — define quantos corretores custam R$ 1M em VGV. Esse valor é usado diretamente no cálculo do ROI (quantos corretores para pagar o plano DWV).</div>
+    </div>
+  </div>
+
+  <div class="rpt-section">
+    <div class="rpt-hdr"><h4>3 · Corretores Necessários para a Meta (NC)</h4><span class="tag a">97 corretores ativos</span></div>
+    <div class="rpt-body">
+      <div class="formula">NC = (R$ 80.000.000 / 1M) × 1,21 = 97 corretores ativos</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.75)">Para atingir R$ 80M, a incorporadora precisa de <strong>97 corretores engajados</strong>. Hoje tem 58 — a DWV precisa ativar mais <strong>39</strong>.</div>
+    </div>
+  </div>
+
+  <!-- Seção 4 - Rotas -->
+  <div style="margin-top:24px;font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:12px">Seção 4 · 3 Rotas Estratégicas</div>
+
+  <div class="routes">
+    <div class="rc">
+      <div class="rcn">Rota A · Engajamento</div>
+      <div class="rct">Aumentar TE</div>
+      <div class="rcv">23,1%</div>
+      <div class="rcd">Nova TE necessária mantendo a base de 420 corretores. Hoje: 13,8%.</div>
+    </div>
+    <div class="rc">
+      <div class="rcn">Rota B · Crescimento</div>
+      <div class="rct">Crescer a Base</div>
+      <div class="rcv">703</div>
+      <div class="rcd">Total de corretores necessário mantendo a TE atual. Hoje: 420.</div>
+    </div>
+    <div class="rc">
+      <div class="rcn">Rota C · Produtividade</div>
+      <div class="rct">Aumentar Prod.</div>
+      <div class="rcv">0,73/M</div>
+      <div class="rcd">DC necessário com base e TE atuais. Hoje: 1,21/M.</div>
+    </div>
+  </div>
+
+  <div class="callout green" style="margin-top:8px">
+    <strong>Como usar as 3 rotas na conversa comercial:</strong><br/>
+    <strong>Rota A</strong> — é o foco principal da DWV: ativar inativos da base existente via comunicação, segmentação e presença constante.<br/>
+    <strong>Rota B</strong> — mostra o quanto seria necessário crescer a base sem melhorar o engajamento (inviável na maioria dos casos).<br/>
+    <strong>Rota C</strong> — demonstra que aumentar a produtividade individual exigiria cada corretor vender ~65% mais (também difícil sem estrutura).<br/>
+    <em>Conclusão: a Rota A é sempre a mais viável — e é o que a DWV entrega.</em>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ── 06 ─────────────────────────────────────────── -->
+<a class="pb-section-anchor" id="s6"></a>
+<div class="pb-section">
+  <div class="sec-hdr">
+    <div class="sec-num">06</div>
+    <div><div class="sec-ttl">Relatório — Seção 5 · Organograma</div>
+    <div class="sec-desc">Mapeamento da estrutura atual e como a DWV se posiciona no canal.</div></div>
+  </div>
+
+  <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;margin-bottom:16px">
+    A seção de organograma é uma das mais estratégicas do diagnóstico — ela documenta quem faz o quê no canal de parcerias e demonstra visualmente <strong>como a Operadora DWV se encaixa na estrutura sem ser subordinada</strong>.
+  </div>
+
+  <!-- Org sem DWV -->
+  <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Organograma atual — sem DWV</div>
+  <div class="org-demo">
+    <div class="org-lev">
+      <div class="org-lab">Diretor de Parceria</div>
+      <div class="org-boxes"><div class="ob hi">Dir. Parceria</div></div>
+      <div style="font-size:10px;color:var(--am);margin-top:3px">KPI: VGV mensal, gestão do time</div>
+    </div>
+    <div class="org-arr">↓</div>
+    <div class="org-lev">
+      <div class="org-lab">Gerência / Marketing</div>
+      <div class="org-boxes"><div class="ob hi">Ger. 1</div><div class="ob hi">Ger. 2</div><div class="ob hi">Ger. 3</div><div class="ob" style="color:#a78bfa;border-color:rgba(139,92,246,0.3)">Marketing</div></div>
+      <div style="font-size:10px;color:var(--am);margin-top:3px">KPI: VGV mensal, nº corretores ativos</div>
+    </div>
+    <div class="org-arr">↓</div>
+    <div class="org-lev">
+      <div class="org-lab">Executivos de Parceria</div>
+      <div class="org-boxes"><div class="ob">Exec. 1</div><div class="ob">Exec. 2</div><div class="ob">Exec. 3</div><div class="ob">Exec. 4</div><div class="ob">Exec. 5</div><div class="ob">Exec. 6</div></div>
+      <div style="font-size:10px;color:var(--am);margin-top:3px">KPI: Nº visitas, propostas geradas, novos corretores captados</div>
+    </div>
+    <div class="org-arr">↓</div>
+    <div class="org-lev">
+      <div class="org-lab">Base de Corretores</div>
+      <div class="org-boxes"><div class="ob">420 cadastrados</div><div class="ob hi">58 ativos (13,8%)</div><div class="ob">12 imobiliárias parceiras</div></div>
+    </div>
+  </div>
+
+  <!-- Org com DWV -->
+  <div style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin:16px 0 8px">Organograma com Operadora DWV</div>
+  <div class="org-demo">
+    <div class="org-lev">
+      <div class="org-lab">Direção</div>
+      <div class="org-boxes"><div class="ob hi">Dir. de Parceria</div><div class="ob gn">Relatórios de performance</div><div class="ob gn">Análises de mercado</div></div>
+      <div style="font-size:10px;color:var(--gr);margin-top:3px;font-style:italic">↑ Entregas da Operadora DWV para a Direção</div>
+    </div>
+    <div class="org-arr">↓</div>
+    <div class="org-lev">
+      <div class="org-lab">Gerência · Operadora DWV (lateral)</div>
+      <div class="org-boxes"><div class="ob hi">Ger. 1</div><div class="ob hi">Ger. 2</div><div class="ob hi">Ger. 3</div><div class="ob" style="color:#a78bfa;border-color:rgba(139,92,246,0.3)">Marketing</div><div class="ob gn">Definição de estratégias</div><div class="ob gn">Relatórios gerenciais</div></div>
+      <div style="font-size:10px;color:var(--gr);margin-top:3px;font-style:italic">↑ Entregas da Operadora DWV para a Gerência</div>
+    </div>
+    <div class="org-arr">↓</div>
+    <div class="org-lev">
+      <div class="org-lab">Executivos · Suporte Operadora</div>
+      <div class="org-boxes"><div class="ob">Exec. 1</div><div class="ob">Exec. 2</div><div class="ob">Exec. 3</div><div class="ob">Exec. 4</div><div class="ob">Exec. 5</div><div class="ob">Exec. 6</div><div class="ob gn">Organização de carteiras</div><div class="ob gn">Ativações</div></div>
+      <div style="font-size:10px;color:var(--gr);margin-top:3px;font-style:italic">↑ Entregas da Operadora DWV para os Executivos</div>
+    </div>
+    <div class="org-arr">↓</div>
+    <div class="org-lev">
+      <div class="org-lab">Base Segmentada pela DWV</div>
+      <div class="org-boxes"><div class="ob go">Ouro — já venderam</div><div class="ob si">Prata — engajados</div><div class="ob br">Bronze — inativos</div></div>
+    </div>
+  </div>
+
+  <div class="callout green" style="margin-top:12px">
+    <strong>Regra de cascata DWV</strong> — o organograma se adapta automaticamente à realidade da incorporadora:<br/>
+    • Se há <strong>Diretor</strong>: entregas da direção vão ao Diretor<br/>
+    • Se <strong>não há Diretor</strong>: entregas da direção são absorvidas pelo Gerente<br/>
+    • Se <strong>não há Diretor nem Gerente</strong>: todas as entregas são direcionadas ao Responsável pelo canal
+  </div>
+
+  <div style="margin-top:16px;font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Tabela de cargos com KPIs e atividades</div>
+  <table class="tbl">
+    <thead><tr><th>Cargo</th><th>Qtd</th><th>KPI / Métricas</th><th>Atividades</th></tr></thead>
+    <tbody>
+      <tr><td style="color:var(--red);font-weight:600">Diretor de Parceria</td><td>1</td><td>VGV mensal, gestão do time</td><td style="font-size:11px">Gestão estratégica do canal, definição de metas.</td></tr>
+      <tr><td style="color:var(--red);font-weight:600">Gerente de Parceria</td><td>3</td><td>VGV mensal, nº corretores ativos</td><td style="font-size:11px">Visitas a imobiliárias, treinamentos, gestão dos executivos.</td></tr>
+      <tr><td style="color:#a78bfa;font-weight:600">Marketing</td><td>1</td><td>Leads gerados, campanhas</td><td style="font-size:11px">Campanhas de incentivo, materiais, eventos.</td></tr>
+      <tr><td style="font-weight:600">Executivo de Parceria</td><td>6</td><td>Nº visitas, propostas, captações</td><td style="font-size:11px">Visitas a corretores, captação, atendimento via WhatsApp.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="divider"/>
+
+<!-- ── 07 ─────────────────────────────────────────── -->
+<a class="pb-section-anchor" id="s7"></a>
+<div class="pb-section">
+  <div class="sec-hdr">
+    <div class="sec-num">07</div>
+    <div><div class="sec-ttl">Relatório — Seções 6 e 7 · Ferramentas e Indicadores</div>
+    <div class="sec-desc">Mapeamento tecnológico e visão operacional quantitativa do canal.</div></div>
+  </div>
+
+  <!-- Seção 6 -->
+  <div style="font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:12px">Seção 6 · Tecnologia e Ferramentas</div>
+
+  <div class="rpt-section">
+    <div class="rpt-hdr"><h4>6 · Tecnologia e Ferramentas</h4><span class="tag r">5 desconectadas</span></div>
+    <div class="rpt-body">
+      <div style="font-size:13px;color:var(--mu);margin-bottom:10px">CRM de contratos: <strong style="color:#fff">Sienge</strong> — focado em contratos, não em gestão de corretores.</div>
+      <div class="badge-row">
+        <div class="badge hi">WhatsApp pessoal / grupos avulsos</div>
+        <div class="badge hi">E-mail marketing · R$ 4.200/ano</div>
+        <div class="badge hi">Drive · R$ 2.400/ano</div>
+        <div class="badge hi">Planilhas Excel</div>
+        <div class="badge hi">Facilita · R$ 6.000/ano</div>
+        <div class="badge hi">Sem CRM de parceiros</div>
+      </div>
+      <div style="font-size:13px;color:var(--mu);margin-top:10px">Custo anual estimado: <strong style="color:#fff">R$ 12.600</strong></div>
+    </div>
+  </div>
+
+  <div class="callout amber" style="margin-top:8px">
+    <strong>O que observar na seção de ferramentas:</strong><br/>
+    • Ferramentas em vermelho = as que a incorporadora usa e que a DWV substitui<br/>
+    • O custo total anual é base para o cálculo de economia na seção 7<br/>
+    • "Sem CRM de parceiros" é o sinal mais forte de oportunidade para a DWV
+  </div>
+
+  <!-- Seção 7 -->
+  <div style="font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin:24px 0 12px">Seção 7 · Indicadores Operacionais</div>
+
+  <div class="ind-grid">
+    <div class="ind-card">
+      <div class="ind-lbl">Corretores por Executivo</div>
+      <div class="ind-val" style="color:var(--red)">70</div>
+      <div class="ind-sub">420 corretores / 6 executivos</div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-lbl">Custo por Corretor Ativo</div>
+      <div class="ind-val" style="color:var(--red)">R$ 217</div>
+      <div class="ind-sub">R$ 12.600 / 58 ativos</div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-lbl">Ociosidade da Base</div>
+      <div class="ind-val" style="color:var(--red)">86,2%</div>
+      <div class="ind-sub">362 corretores inativos</div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-lbl">Unidades p/ Atingir Meta</div>
+      <div class="ind-val" style="color:var(--am)">52</div>
+      <div class="ind-sub">Gap R$ 32M / Ticket R$ 620k</div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-lbl">Empreendimentos Ativos</div>
+      <div class="ind-val" style="color:#fff">4</div>
+      <div class="ind-sub">1 pré-lanç · 2 lanç · 1 estoque</div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-lbl">Eventos / Treinamentos</div>
+      <div class="ind-val" style="font-size:18px;color:var(--am)">Esporádico</div>
+      <div class="ind-sub">sem frequência definida</div>
+    </div>
+  </div>
+
+  <div style="background:rgba(58,184,122,0.06);border:.5px solid rgba(58,184,122,0.15);border-radius:10px;padding:16px 18px;margin:14px 0">
+    <div style="font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;font-weight:500">Projeção: custo por corretor ativo com a DWV</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div style="text-align:center"><div style="font-size:11px;color:var(--mu);margin-bottom:4px">Hoje (58 ativos)</div><div style="font-size:20px;font-weight:500;color:var(--red)">R$ 217</div><div style="font-size:11px;color:var(--mu)">por corretor/ano</div></div>
+      <div style="text-align:center"><div style="font-size:11px;color:var(--mu);margin-bottom:4px">Meta DWV (97 ativos)</div><div style="font-size:20px;font-weight:500;color:var(--am)">R$ 130</div><div style="font-size:11px;color:var(--mu)">por corretor/ano</div></div>
+      <div style="text-align:center"><div style="font-size:11px;color:var(--mu);margin-bottom:4px">Redução</div><div style="font-size:20px;font-weight:500;color:var(--gr)">-40%</div><div style="font-size:11px;color:var(--mu)">no custo por ativo</div></div>
+    </div>
+  </div>
+
+  <div class="callout blue">
+    <strong>Como interpretar os indicadores operacionais:</strong><br/>
+    • <strong>Corretores por Executivo:</strong> 70 corretores por executivo é um volume alto para gestão manual — sinal de que precisam de ferramentas de automação.<br/>
+    • <strong>Custo por Corretor Ativo:</strong> quanto custa em ferramentas para manter 1 corretor ativo no ano. Com a DWV ativando mais corretores, esse custo cai.<br/>
+    • <strong>Ociosidade:</strong> 86,2% da base é oportunidade inexplorada — base "esquecida" que a DWV pode reativar.<br/>
+    • <strong>Unidades para meta:</strong> traduz o gap de VGV em unidades concretas — tangibiliza o desafio.
+  </div>
+
+  <div class="callout amber" style="margin-top:10px">
+    <strong>Lógica condicional da projeção de custo:</strong><br/>
+    • Custo total zero → mensagem: "DWV será a primeira plataforma integrada"<br/>
+    • Custo baixo (até R$ 5.000/ano) → mensagem de produtividade (ganho não é em economia)<br/>
+    • Custo alto (acima de R$ 5.000/ano) → projeção completa com redução de -X% no custo por ativo
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ── 08 ─────────────────────────────────────────── -->
+<a class="pb-section-anchor" id="s8"></a>
+<div class="pb-section">
+  <div class="sec-hdr">
+    <div class="sec-num">08</div>
+    <div><div class="sec-ttl">Relatório — Seção 8 · Retorno sobre Investimento</div>
+    <div class="sec-desc">A seção que fecha a proposta comercial com números.</div></div>
+  </div>
+
+  <div class="roi-box">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+      <div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Plano com Operadora DWV</div>
+        <div style="font-size:22px;font-weight:500">R$ 63.096<span style="font-size:13px;color:var(--mu);font-weight:400">/ano</span></div>
+        <div style="font-size:13px;color:var(--mu);margin-top:3px">12x R$ 4.775/mês</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">VGV por corretor ativado</div>
+        <div style="font-size:22px;font-weight:500;color:var(--red)">R$ 827.586</div>
+        <div style="font-size:13px;color:var(--mu);margin-top:3px">produtividade média atual</div>
+      </div>
+    </div>
+
+    <div class="roi-grid">
+      <div class="roi-card"><div class="roi-lbl">Corretores p/ pagar o plano</div><div class="roi-val" style="color:var(--red)">1</div><div style="font-size:11px;color:var(--mu);margin-top:4px">ponto de equilíbrio</div></div>
+      <div class="roi-card"><div class="roi-lbl">Meta de ativações DWV</div><div class="roi-val" style="color:var(--am)">39</div><div style="font-size:11px;color:var(--mu);margin-top:4px">corretores a engajar</div></div>
+      <div class="roi-card"><div class="roi-lbl">Retorno se meta atingida</div><div class="roi-val" style="color:var(--gr);font-size:18px">R$ 32.275.854</div><div style="font-size:11px;color:var(--mu);margin-top:4px">em VGV adicional</div></div>
+    </div>
+
+    <div style="margin-top:14px;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.75">
+      A incorporadora precisa ativar <strong>39 corretores</strong> para atingir a meta de VGV.<br/>
+      Cada corretor ativado gera em média <strong>R$ 827.586</strong> em VGV.<br/>
+      Com apenas <strong>1 corretor</strong> ativado pela DWV o investimento anual já se paga.<br/>
+      Se a DWV conseguir ativar todos os <strong>39 corretores necessários</strong>, o retorno potencial é de <strong>R$ 32.275.854</strong> em VGV adicional.
+    </div>
+
+    <div style="font-size:13px;color:var(--mu);padding:10px 13px;background:rgba(58,184,122,0.06);border:.5px solid rgba(58,184,122,0.15);border-radius:8px;margin-top:12px">Economia adicional ao consolidar 5 ferramentas na DWV: <strong style="color:var(--gr)">R$ 12.600/ano</strong></div>
+  </div>
+
+  <div class="callout green" style="margin-top:12px">
+    <strong>Como usar a seção de ROI na conversa comercial:</strong><br/>
+    • O <strong>ponto de equilíbrio</strong> (1 corretor) é o argumento mais poderoso: com o primeiro fechamento gerado pela DWV, o plano anual já se paga. Todo o resto é lucro.<br/>
+    • O <strong>retorno total</strong> (R$ 32,3M) quantifica o upside máximo — não é garantia, é potencial baseado na produtividade atual do canal.<br/>
+    • A <strong>economia de ferramentas</strong> é um bônus — mostra que além de gerar mais VGV, a DWV também reduz custos operacionais.
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ── 09 ─────────────────────────────────────────── -->
+<a class="pb-section-anchor" id="s9"></a>
+<div class="pb-section">
+  <div class="sec-hdr">
+    <div class="sec-num">09</div>
+    <div><div class="sec-ttl">Relatório — Seção 9 · Dores, Segmentação e Relatórios</div>
+    <div class="sec-desc">Contexto qualitativo que personaliza a proposta e demonstra escuta ativa.</div></div>
+  </div>
+
+  <div class="rpt-section">
+    <div class="rpt-hdr"><h4>9 · Dores, Segmentação e Relatórios</h4><span class="tag a">Canal de Parcerias</span></div>
+    <div class="rpt-body">
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:500">Principais desafios declarados</div>
+        <div class="badge-row">
+          <div class="badge hi">Baixo engajamento de corretores</div>
+          <div class="badge hi">Relatórios dos executivos de parceria</div>
+          <div class="badge hi">Falta de gestão dos executivos de parceria</div>
+        </div>
+        <div style="background:var(--s);border:.5px solid var(--b);border-radius:9px;padding:12px 14px;margin-top:10px">
+          <div style="font-size:10px;color:var(--am);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Contexto descrito pelo cliente</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.8)">Executivos não conseguem rastrear quais corretores estão próximos de fechar. Falta visibilidade do pipeline.</div>
+        </div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:500">Segmentação</div>
+        <div style="background:var(--s);border:.5px solid var(--b);border-radius:9px;padding:12px 14px;font-size:14px;font-weight:500;color:var(--am)">Não segmenta, mas gostaria</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--gr);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:500">Relatórios desejados</div>
+        <ul style="margin:0 0 8px 16px;padding:0">
+          <li style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.7;list-style:disc">Quais e quantos corretores estão engajados nos meus produtos</li>
+          <li style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.7;list-style:disc">Quais e quantas imobiliárias estão ofertando meu produto</li>
+          <li style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.7;list-style:disc">Quantos corretores o executivo de parceria impacta diariamente, semanalmente e mensalmente</li>
+        </ul>
+        <div style="font-size:13px;color:var(--gr);font-weight:500">Todos disponíveis na plataforma DWV.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout blue" style="margin-top:8px">
+    <strong>Como usar a seção 9 na proposta:</strong><br/>
+    • Os <strong>desafios</strong> são a voz do cliente — repita-os na proposta e mostre como a DWV resolve cada um.<br/>
+    • A <strong>segmentação</strong> indica maturidade do canal: "não segmenta, mas gostaria" = cliente pronto para adotar segmentação Bronze/Prata/Ouro da DWV.<br/>
+    • Os <strong>relatórios desejados</strong> são uma lista de desejos — apresentá-los já prontos na plataforma DWV é altamente convincente.<br/>
+    • As <strong>ações já testadas</strong> mostram que o cliente já tentou resolver sozinho e não conseguiu — reforça a necessidade de uma solução estruturada.
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ── 10 ─────────────────────────────────────────── -->
+<a class="pb-section-anchor" id="s10"></a>
+<div class="pb-section">
+  <div class="sec-hdr">
+    <div class="sec-num">10</div>
+    <div><div class="sec-ttl">Exportação: PDF e Pipefy</div>
+    <div class="sec-desc">Como gerar o relatório em PDF e transferir os dados para o CRM.</div></div>
+  </div>
+
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">Exportação</div>
+      <div class="step-ttl">⬇ Baixar PDF</div>
+      <div class="step-desc">Gera um documento PDF completo com todas as seções do diagnóstico — formatado para impressão e envio ao cliente.</div>
+      <div class="step-fields">
+        <div class="step-field">Resumo executivo com KPIs</div>
+        <div class="step-field">Fórmula de Aceleração</div>
+        <div class="step-field">3 Rotas Estratégicas</div>
+        <div class="step-field">Organograma completo</div>
+        <div class="step-field">Indicadores Operacionais</div>
+        <div class="step-field">Dores, segmentação, relatórios</div>
+        <div class="step-field">ROI e plano DWV</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Exportação</div>
+      <div class="step-ttl">Copiar para Pipefy</div>
+      <div class="step-desc">Copia todos os dados em texto formatado para colar no card do Pipefy (CRM comercial da DWV). Cobre todas as seções.</div>
+      <div class="step-fields">
+        <div class="step-field">Métricas principais (TE, DC, VGV)</div>
+        <div class="step-field">Estrutura de cargos com KPIs</div>
+        <div class="step-field">Indicadores operacionais</div>
+        <div class="step-field">Tecnologia e ferramentas</div>
+        <div class="step-field">Desafios e ações testadas</div>
+        <div class="step-field">Eventos e incentivos</div>
+        <div class="step-field">Concorrente e expectativa 12m</div>
+        <div class="step-field">Tabela Zero</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Dashboard</div>
+      <div class="step-ttl">Histórico de Diagnósticos</div>
+      <div class="step-desc">Todos os diagnósticos realizados ficam salvos e acessíveis no dashboard. Reais e simulações são separados em colunas.</div>
+      <div class="step-fields">
+        <div class="step-field">Diagnósticos reais (coluna esquerda)</div>
+        <div class="step-field">Simulações (coluna direita)</div>
+        <div class="step-field">TE, VGV atual, gap por diagnóstico</div>
+        <div class="step-field">Reabertura para revisão</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout amber" style="margin-top:8px">
+    <strong>Fluxo recomendado após o diagnóstico:</strong>
+    1. Gerar PDF → enviar ao cliente como documento da reunião<br/>
+    2. Copiar para Pipefy → registrar no card do cliente no CRM<br/>
+    3. Usar os números do ROI como base para a proposta comercial formal
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ── 11 ─────────────────────────────────────────── -->
+<a class="pb-section-anchor" id="s11"></a>
+<div class="pb-section">
+  <div class="sec-hdr">
+    <div class="sec-num">11</div>
+    <div><div class="sec-ttl">Interpretação e próximos passos</div>
+    <div class="sec-desc">Como ler o diagnóstico completo e o que fazer com cada resultado.</div></div>
+  </div>
+
+  <table class="tbl">
+    <thead><tr><th>Indicador</th><th>Resultado exemplo</th><th>Interpretação</th><th>Ação DWV</th></tr></thead>
+    <tbody>
+      <tr><td>Taxa de Engajamento</td><td style="color:var(--red)">13,8% · Crítica</td><td style="font-size:11px">Menos de 1 em 7 corretores vende. Base altamente ociosa.</td><td style="font-size:11px">Prioridade máxima: ativação de inativos via WhatsApp API e segmentação.</td></tr>
+      <tr><td>Delta/Milhão</td><td>1,21 corretores/M</td><td style="font-size:11px">Produtividade atual do canal. Cada ativo gera R$ 827k em VGV.</td><td style="font-size:11px">Manter ou melhorar produtividade com treinamentos e CRM.</td></tr>
+      <tr><td>Corretores a ativar</td><td style="color:var(--am)">39 corretores</td><td style="font-size:11px">Gap preciso para a meta de VGV. Meta central do contrato DWV.</td><td style="font-size:11px">Plano de ativação mensal com metas parciais e acompanhamento.</td></tr>
+      <tr><td>Ociosidade da base</td><td style="color:var(--red)">86,2%</td><td style="font-size:11px">362 corretores cadastrados sem nenhuma venda nos últimos 12m.</td><td style="font-size:11px">Campanha de reativação + segmentação Bronze/Prata/Ouro.</td></tr>
+      <tr><td>Ferramentas (custo)</td><td>R$ 12.600/ano</td><td style="font-size:11px">5 ferramentas desconectadas. Custo alto por corretor ativo (R$ 217).</td><td style="font-size:11px">DWV consolida tudo. Custo cai para R$ 130/ativo ao atingir meta.</td></tr>
+      <tr><td>Segmentação</td><td style="color:var(--am)">Não, mas gostaria</td><td style="font-size:11px">Cliente pronto para adotar segmentação — alta receptividade.</td><td style="font-size:11px">Demonstrar segmentação Bronze/Prata/Ouro na plataforma DWV.</td></tr>
+      <tr><td>Ponto de equilíbrio ROI</td><td style="color:var(--gr)">1 corretor</td><td style="font-size:11px">Com 1 venda gerada pela DWV, o plano anual inteiro já se paga.</td><td style="font-size:11px">Argumento central de fechamento da proposta comercial.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout green" style="margin-top:20px">
+    <strong>Checklist pós-diagnóstico:</strong><br/>
+    ☐ TE identificada e classificada (crítica / regular / boa)<br/>
+    ☐ Número exato de corretores a ativar calculado<br/>
+    ☐ Ponto de equilíbrio ROI comunicado ao cliente<br/>
+    ☐ Organograma mapeado com cargos, KPIs e atividades<br/>
+    ☐ Ferramentas e custos documentados<br/>
+    ☐ Dores e relatórios desejados registrados<br/>
+    ☐ PDF gerado e enviado ao cliente<br/>
+    ☐ Dados copiados para o Pipefy<br/>
+    ☐ Diagnóstico salvo no dashboard
+  </div>
+
+  <div class="callout red" style="margin-top:12px">
+    <strong>Sinais de alerta que merecem atenção especial:</strong><br/>
+    • TE abaixo de 10% → canal em colapso, intervenção urgente<br/>
+    • Sem nenhum cargo de gerência ou executivo → estrutura mínima, implementação pode ser mais lenta<br/>
+    • Sem CRM de nenhum tipo → processo manual total, alto potencial de adoção DWV<br/>
+    • "Não está batendo metas" + TE crítica → urgência alta, proposta deve ser agressiva<br/>
+    • Já testou ações sem resultado → cliente frustrado, precisa de solução nova — não das mesmas táticas
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="margin-top:60px;padding-top:20px;border-top:.5px solid var(--b);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+  <div style="font-size:12px;color:var(--mu)">DWV · Playbook Diagnóstico Comercial · Fórmula de Aceleração</div>
+  <div style="font-size:12px;color:var(--mu)">dwvapp.com.br</div>
+</div>
+
+</div>
+</body>
+</html>
