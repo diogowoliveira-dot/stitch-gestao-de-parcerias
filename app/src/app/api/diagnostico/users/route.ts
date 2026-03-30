@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { sendInviteEmail } from "@/lib/email";
 
 // GET all users
 export async function GET() {
@@ -46,6 +47,13 @@ export async function POST(req: NextRequest) {
       avatar: data.avatar || null,
     },
   });
+
+  // Enviar e-mail de convite (não bloqueia se falhar)
+  try {
+    await sendInviteEmail({ nome: user.nome, email: user.email, senha: data.senha });
+  } catch (err) {
+    console.error("Erro ao enviar e-mail de convite:", err);
+  }
 
   return NextResponse.json({
     id: user.id,
