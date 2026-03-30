@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM = "DWV Diagnóstico <noreply@dwvoperadora.com.br>";
+const FROM = "DWV Diagnóstico <onboarding@resend.dev>";
 const BASE_URL = "https://dwv-diagnostico-comercial.vercel.app";
 
 export async function sendInviteEmail({
