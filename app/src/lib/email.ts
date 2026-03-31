@@ -1,8 +1,5 @@
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const FROM = "DWV Diagnóstico <onboarding@resend.dev>";
+const FROM_NAME = "DWV Diagnóstico";
+const FROM_EMAIL = "noreply@mail.dwvapp.com.br";
 const BASE_URL = "https://dwv-diagnostico-comercial.vercel.app";
 
 export async function sendInviteEmail({
@@ -14,11 +11,7 @@ export async function sendInviteEmail({
   email: string;
   senha: string;
 }) {
-  await resend.emails.send({
-    from: FROM,
-    to: email,
-    subject: "Seu acesso ao Diagnóstico Comercial DWV",
-    html: `
+  const html = `
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
@@ -85,6 +78,26 @@ export async function sendInviteEmail({
     </td></tr>
   </table>
 </body>
-</html>`,
+</html>`;
+
+  const res = await fetch("https://api.sparkpost.com/api/v1/transmissions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: process.env.SPARKPOST_API_KEY!,
+    },
+    body: JSON.stringify({
+      recipients: [{ address: { email, name: nome } }],
+      content: {
+        from: { name: FROM_NAME, email: FROM_EMAIL },
+        subject: "Seu acesso ao Diagnóstico Comercial DWV",
+        html,
+      },
+    }),
   });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`SparkPost error: ${err}`);
+  }
 }
