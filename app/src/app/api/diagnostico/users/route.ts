@@ -105,7 +105,13 @@ export async function PATCH(req: NextRequest) {
   });
 
   // Reenviar e-mail de convite
-  await sendInviteEmail({ nome: user.nome, email: user.email, senha: tempSenha });
+  try {
+    await sendInviteEmail({ nome: user.nome, email: user.email, senha: tempSenha });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("Erro reenvio convite:", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true });
 }
