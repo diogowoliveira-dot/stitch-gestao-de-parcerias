@@ -73,7 +73,7 @@ function loadDBSync(){return _dbCache||[];}
 
 async function addToDB(record){
   const user=getUser();
-  if(!user) return;
+  if(!user) return null;
   const payload=mapV1toAPI(record, user);
   try{
     const res=await fetch('/api/diagnostico/diagnosticos',{
@@ -81,8 +81,13 @@ async function addToDB(record){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload)
     });
-    if(res.ok){_dbCache=null;} // invalidate cache
+    if(res.ok){
+      _dbCache=null;
+      const data=await res.json();
+      return data.id||null;
+    }
   }catch(e){console.error('Erro ao salvar:',e);}
+  return null;
 }
 
 function mapV1toAPI(d, user){
@@ -169,6 +174,7 @@ let isSim=false;
 let currentStep=0;
 let editingId=null; // ID do diagnóstico sendo editado
 let _saving=false; // evita salvamento duplo
+let _savedThisSession=false; // evita re-save se usuário navegar para trás
 
 const ESTADOS_BR=['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'];
 const CARGOS_CANAL=[
@@ -224,7 +230,8 @@ function showStart(){
 }
 
 function startDiag(sim){
-  resetD();isSim=sim;currentStep=0;
+  resetD();isSim=sim;currentStep=0;_savedThisSession=false;
+  if(!sim){ offerBackupRestore(); }
   if(sim){
     D.companyName='Vertice Incorporadora';D.cidade='Florianópolis';D.estado='SC';
     D.responsibleName='Ricardo Menezes';D.responsibleRole='Diretor de Parcerias';
@@ -327,6 +334,7 @@ function goStep(i){save();currentStep=i;render();}
 function prev(){if(currentStep===0)return;save();currentStep--;render();window.scrollTo({top:0,behavior:'smooth'});}
 function next(){
   save();
+  saveBackup(); // backup a cada avanço
   if(currentStep<STEPS.length-1){currentStep++;render();window.scrollTo({top:0,behavior:'smooth'});}
   else showResults();
 }
@@ -685,12 +693,19 @@ function calc(data){
 }
 
 // ── RESULTS ───────────────────────────────────────────────────
-async function showResults(){
+async function showResults(viewOnly){
   if(_saving) return; // bloqueia chamada dupla
   _saving=true;
   const r=calc();
-  if(!isSim) await addToDB({...D,results:r,isSim:false});
-  else await addToDB({...D,results:r,isSim:true});
+  // viewOnly=true: apenas renderiza (ex: ?ver=ID — não salva no DB)
+  // _savedThisSession=true: já foi salvo nesta sessão — não duplica
+  if(!viewOnly && !_savedThisSession){
+    const savedId=await addToDB({...D,results:r,isSim:isSim});
+    if(savedId){
+      _savedThisSession=true;
+      clearBackup();
+    }
+  }
   _saving=false;
   document.getElementById('formWrap').style.display='none';
   document.getElementById('results').style.display='block';
@@ -1113,7 +1128,6 @@ async function showResults(){
 
     <div class="acts">
       <button class="bto" onclick="window.location.href='/diagnostico/dashboard'">← Dashboard</button>
-      <button class="bto" onclick="copyPipefy()">Copiar para Pipefy</button>
       <button class="bto" onclick="openAll()">Expandir Tudo</button>
       <button class="btr" onclick="generatePDF()">⬇ Baixar PDF</button>
     </div>`;
@@ -1882,6 +1896,48 @@ function _backFromTutorial(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+// ── BACKUP LOCAL ──────────────────────────────────────────────
+function _backupKey(name){return'dwv_bkp_'+(name||'').toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');}
+
+function saveBackup(){
+  if(!D.companyName) return;
+  try{
+    localStorage.setItem(_backupKey(D.companyName), JSON.stringify({D, step:currentStep, isSim, ts:Date.now()}));
+  }catch(e){}
+}
+
+function clearBackup(){
+  if(!D.companyName) return;
+  try{ localStorage.removeItem(_backupKey(D.companyName)); }catch(e){}
+}
+
+function findAnyRecentBackup(){
+  const MAX=24*60*60*1000; // 24h
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(!k||!k.startsWith('dwv_bkp_')) continue;
+      const b=JSON.parse(localStorage.getItem(k)||'null');
+      if(b&&b.D?.companyName&&(Date.now()-b.ts)<MAX) return b;
+    }
+  }catch(e){}
+  return null;
+}
+
+function offerBackupRestore(){
+  const b=findAnyRecentBackup();
+  if(!b) return false;
+  const mins=Math.round((Date.now()-b.ts)/60000);
+  const label=mins<2?'agora mesmo':mins<60?mins+' min atrás':(Math.round(mins/60))+'h atrás';
+  if(confirm('Encontramos um diagnóstico não finalizado de "'+b.D.companyName+'" ('+label+'). Deseja continuar de onde parou?')){
+    Object.assign(D, b.D);
+    currentStep=b.step||0;
+    isSim=b.isSim||false;
+    return true;
+  }
+  return false;
+}
+
 // ── INIT ──────────────────────────────────────────────────────
 (async function init(){
   const user=checkAuth();
@@ -1922,7 +1978,7 @@ function _backFromTutorial(){
     }catch(e){console.error(e);}
   }
 
-  // Ver — abre direto no relatório
+  // Ver — abre direto no relatório (viewOnly: não salva no DB)
   if(params.get('ver')){
     const id=params.get('ver');
     try{
@@ -1931,7 +1987,7 @@ function _backFromTutorial(){
       const rec=all.find(d=>d.id===id);
       if(rec){
         populateFromAPI(rec);
-        showResults();
+        showResults(true); // viewOnly — apenas renderiza, sem salvar
         return;
       }
     }catch(e){console.error(e);}
