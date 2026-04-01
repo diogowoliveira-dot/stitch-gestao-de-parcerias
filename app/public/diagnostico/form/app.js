@@ -86,25 +86,48 @@ async function addToDB(record){
 }
 
 function mapV1toAPI(d, user){
-  // Split location into city/state if combined
   let cidade=d.cidade||'', estado=d.estado||'';
   if(!cidade && d.location){
     const parts=d.location.split(/[,\/]/);
     cidade=(parts[0]||'').trim();
     estado=(parts[1]||'').trim();
   }
+  // Mapear todos os 4 cargos do canal
+  const cargosPayload=CARGOS_CANAL.filter(c=>d.cargos?.[c.id]?.existe).map(c=>{
+    const cargoData=d.cargos[c.id];
+    return {
+      id:'cargo_'+c.id,
+      nome:c.nome,
+      existe:true,
+      tarefas:[],metricas:[],ferramentas:[],
+      subordinadosDe: c.id==='executivo'?'cargo_gerente':c.id==='gerente'?'cargo_diretor':null,
+      subordinados: c.id==='diretor'?['cargo_gerente']:c.id==='gerente'?['cargo_executivo']:c.id==='marketing'?[]:null,
+      quantidade:cargoData.qtd||1,
+      kpiPrincipal:cargoData.kpi?[cargoData.kpi]:[],
+      atividadesDescritivas:cargoData.atividades||'',
+      crmNome:null
+    };
+  });
   return {
     empresa:{nome:d.companyName||'', cidade, estado},
     criadoPor: user.id,
     status:'completo',
     isSimulacao: d.isSim||false,
-    shareHouse: null,
-    shareParcerias: null,
-    cargos:[
-      ...(d.parcManagers>0?[{id:'cargo_gerente_parceria',nome:'Gerente de Parceria',existe:true,tarefas:[],metricas:[],ferramentas:[],subordinadosDe:null,subordinados:['cargo_executivo_parceria'],quantidade:d.parcManagers,kpiPrincipal:[],atividadesDescritivas:'',crmNome:null}]:[]),
-      ...(d.parcExecutives>0?[{id:'cargo_executivo_parceria',nome:'Executivo de Parceria',existe:true,tarefas:[],metricas:[],ferramentas:[],subordinadosDe:'cargo_gerente_parceria',subordinados:[],quantidade:d.parcExecutives,kpiPrincipal:[],atividadesDescritivas:'',crmNome:null}]:[]),
-    ],
-    ferramentasGerais: Object.keys(d.toolCosts||{}).filter(k=>d['tools'+k.charAt(0).toUpperCase()+k.slice(1)]||d[k]),
+    totalVGV: d.totalVGV||null,
+    vgvGoal: d.vgvGoal||null,
+    avgTicket: d.avgTicket||null,
+    totalBrokers: d.totalBrokers||null,
+    activeBrokers: d.activeBrokers||null,
+    shareHouse: d.shareHouse||null,
+    shareParcerias: d.shareParcerias||null,
+    numImobiliarias: d.numImobiliarias||null,
+    segmentacao: d.brokerSegmentation||null,
+    segmentacaoDescritiva: d.brokerSegDescritivo||null,
+    relatoriosDesejados: d.desiredReports||[],
+    relatoriosDescritivo: d.desiredReportsDescritivo||null,
+    tabelaZeroParcerias: d.tabelaZero||false,
+    cargos: cargosPayload,
+    ferramentasGerais: TOOLS_DEF.filter(t=>d[t.k]).map(t=>t.k),
     problemasIdentificados: (d.challenges||[]).map(k=>CHAL_LABELS[k]||k),
   };
 }
@@ -145,6 +168,7 @@ let D={};
 let isSim=false;
 let currentStep=0;
 let editingId=null; // ID do diagnóstico sendo editado
+let _saving=false; // evita salvamento duplo
 
 const ESTADOS_BR=['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'];
 const CARGOS_CANAL=[
@@ -662,9 +686,12 @@ function calc(data){
 
 // ── RESULTS ───────────────────────────────────────────────────
 async function showResults(){
+  if(_saving) return; // bloqueia chamada dupla
+  _saving=true;
   const r=calc();
   if(!isSim) await addToDB({...D,results:r,isSim:false});
   else await addToDB({...D,results:r,isSim:true});
+  _saving=false;
   document.getElementById('formWrap').style.display='none';
   document.getElementById('results').style.display='block';
 
