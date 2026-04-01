@@ -12,6 +12,8 @@ export default function UsuariosPage() {
   const [editingUser, setEditingUser] = useState<UserInfo | null>(null);
   const [search, setSearch] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [resendingInvite, setResendingInvite] = useState<string | null>(null);
+  const [resendSuccess, setResendSuccess] = useState<string | null>(null);
 
   // Form state
   const [formNome, setFormNome] = useState("");
@@ -38,6 +40,23 @@ export default function UsuariosPage() {
     setFormSenha("");
     setFormStatus(u.status as "ativo" | "inativo");
     setShowModal(true);
+  };
+
+  const handleResendInvite = async (userId: string) => {
+    setResendingInvite(userId);
+    try {
+      const res = await fetch("/api/diagnostico/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: userId }),
+      });
+      if (res.ok) {
+        setResendSuccess(userId);
+        setTimeout(() => setResendSuccess(null), 3000);
+      }
+    } finally {
+      setResendingInvite(null);
+    }
   };
 
   const handleSave = async () => {
@@ -160,6 +179,20 @@ export default function UsuariosPage() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
+                <button
+                  onClick={() => handleResendInvite(u.id)}
+                  disabled={resendingInvite === u.id}
+                  className="p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-white/5 text-slate-500 disabled:opacity-50"
+                  title="Reenviar convite por e-mail"
+                >
+                  {resendSuccess === u.id ? (
+                    <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#10b981" }}>check_circle</span>
+                  ) : resendingInvite === u.id ? (
+                    <span className="material-symbols-outlined animate-spin" style={{ fontSize: 18 }}>progress_activity</span>
+                  ) : (
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>forward_to_inbox</span>
+                  )}
+                </button>
                 <button
                   onClick={() => openEdit(u)}
                   className="p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-white/5 text-slate-500"

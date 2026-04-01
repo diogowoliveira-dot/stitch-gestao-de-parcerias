@@ -90,6 +90,26 @@ export async function PUT(req: NextRequest) {
   });
 }
 
+// PATCH resend invite email
+export async function PATCH(req: NextRequest) {
+  const { id } = await req.json();
+
+  const user = await prisma.user.findUnique({ where: { id } });
+  if (!user) return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
+
+  // Reset senha para DWV@2024
+  const tempSenha = "DWV@2024";
+  await prisma.user.update({
+    where: { id },
+    data: { senha: await bcrypt.hash(tempSenha, 10) },
+  });
+
+  // Reenviar e-mail de convite
+  await sendInviteEmail({ nome: user.nome, email: user.email, senha: tempSenha });
+
+  return NextResponse.json({ ok: true });
+}
+
 // DELETE user
 export async function DELETE(req: NextRequest) {
   const { id } = await req.json();
