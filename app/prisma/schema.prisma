@@ -51,6 +51,50 @@ model Diagnostico {
   aiAnalysis            String?  // JSON resultado consolidado da IA
   isSimulacao           Boolean  @default(false) // true = dados de teste, ignorado no BI
 
+  // Responsável
+  responsavelNome       String?
+  responsavelCargo      String?
+
+  // Canais
+  hasHouse              Boolean?
+  hasParc               Boolean?
+  hasImob               Boolean?
+  exclusividade         String?  // 'exclusive' | 'non-exclusive' | ''
+
+  // Inventário / portfólio
+  numEmpreendimentos    Int?
+  numPreLancamento      Int?
+  numLancamento         Int?
+  numEstoque            Int?
+  focoVendas            String?
+  totalImoveisVenda     Int?
+  propostasMensais      Int?
+  fechamentosMensais    Int?
+
+  // Tecnologia
+  temCRM                Boolean?
+  crmNome               String?
+  crmContratoNome       String?
+  ferramentasAtivas     String?  // JSON array de keys (toolsWhatsapp, etc.)
+  custosFerramentas     String?  // JSON object {toolKey: custo}
+
+  // Dores e desafios
+  atingiuMetas          String?  // 'yes' | 'partial' | 'no'
+  desafiosKeys          String?  // JSON array de keys
+  desafiosTexto         String?
+  acoesTestadas         Boolean?
+  resultadosTestados    String?
+
+  // Contexto estratégico
+  temEventos            String?  // 'sim_regular' | 'sim_esporadico' | 'no'
+  temIncentivo          String?  // 'yes' | 'no'
+  concorrente           String?
+  expectativa12m        String?
+
+  // Tabela Zero completa
+  tabelaZeroAcesso      String?  // JSON array ('house', 'canal_parcerias', etc.)
+  tabelaZeroObs         String?
+
   cargos              Cargo[]
   ferramentasGerais   FerramentaGeral[]
   problemasIdentificados ProblemaIdentificado[]

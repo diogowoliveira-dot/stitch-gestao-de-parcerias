@@ -97,7 +97,6 @@ function mapV1toAPI(d, user){
     cidade=(parts[0]||'').trim();
     estado=(parts[1]||'').trim();
   }
-  // Mapear todos os 4 cargos do canal
   const cargosPayload=CARGOS_CANAL.filter(c=>d.cargos?.[c.id]?.existe).map(c=>{
     const cargoData=d.cargos[c.id];
     return {
@@ -110,54 +109,187 @@ function mapV1toAPI(d, user){
       quantidade:cargoData.qtd||1,
       kpiPrincipal:cargoData.kpi?[cargoData.kpi]:[],
       atividadesDescritivas:cargoData.atividades||'',
-      crmNome:null
+      crmNome: d.hasCRM?(d.crmName||null):null
     };
   });
+  // Ferramentas ativas (keys) e custos
+  const ferramentasAtivas=TOOLS_DEF.filter(t=>d[t.k]).map(t=>t.k);
+  const custosFerramentas={};
+  TOOLS_DEF.forEach(t=>{ if(d.toolCosts?.[t.k]) custosFerramentas[t.k]=d.toolCosts[t.k]; });
+
   return {
     empresa:{nome:d.companyName||'', cidade, estado},
     criadoPor: user.id,
     status:'completo',
     isSimulacao: d.isSim||false,
+
+    // Responsável
+    responsavelNome: d.responsibleName||null,
+    responsavelCargo: d.responsibleRole||null,
+
+    // Métricas
     totalVGV: d.totalVGV||null,
     vgvGoal: d.vgvGoal||null,
     avgTicket: d.avgTicket||null,
     totalBrokers: d.totalBrokers||null,
     activeBrokers: d.activeBrokers||null,
+
+    // Canais
     shareHouse: d.shareHouse||null,
     shareParcerias: d.shareParcerias||null,
     numImobiliarias: d.numImobiliarias||null,
+    hasHouse: d.hasHouse||false,
+    hasParc: d.hasParc||false,
+    hasImob: d.hasImob||false,
+    exclusividade: d.brokersExclusivity||null,
+
+    // Inventário
+    numEmpreendimentos: d.numEmpreendimentos||null,
+    numPreLancamento: d.numPreLancamento||null,
+    numLancamento: d.numLancamento||null,
+    numEstoque: d.numEstoque||null,
+    focoVendas: d.focoVendas||null,
+    totalImoveisVenda: d.totalImoveisVenda||null,
+    propostasMensais: d.propostasMensais||null,
+    fechamentosMensais: d.fechamentosMensais||null,
+
+    // Tecnologia
+    temCRM: d.hasCRM||false,
+    crmNome: d.crmName||null,
+    crmContratoNome: d.crmContratoNome||null,
+    ferramentasAtivas,
+    custosFerramentas,
+
+    // Segmentação e relatórios
     segmentacao: d.brokerSegmentation||null,
     segmentacaoDescritiva: d.brokerSegDescritivo||null,
     relatoriosDesejados: d.desiredReports||[],
     relatoriosDescritivo: d.desiredReportsDescritivo||null,
+
+    // Dores
+    atingiuMetas: d.meetingGoals||null,
+    desafiosKeys: d.challenges||[],
+    desafiosTexto: d.challengesText||null,
+    acoesTestadas: d.testedActions||false,
+    resultadosTestados: d.testedResults||null,
+
+    // Contexto estratégico
+    temEventos: d.hasEventos||null,
+    temIncentivo: d.hasIncentivo||null,
+    concorrente: d.concorrente||null,
+    expectativa12m: d.expectativa12m||null,
+
+    // Tabela Zero
     tabelaZeroParcerias: d.tabelaZero||false,
+    tabelaZeroAcesso: d.tabelaZeroAccess||[],
+    tabelaZeroObs: d.tabelaZeroObs||null,
+
+    // Cargos e ferramentas gerais (para compatibilidade/relatório)
     cargos: cargosPayload,
-    ferramentasGerais: TOOLS_DEF.filter(t=>d[t.k]).map(t=>t.k),
+    ferramentasGerais: ferramentasAtivas,
     problemasIdentificados: (d.challenges||[]).map(k=>CHAL_LABELS[k]||k),
   };
 }
 
 function mapAPItoV1(rec){
+  // Reconstruir objeto D completo a partir do registro da API
   const gerCargo=rec.cargos?.find(c=>c.id?.includes('gerente'));
   const execCargo=rec.cargos?.find(c=>c.id?.includes('executivo'));
+  const dirCargo=rec.cargos?.find(c=>c.id?.includes('diretor'));
+  const mktCargo=rec.cargos?.find(c=>c.id?.includes('marketing'));
+
+  // Reconstruir D.cargos a partir dos cargos salvos
+  const cargos={};
+  CARGOS_CANAL.forEach(c=>{
+    const saved=rec.cargos?.find(x=>x.id==='cargo_'+c.id);
+    cargos[c.id]={
+      existe: !!saved,
+      qtd: saved?.quantidade||1,
+      kpi: saved?.kpiPrincipal?.[0]||'',
+      atividades: saved?.atividadesDescritivas||''
+    };
+  });
+
+  // Reconstruir ferramentas ativas como flags booleanas no D
+  const ferrFlags={};
+  TOOLS_DEF.forEach(t=>{ ferrFlags[t.k]=false; });
+  (rec.ferramentasAtivas||[]).forEach(k=>{ ferrFlags[k]=true; });
+
   return {
     id: rec.id,
-    companyName: rec.empresa?.nome||rec.empresaNome||'',
-    location: (rec.empresa?.cidade||rec.empresaCidade||'')+'/'+(rec.empresa?.estado||rec.empresaEstado||''),
-    cidade: rec.empresa?.cidade||rec.empresaCidade||'',
-    estado: rec.empresa?.estado||rec.empresaEstado||'',
-    responsibleName: rec.criadoPorNome||'',
-    responsibleRole: '',
+    companyName: rec.empresa?.nome||'',
+    location: (rec.empresa?.cidade||'')+'/'+(rec.empresa?.estado||''),
+    cidade: rec.empresa?.cidade||'',
+    estado: rec.empresa?.estado||'',
+    date: rec.dataCriacao,
+    isSim: rec.isSimulacao||false,
+    criadoPorNome: rec.criadoPorNome||'',
+
+    // Responsável
+    responsibleName: rec.responsavelNome||rec.criadoPorNome||'',
+    responsibleRole: rec.responsavelCargo||'',
+
+    // Métricas
     totalVGV: rec.totalVGV||0,
     vgvGoal: rec.vgvGoal||0,
     avgTicket: rec.avgTicket||0,
     totalBrokers: rec.totalBrokers||0,
     activeBrokers: rec.activeBrokers||0,
+
+    // Canais
+    shareHouse: rec.shareHouse||0,
+    shareParcerias: rec.shareParcerias||0,
+    numImobiliarias: rec.numImobiliarias||0,
+    hasHouse: rec.hasHouse||false,
+    hasParc: rec.hasParc||false,
+    hasImob: rec.hasImob||false,
+    brokersExclusivity: rec.exclusividade||'',
+
+    // Cargos reconstruídos
+    cargos,
     parcManagers: gerCargo?.quantidade||0,
     parcExecutives: execCargo?.quantidade||0,
-    date: rec.dataCriacao,
-    isSim: rec.isSimulacao||false,
-    criadoPorNome: rec.criadoPorNome||'',
+
+    // Inventário
+    numEmpreendimentos: rec.numEmpreendimentos||0,
+    numPreLancamento: rec.numPreLancamento||0,
+    numLancamento: rec.numLancamento||0,
+    numEstoque: rec.numEstoque||0,
+    focoVendas: rec.focoVendas||'',
+    totalImoveisVenda: rec.totalImoveisVenda||0,
+    propostasMensais: rec.propostasMensais||0,
+    fechamentosMensais: rec.fechamentosMensais||0,
+
+    // Tecnologia
+    hasCRM: rec.temCRM||false,
+    crmName: rec.crmNome||'',
+    crmContratoNome: rec.crmContratoNome||'',
+    toolCosts: rec.custosFerramentas||{},
+    ...ferrFlags,
+
+    // Segmentação e relatórios
+    brokerSegmentation: rec.segmentacao||'',
+    brokerSegDescritivo: rec.segmentacaoDescritiva||'',
+    desiredReports: rec.relatoriosDesejados||[],
+    desiredReportsDescritivo: rec.relatoriosDescritivo||'',
+
+    // Dores
+    meetingGoals: rec.atingiuMetas||'',
+    challenges: rec.desafiosKeys||[],
+    challengesText: rec.desafiosTexto||'',
+    testedActions: rec.acoesTestadas||false,
+    testedResults: rec.resultadosTestados||'',
+
+    // Contexto estratégico
+    hasEventos: rec.temEventos||'',
+    hasIncentivo: rec.temIncentivo||'',
+    concorrente: rec.concorrente||'',
+    expectativa12m: rec.expectativa12m||'',
+
+    // Tabela Zero
+    tabelaZero: rec.tabelaZeroParcerias||false,
+    tabelaZeroAccess: rec.tabelaZeroAcesso||[],
+    tabelaZeroObs: rec.tabelaZeroObs||'',
   };
 }
 
