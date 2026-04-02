@@ -15,7 +15,6 @@ interface DiagShellProps {
 const NAV_ITEMS: { href: string; icon: string; label: string; adminOnly: boolean; external?: boolean }[] = [
   { href: "/diagnostico/dashboard", icon: "space_dashboard", label: "Início", adminOnly: false },
   { href: "/diagnostico/bi", icon: "monitoring", label: "BI", adminOnly: true },
-  { href: "/diagnostico/form/", icon: "add_circle", label: "Novo", adminOnly: false, external: true },
   { href: "/diagnostico/usuarios", icon: "group", label: "Usuários", adminOnly: true },
 ];
 
