@@ -71,20 +71,32 @@ async function loadDB(){
 }
 function loadDBSync(){return _dbCache||[];}
 
-async function addToDB(record){
+async function addToDB(record, idOverride){
   const user=getUser();
   if(!user) return null;
   const payload=mapV1toAPI(record, user);
   try{
-    const res=await fetch('/api/diagnostico/diagnosticos',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(payload)
-    });
-    if(res.ok){
-      _dbCache=null;
-      const data=await res.json();
-      return data.id||null;
+    let res;
+    if(idOverride){
+      // Edição — PUT com id
+      res=await fetch('/api/diagnostico/diagnosticos',{
+        method:'PUT',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({id:idOverride, ...payload})
+      });
+      if(res.ok){ _dbCache=null; return idOverride; }
+    } else {
+      // Criação — POST
+      res=await fetch('/api/diagnostico/diagnosticos',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      if(res.ok){
+        _dbCache=null;
+        const data=await res.json();
+        return data.id||null;
+      }
     }
   }catch(e){console.error('Erro ao salvar:',e);}
   return null;
@@ -332,7 +344,9 @@ function resetD(){
     brokerSegmentation:'',brokerSegDescritivo:'',
     desiredReports:[],desiredReportsDescritivo:'',
     hasEventos:'',hasIncentivo:'',concorrente:'',expectativa12m:'',
-    tabelaZero:false,tabelaZeroAccess:[],tabelaZeroObs:''
+    tabelaZero:false,tabelaZeroAccess:[],tabelaZeroObs:'',
+    observations:'',
+    parcManagers:0,parcExecutives:0
   };
   CARGOS_CANAL.forEach(c=>D.cargos[c.id]={existe:false,qtd:1,kpi:'',atividades:''});
   TOOLS_DEF.forEach(t=>D[t.k]=false);
@@ -449,7 +463,7 @@ function save(){
   }
   else if(currentStep===5){
     D.tabelaZero=gr('tz')==='yes';D.tabelaZeroAccess=gca('tzAccess');
-    D.tabelaZeroObs=g('tzObs');
+    D.tabelaZeroObs=g('tzObs');D.observations=g('obs');
   }
 }
 
@@ -724,6 +738,8 @@ function body(){
       <div class="field"><label>Observações sobre a Tabela Zero</label>
         <textarea id="tzObs" placeholder="Ex: só corretores Ouro têm acesso, parceiros recebem 48h antes..."></textarea></div>
     </div>
+    <div class="field"><label>Observações gerais</label>
+      <textarea id="obs" placeholder="Observações adicionais sobre o diagnóstico..."></textarea></div>
     `;
   return '';
 }
@@ -835,7 +851,7 @@ async function showResults(viewOnly){
   // viewOnly=true: apenas renderiza (ex: ?ver=ID — não salva no DB)
   // _savedThisSession=true: já foi salvo nesta sessão — não duplica
   if(!viewOnly && !_savedThisSession){
-    const savedId=await addToDB({...D,results:r,isSim:isSim});
+    const savedId=await addToDB({...D,results:r,isSim:isSim}, editingId||null);
     if(savedId){
       _savedThisSession=true;
       clearBackup();
@@ -1252,7 +1268,7 @@ async function showResults(viewOnly){
         </div>`:''}
 
         <!-- Ações testadas -->
-        ${D.testedActions==='yes'&&D.testedResults?`<div>
+        ${D.testedActions===true&&D.testedResults?`<div>
           <div style="font-size:11px;color:var(--am);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:500">Ações já testadas pelo cliente</div>
           <div style="background:var(--s);border:.5px solid rgba(224,160,32,0.25);border-radius:10px;padding:14px 16px">
             <div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.65">${D.testedResults}</div>
@@ -1275,13 +1291,13 @@ function tog(h){const b=h.nextElementSibling;const c=h.querySelector('.chev');co
 function openAll(){document.querySelectorAll('.dbody').forEach(b=>b.classList.add('open'));}
 
 // ── DASHBOARD ─────────────────────────────────────────────────
-function showDashboard(){
+async function showDashboard(){
   document.getElementById('startScreen').style.display='none';
   document.getElementById('formWrap').style.display='none';
   document.getElementById('results').style.display='none';
   const dash=document.getElementById('dashboard');
   dash.style.display='block';
-  const records=loadDB().filter(r=>!r.isSim);
+  const records=(await loadDB()).filter(r=>!r.isSim);
   if(records.length===0){
     dash.innerHTML=`
       <button class="bto" style="margin-bottom:20px" onclick="showStart()">← Voltar</button>
@@ -1300,7 +1316,7 @@ function showDashboard(){
   const topTools=TOOLS_DEF.map(t=>({l:t.l,n:toolFreq[t.k]})).sort((a,b)=>b.n-a.n).filter(t=>t.n>0);
   const chalFreq={};Object.keys(CHAL_LABELS).forEach(k=>{chalFreq[k]=records.filter(r=>(r.challenges||[]).includes(k)).length;});
   const topChals=Object.entries(chalFreq).map(([k,n])=>({l:CHAL_LABELS[k],n})).sort((a,b)=>b.n-a.n).filter(t=>t.n>0).slice(0,8);
-  const tzAccess={house:0,parcerias:0,imobiliarias:0,todos:0};
+  const tzAccess={house:0,canal_parcerias:0,imobiliarias:0,todos:0};
   records.filter(r=>r.tabelaZero).forEach(r=>(r.tabelaZeroAccess||[]).forEach(k=>{if(tzAccess[k]!==undefined)tzAccess[k]++;}));
 
   dash.innerHTML=`
@@ -1358,9 +1374,9 @@ function showDashboard(){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
       <div class="dash-card"><h3>Segmentação de corretores</h3>
         <div class="seg-grid">
-          <div class="seg-card"><div class="seg-v" style="color:var(--red)">${records.filter(r=>r.brokerSegmentation==='none').length}</div><div class="seg-l">Não segmentam</div></div>
-          <div class="seg-card"><div class="seg-v" style="color:var(--am)">${records.filter(r=>r.brokerSegmentation==='manual').length}</div><div class="seg-l">Manual</div></div>
-          <div class="seg-card"><div class="seg-v" style="color:var(--gr)">${records.filter(r=>r.brokerSegmentation==='system').length}</div><div class="seg-l">Por sistema</div></div>
+          <div class="seg-card"><div class="seg-v" style="color:var(--red)">${records.filter(r=>r.brokerSegmentation==='nao').length}</div><div class="seg-l">Não segmentam</div></div>
+          <div class="seg-card"><div class="seg-v" style="color:var(--am)">${records.filter(r=>r.brokerSegmentation==='sim_parcial').length}</div><div class="seg-l">Sim, parcialmente</div></div>
+          <div class="seg-card"><div class="seg-v" style="color:var(--gr)">${records.filter(r=>r.brokerSegmentation==='sim_total').length}</div><div class="seg-l">Sim, totalmente</div></div>
         </div>
       </div>
       <div class="dash-card"><h3>Tabela Zero · quem absorve</h3>
@@ -1473,7 +1489,7 @@ function generatePDF(){
   const rptTxt=D.desiredReports.map(k=>RPT_LABELS[k]||k).join(', ')||'Não informado';
   const toolRows=TOOLS_DEF.filter(t=>D[t.k]).map(t=>`<tr><td>${t.l}</td><td>${D.toolCosts[t.k]?fmt(D.toolCosts[t.k])+'/mês':'—'}</td><td>${D.toolCosts[t.k]?fmt(D.toolCosts[t.k]*12)+'/ano':'—'}</td></tr>`).join('');
   const tzTxt=D.tabelaZero?D.tabelaZeroAccess.map(k=>TZ_LABELS[k]).join(', '):'Não utiliza';
-  const segTxt={none:'Não segmenta',manual:'Manual (planilha/memória)',system:'Por sistema — '+D.brokerSegCRM}[D.brokerSegmentation]||'Não informado';
+  const segTxt={nao:'Não segmenta',nao_gostaria:'Não, mas gostaria de segmentar',sim_parcial:'Sim, parcialmente',sim_total:'Sim, totalmente'}[D.brokerSegmentation]||'Não informado';
   const teColor=r.te<15?'#E8392A':r.te<30?'#e0a020':'#2e9e60';
   const teLabel=r.te<15?'Crítica':r.te<30?'Regular':'Boa';
   const nTools=TOOLS_DEF.filter(t=>D[t.k]).length+(!D.hasCRM?1:0);

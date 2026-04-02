@@ -288,6 +288,49 @@ export async function PUT(req: NextRequest) {
   set("aiAnalysis", f.aiAnalysis);
 
   await prisma.diagnostico.update({ where: { id }, data: u });
+
+  // Recriar cargos se fornecidos
+  if (f.cargos !== undefined) {
+    await prisma.cargo.deleteMany({ where: { diagnosticoId: id } });
+    for (const cargo of (f.cargos || [])) {
+      await prisma.cargo.create({
+        data: {
+          cargoKey: cargo.id,
+          nome: cargo.nome,
+          existe: cargo.existe,
+          acumulaFuncao: cargo.acumulaFuncao || null,
+          personalizado: cargo.personalizado || false,
+          subordinadosDe: cargo.subordinadosDe || null,
+          quantidade: cargo.quantidade || 1,
+          kpiPrincipal: cargo.kpiPrincipal?.length ? JSON.stringify(cargo.kpiPrincipal) : null,
+          atividadesDescritivas: cargo.atividadesDescritivas || null,
+          crmNome: cargo.crmNome || null,
+          diagnosticoId: id,
+          tarefas: { create: (cargo.tarefas || []).map((t: string) => ({ nome: t })) },
+          metricas: { create: (cargo.metricas || []).map((m: string) => ({ nome: m })) },
+          ferramentas: { create: (cargo.ferramentas || []).map((fv: string) => ({ nome: fv })) },
+          subordinados: { create: (cargo.subordinados || []).map((s: string) => ({ cargoKey: s })) },
+        },
+      });
+    }
+  }
+
+  // Recriar problemas identificados se fornecidos
+  if (f.problemasIdentificados !== undefined) {
+    await prisma.problemaIdentificado.deleteMany({ where: { diagnosticoId: id } });
+    for (const p of (f.problemasIdentificados || [])) {
+      await prisma.problemaIdentificado.create({ data: { descricao: p, diagnosticoId: id } });
+    }
+  }
+
+  // Recriar ferramentas gerais se fornecidas
+  if (f.ferramentasGerais !== undefined) {
+    await prisma.ferramentaGeral.deleteMany({ where: { diagnosticoId: id } });
+    for (const fv of (f.ferramentasGerais || [])) {
+      await prisma.ferramentaGeral.create({ data: { nome: fv, diagnosticoId: id } });
+    }
+  }
+
   return NextResponse.json({ ok: true });
 }
 
