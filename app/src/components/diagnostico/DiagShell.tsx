@@ -12,10 +12,10 @@ interface DiagShellProps {
   actions?: ReactNode;
 }
 
-const NAV_ITEMS = [
+const NAV_ITEMS: { href: string; icon: string; label: string; adminOnly: boolean; external?: boolean }[] = [
   { href: "/diagnostico/dashboard", icon: "space_dashboard", label: "Início", adminOnly: false },
   { href: "/diagnostico/bi", icon: "monitoring", label: "BI", adminOnly: true },
-  { href: "/diagnostico/novo", icon: "add_circle", label: "Novo", adminOnly: false },
+  { href: "/diagnostico/form/", icon: "add_circle", label: "Novo", adminOnly: false, external: true },
   { href: "/diagnostico/usuarios", icon: "group", label: "Usuários", adminOnly: true },
 ];
 
@@ -82,7 +82,7 @@ export default function DiagShell({ children, title, subtitle, icon, showBack, a
             return (
               <button
                 key={item.href}
-                onClick={() => router.push(item.href)}
+                onClick={() => item.external ? (window.location.href = item.href) : router.push(item.href)}
                 className="flex-1 flex flex-col items-center gap-1 py-3 transition-all"
                 style={{ color: isActive ? "#ec1313" : "#64748b" }}
               >
