@@ -5,15 +5,18 @@ import { useDiagAuth, useDiagData } from "@/lib/diagnostico-context";
 
 export default function DiagDashboard() {
   const router = useRouter();
-  const { users, isAdmin } = useDiagAuth();
+  const { users, isAdmin, isMaster, user } = useDiagAuth();
   const { diagnosticos, deleteDiagnostico } = useDiagData();
 
   const handleDelete = async (e: React.MouseEvent, id: string, nome: string) => {
     e.stopPropagation();
     if (!confirm(`Tem certeza que deseja apagar o diagnóstico de "${nome}"? Esta ação não pode ser desfeita.`)) return;
     try {
-      await deleteDiagnostico(id);
-    } catch { alert("Erro ao apagar"); }
+      await deleteDiagnostico(id, user?.id);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro ao apagar";
+      alert(msg);
+    }
   };
 
   const totalDiagnosticos = diagnosticos.length;
@@ -104,22 +107,22 @@ export default function DiagDashboard() {
                 </div>
                 <div className="flex items-center gap-1">
                   {isAdmin && (
-                    <>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); window.location.href = `/diagnostico/form/index.html?editar=${diag.id}`; }}
-                        className="p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
-                        title="Editar"
-                      >
-                        <span className="material-symbols-outlined text-slate-500 hover:text-blue-400" style={{ fontSize: 16 }}>edit</span>
-                      </button>
-                      <button
-                        onClick={(e) => handleDelete(e, diag.id, diag.empresa.nome)}
-                        className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors"
-                        title="Apagar"
-                      >
-                        <span className="material-symbols-outlined text-slate-500 hover:text-red-400" style={{ fontSize: 16 }}>delete</span>
-                      </button>
-                    </>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); window.location.href = `/diagnostico/form/index.html?editar=${diag.id}`; }}
+                      className="p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors"
+                      title="Editar"
+                    >
+                      <span className="material-symbols-outlined text-slate-500 hover:text-blue-400" style={{ fontSize: 16 }}>edit</span>
+                    </button>
+                  )}
+                  {(diag.isSimulacao || isMaster) && (
+                    <button
+                      onClick={(e) => handleDelete(e, diag.id, diag.empresa.nome)}
+                      className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors"
+                      title="Apagar"
+                    >
+                      <span className="material-symbols-outlined text-slate-500 hover:text-red-400" style={{ fontSize: 16 }}>delete</span>
+                    </button>
                   )}
                   <span className="material-symbols-outlined text-slate-700" style={{ fontSize: 18 }}>chevron_right</span>
                 </div>

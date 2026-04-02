@@ -2,7 +2,7 @@
 // DIAGNÓSTICO COMERCIAL - DATA MODELS
 // ============================================
 
-export type DiagUserRole = 'admin' | 'consultor';
+export type DiagUserRole = 'master' | 'admin' | 'consultor';
 
 export interface DiagUser {
   id: string;

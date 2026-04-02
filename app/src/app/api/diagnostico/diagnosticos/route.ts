@@ -293,7 +293,22 @@ export async function PUT(req: NextRequest) {
 
 // DELETE diagnostico
 export async function DELETE(req: NextRequest) {
-  const { id } = await req.json();
+  const { id, userId } = await req.json();
+
+  // Fetch the diagnostico to check isSimulacao
+  const diag = await prisma.diagnostico.findUnique({ where: { id }, select: { isSimulacao: true } });
+  if (!diag) return NextResponse.json({ error: "Não encontrado" }, { status: 404 });
+
+  if (!diag.isSimulacao) {
+    // Real diagnostico — only master can delete
+    if (!userId) return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+    if (!user || user.role !== "master") {
+      return NextResponse.json({ error: "Apenas o usuário master pode apagar diagnósticos reais" }, { status: 403 });
+    }
+  }
+  // Simulations: any authenticated user can delete (userId optional, no role check)
+
   await prisma.diagnostico.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

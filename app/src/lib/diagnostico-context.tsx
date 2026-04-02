@@ -17,6 +17,7 @@ type DiagUserSafe = Omit<DiagUser, "senha">;
 interface DiagAuthContextType {
   user: DiagUserSafe | null;
   isAdmin: boolean;
+  isMaster: boolean;
   login: (email: string, senha: string) => Promise<boolean>;
   logout: () => void;
   users: DiagUserSafe[];
@@ -29,6 +30,7 @@ interface DiagAuthContextType {
 const DiagAuthContext = createContext<DiagAuthContextType>({
   user: null,
   isAdmin: false,
+  isMaster: false,
   login: async () => false,
   logout: () => {},
   users: [],
@@ -49,7 +51,8 @@ export function DiagAuthProvider({ children }: { children: ReactNode }) {
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [useApi, setUseApi] = useState(true); // false = fallback to mock data
 
-  const isAdmin = user?.role === "admin";
+  const isMaster = user?.role === "master";
+  const isAdmin = user?.role === "admin" || user?.role === "master";
 
   // Load users — try API first, fallback to mock
   const fetchUsers = useCallback(async () => {
@@ -175,7 +178,7 @@ export function DiagAuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <DiagAuthContext.Provider
-      value={{ user, isAdmin, login, logout, users, addUser, updateUser, deleteUser, loadingUsers }}
+      value={{ user, isAdmin, isMaster, login, logout, users, addUser, updateUser, deleteUser, loadingUsers }}
     >
       {children}
     </DiagAuthContext.Provider>
@@ -300,7 +303,7 @@ function diagReducer(state: DiagFormState, action: DiagAction): DiagFormState {
 interface DiagDataContextType {
   diagnosticos: DiagnosticoData[];
   addDiagnostico: (d: DiagnosticoData) => Promise<void>;
-  deleteDiagnostico: (id: string) => Promise<void>;
+  deleteDiagnostico: (id: string, userId?: string) => Promise<void>;
   formState: DiagFormState;
   dispatch: React.Dispatch<DiagAction>;
   loadingDiagnosticos: boolean;
@@ -365,20 +368,25 @@ export function DiagDataProvider({ children }: { children: ReactNode }) {
     setDiagnosticos((prev) => [...prev, d]);
   }, [useApi, fetchDiagnosticos]);
 
-  const deleteDiagnostico = useCallback(async (id: string) => {
+  const deleteDiagnostico = useCallback(async (id: string, userId?: string) => {
     if (useApi) {
       try {
         const res = await fetch("/api/diagnostico/diagnosticos", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id }),
+          body: JSON.stringify({ id, userId }),
         });
         if (res.ok) {
           setDiagnosticos((prev) => prev.filter((d) => d.id !== id));
           return;
         }
-      } catch {
-        // fallback
+        // If 403, surface the error
+        if (res.status === 403) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error || "Sem permissão");
+        }
+      } catch (err) {
+        throw err;
       }
     }
     // Mock fallback
