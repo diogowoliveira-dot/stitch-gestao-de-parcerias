@@ -1691,38 +1691,10 @@ ${D.observations?`<h2>Observações</h2><div class="box">${D.observations}</div>
 // ── POPULATE D FROM API RECORD ────────────────────────────────
 function populateFromAPI(rec){
   resetD();
-  D.companyName=rec.empresa?.nome||'';
-  D.cidade=rec.empresa?.cidade||'';
-  D.estado=rec.empresa?.estado||'';
-  D.responsibleName=rec.criadoPorNome||'';
-  D.responsibleRole='';
-  D.totalVGV=rec.totalVGV||0;
-  D.vgvGoal=rec.vgvGoal||0;
-  D.avgTicket=rec.avgTicket||0;
-  D.totalBrokers=rec.totalBrokers||0;
-  D.activeBrokers=rec.activeBrokers||0;
-  D.shareHouse=rec.shareHouse||0;
-  D.shareParcerias=rec.shareParcerias||0;
-  D.numImobiliarias=rec.numImobiliarias||0;
-  D.hasImob=D.numImobiliarias>0;
-  D.hasParc=true;
-  // Cargos from API
-  (rec.cargos||[]).forEach(c=>{
-    const key=c.id?.replace('cargo_','')||'';
-    if(D.cargos[key]){
-      D.cargos[key].existe=c.existe||true;
-      D.cargos[key].qtd=c.quantidade||1;
-      D.cargos[key].kpi=(c.kpiPrincipal||[]).join(', ');
-      D.cargos[key].atividades=c.atividadesDescritivas||'';
-    }
-  });
-  const ger=D.cargos.gerente;const exec=D.cargos.executivo;
-  D.parcManagers=ger.existe?ger.qtd:0;
-  D.parcExecutives=exec.existe?exec.qtd:0;
-  D.brokerSegmentation=rec.segmentacao||'nao';
-  D.brokerSegDescritivo=rec.segmentacaoDescritiva||'';
-  D.desiredReports=rec.relatoriosDesejados||[];
-  D.desiredReportsDescritivo=rec.relatoriosDescritivo||'';
+  // Reutiliza o mapeamento completo de mapAPItoV1 para garantir
+  // que TODOS os campos (dores, tecnologia, tabela zero, etc.) apareçam no PDF
+  const v1=mapAPItoV1(rec);
+  Object.assign(D,v1);
   isSim=rec.isSimulacao||false;
 }
 

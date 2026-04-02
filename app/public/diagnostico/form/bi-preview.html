@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>BI - Diagnostico Comercial DWV</title>
+<title>BI · Diagnóstico Comercial DWV</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -11,60 +11,54 @@
 body{background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;min-height:100vh}
 .app{max-width:1200px;margin:0 auto;padding:24px 20px 80px}
 
-/* Header */
 .hdr{display:flex;align-items:center;gap:14px;margin-bottom:6px}
 .logo{width:38px;height:38px;background:var(--red);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .hdr-text .bn{font-size:17px;font-weight:600;letter-spacing:.02em}
 .hdr-text .bs{font-size:12px;color:var(--mu);margin-top:2px}
 
-/* Filter bar */
 .filter-bar{display:flex;align-items:center;gap:14px;margin:18px 0 28px;flex-wrap:wrap}
 .filter-bar label{font-size:13px;color:var(--mu)}
-.filter-bar select{background:var(--s);border:.5px solid var(--b);border-radius:8px;padding:8px 32px 8px 12px;color:#fff;font-size:13px;font-family:inherit;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.35)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;min-width:180px}
-.filter-bar select:focus{border-color:rgba(232,57,42,0.5)}
+.filter-bar select,.filter-bar input[type=date]{background:var(--s);border:.5px solid var(--b);border-radius:8px;padding:8px 32px 8px 12px;color:#fff;font-size:13px;font-family:inherit;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.35)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;min-width:180px}
+.filter-bar input[type=date]{background-image:none;min-width:140px}
+.filter-bar select:focus,.filter-bar input:focus{border-color:rgba(232,57,42,0.5)}
 .filter-bar select option{background:#1a1a1a}
 
+/* Section titles */
+.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mu);margin:28px 0 12px;padding-bottom:6px;border-bottom:.5px solid var(--b)}
+
 /* KPI cards */
-.kpis-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
-.kpi-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:20px 22px}
-.kpi-label{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.kpi-value{font-size:30px;font-weight:700;line-height:1.1}
+.kpis-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:12px}
+.kpi-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:18px 20px}
+.kpi-label{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;line-height:1.4}
+.kpi-value{font-size:26px;font-weight:700;line-height:1.1}
 .kpi-value.red{color:var(--red)}
 .kpi-value.green{color:var(--gr)}
 .kpi-value.amber{color:var(--am)}
-.kpi-sub{font-size:11px;color:var(--mu);margin-top:5px}
+.kpi-value.white{color:#fff}
+.kpi-sub{font-size:10px;color:var(--mu);margin-top:5px;line-height:1.4}
+.kpi-base{font-size:10px;color:rgba(255,255,255,0.28);margin-top:3px}
 
 /* Charts */
 .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
 .chart-full{grid-column:1/-1}
 .chart-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:22px}
-.chart-title{font-size:13px;font-weight:500;margin-bottom:16px;color:rgba(255,255,255,0.85)}
-.chart-count{font-size:11px;color:var(--mu);margin-top:-10px;margin-bottom:10px}
+.chart-title{font-size:13px;font-weight:500;margin-bottom:4px;color:rgba(255,255,255,0.85)}
+.chart-base{font-size:10px;color:rgba(255,255,255,0.28);margin-bottom:14px}
 .chart-wrap{position:relative;width:100%}
 .chart-wrap canvas{width:100%!important}
 .chart-empty{text-align:center;padding:30px 10px;color:var(--mu);font-size:13px}
 
-/* Loading / Error */
 .loading{text-align:center;padding:60px 20px;color:var(--mu);font-size:14px}
 .loading .spinner{display:inline-block;width:24px;height:24px;border:2px solid var(--b);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .error-msg{text-align:center;padding:40px 20px;color:var(--red);font-size:14px}
 
-/* Responsive */
-@media(max-width:768px){
-  .kpis-row{grid-template-columns:1fr 1fr}
-  .charts-grid{grid-template-columns:1fr}
-  .kpi-value{font-size:22px}
-}
-@media(max-width:480px){
-  .kpis-row{grid-template-columns:1fr}
-}
+@media(max-width:768px){.charts-grid{grid-template-columns:1fr}.kpi-value{font-size:20px}}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- Header -->
   <div class="hdr">
     <div class="logo">
       <svg viewBox="0 0 22 22" fill="none" width="22" height="22">
@@ -74,520 +68,543 @@ body{background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
       </svg>
     </div>
     <div class="hdr-text">
-      <div class="bn">BI &middot; Diagnostico Comercial</div>
-      <div class="bs">Dados consolidados &middot; Apenas diagnosticos reais</div>
+      <div class="bn">BI &middot; Diagnóstico Comercial</div>
+      <div class="bs">Dados consolidados &middot; Apenas diagnósticos reais</div>
     </div>
   </div>
 
-  <!-- Voltar -->
   <div style="margin:12px 0"><a href="/diagnostico/dashboard" style="color:var(--mu);font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:6px">&larr; Voltar ao Dashboard</a></div>
 
-  <!-- Filters -->
   <div class="filter-bar" id="filterBar" style="display:none">
     <label>Estado:</label>
     <select id="stateFilter"><option value="">Todos</option></select>
-    <label style="margin-left:10px">Periodo:</label>
-    <input type="date" id="dateFrom" style="background:var(--s);border:.5px solid var(--b);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;font-family:inherit;outline:none" />
-    <span style="color:var(--mu);font-size:13px">ate</span>
-    <input type="date" id="dateTo" style="background:var(--s);border:.5px solid var(--b);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;font-family:inherit;outline:none" />
+    <label style="margin-left:10px">Período:</label>
+    <input type="date" id="dateFrom"/>
+    <span style="color:var(--mu);font-size:13px">até</span>
+    <input type="date" id="dateTo"/>
     <button onclick="applyFilters()" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit">Filtrar</button>
     <button onclick="clearFilters()" style="background:transparent;color:var(--mu);border:.5px solid var(--b);border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit">Limpar</button>
   </div>
 
-  <!-- Loading / Error -->
-  <div id="loadingEl" class="loading"><div class="spinner"></div><br>Carregando diagnosticos...</div>
+  <div id="loadingEl" class="loading"><div class="spinner"></div><br>Carregando diagnósticos...</div>
   <div id="errorEl" class="error-msg" style="display:none"></div>
 
-  <!-- Dashboard -->
   <div id="dashboard" style="display:none">
-    <div class="kpis-row" id="kpiRow1"></div>
-    <div class="kpis-row" id="kpiRow2"></div>
+    <!-- KPI rows injected by JS -->
+    <div id="kpiSections"></div>
+    <!-- Charts injected by JS -->
     <div class="charts-grid" id="chartsGrid"></div>
   </div>
 </div>
 
 <script>
-const API_URL = '/api/diagnostico/diagnosticos';
-let allData = [];
-let chartInstances = {};
+const API_URL='/api/diagnostico/diagnosticos';
+let allData=[];
+let chartInstances={};
 
-function setupChartDefaults() {
-  Chart.defaults.color = 'rgba(255,255,255,0.55)';
-  Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
-  Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
-  Chart.defaults.font.size = 11;
-  Chart.defaults.plugins.legend.labels.boxWidth = 12;
-  Chart.defaults.plugins.legend.labels.padding = 14;
+/* ── defaults ── */
+function setupChartDefaults(){
+  Chart.defaults.color='rgba(255,255,255,0.55)';
+  Chart.defaults.borderColor='rgba(255,255,255,0.06)';
+  Chart.defaults.font.family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
+  Chart.defaults.font.size=11;
+  Chart.defaults.plugins.legend.labels.boxWidth=12;
+  Chart.defaults.plugins.legend.labels.padding=14;
 }
 
-async function init() {
+async function init(){
   setupChartDefaults();
-  try {
-    const res = await fetch(API_URL);
-    if (!res.ok) throw new Error('Erro ' + res.status);
-    const json = await res.json();
-    const list = Array.isArray(json) ? json : (json.data || json.diagnosticos || []);
-    allData = list.filter(d => !d.isSimulacao);
-    if (!allData.length) { showError('Nenhum diagnostico real encontrado.'); return; }
+  try{
+    const res=await fetch(API_URL);
+    if(!res.ok) throw new Error('Erro '+res.status);
+    const json=await res.json();
+    const list=Array.isArray(json)?json:(json.data||json.diagnosticos||[]);
+    allData=list.filter(d=>!d.isSimulacao);
+    if(!allData.length){showError('Nenhum diagnóstico real encontrado.');return;}
     populateStateFilter();
-    document.getElementById('loadingEl').style.display = 'none';
-    document.getElementById('filterBar').style.display = 'flex';
-    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('loadingEl').style.display='none';
+    document.getElementById('filterBar').style.display='flex';
+    document.getElementById('dashboard').style.display='block';
     render(allData);
-  } catch (e) {
-    showError('Falha ao carregar dados: ' + e.message);
-  }
+  }catch(e){showError('Falha ao carregar dados: '+e.message);}
 }
 
-function showError(msg) {
-  document.getElementById('loadingEl').style.display = 'none';
-  const el = document.getElementById('errorEl');
-  el.textContent = msg;
-  el.style.display = 'block';
+function showError(msg){
+  document.getElementById('loadingEl').style.display='none';
+  const el=document.getElementById('errorEl');
+  el.textContent=msg;el.style.display='block';
 }
 
-function populateStateFilter() {
-  const states = [...new Set(allData.map(d => d.empresa?.estado).filter(Boolean))].sort();
-  const sel = document.getElementById('stateFilter');
-  states.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; sel.appendChild(o); });
-  sel.addEventListener('change', () => applyFilters());
+function populateStateFilter(){
+  const states=[...new Set(allData.map(d=>d.empresa?.estado).filter(Boolean))].sort();
+  const sel=document.getElementById('stateFilter');
+  states.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o);});
+  sel.addEventListener('change',()=>applyFilters());
 }
 
-function applyFilters() {
-  const state = document.getElementById('stateFilter').value;
-  const from = document.getElementById('dateFrom').value;
-  const to = document.getElementById('dateTo').value;
-  let filtered = allData;
-  if (state) filtered = filtered.filter(d => d.empresa?.estado === state);
-  if (from) filtered = filtered.filter(d => (d.dataCriacao || '').slice(0,10) >= from);
-  if (to) filtered = filtered.filter(d => (d.dataCriacao || '').slice(0,10) <= to);
+function applyFilters(){
+  const state=document.getElementById('stateFilter').value;
+  const from=document.getElementById('dateFrom').value;
+  const to=document.getElementById('dateTo').value;
+  let filtered=allData;
+  if(state) filtered=filtered.filter(d=>d.empresa?.estado===state);
+  if(from) filtered=filtered.filter(d=>(d.dataCriacao||'').slice(0,10)>=from);
+  if(to) filtered=filtered.filter(d=>(d.dataCriacao||'').slice(0,10)<=to);
   render(filtered);
 }
 
-function clearFilters() {
-  document.getElementById('stateFilter').value = '';
-  document.getElementById('dateFrom').value = '';
-  document.getElementById('dateTo').value = '';
+function clearFilters(){
+  document.getElementById('stateFilter').value='';
+  document.getElementById('dateFrom').value='';
+  document.getElementById('dateTo').value='';
   render(allData);
 }
 
-function render(data) {
-  renderKPIs(data);
-  renderCharts(data);
-}
+function render(data){renderKPIs(data);renderCharts(data);}
 
-/* ======== KPIs ======== */
-function avg(arr) { return arr.length ? arr.reduce((a, b) => a + Number(b), 0) / arr.length : 0; }
+/* ── helpers ── */
+const avg=arr=>arr.length?arr.reduce((a,b)=>a+Number(b),0)/arr.length:0;
+const fmtBRL=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}).format(v||0);
+const fmtN=v=>new Intl.NumberFormat('pt-BR').format(Math.round(v||0));
+const pct=v=>(v||0).toFixed(1)+'%';
 
-function kpiCard(label, value, colorClass, sub) {
+function kpiCard(label,value,colorClass,sub,base){
   return `<div class="kpi-card">
     <div class="kpi-label">${label}</div>
-    <div class="kpi-value${colorClass ? ' ' + colorClass : ''}">${value}</div>
-    ${sub ? '<div class="kpi-sub">' + sub + '</div>' : ''}
+    <div class="kpi-value${colorClass?' '+colorClass:''}">${value}</div>
+    ${sub?'<div class="kpi-sub">'+sub+'</div>':''}
+    ${base?'<div class="kpi-base">'+base+'</div>':''}
   </div>`;
 }
 
-function renderKPIs(data) {
-  const total = data.length;
-  let row1 = '';
-  let row2 = '';
+/* ══════════════════════════════════════════════
+   KPIs
+══════════════════════════════════════════════ */
+function renderKPIs(data){
+  const total=data.length;
+  const base=n=>'Base: '+n+' de '+total+' incorporadora'+(total===1?'':'s');
 
-  /* --- ROW 1 --- */
+  let html='';
 
-  // Distribuicao VGV House vs Parcerias
-  const parcsValid = data.filter(d => d.shareParcerias != null && !isNaN(d.shareParcerias));
-  if (parcsValid.length) {
-    const avgH = Math.round(avg(parcsValid.map(d => Number(d.shareHouse || 0))));
-    const avgP = Math.round(avg(parcsValid.map(d => Number(d.shareParcerias))));
-    row1 += kpiCard(
-      'Distribuicao VGV: House vs Parcerias',
-      'House ' + avgH + '% <span style="color:var(--mu);font-size:16px;font-weight:400">|</span> Parcerias ' + avgP + '%',
-      '',
-      'Base: ' + parcsValid.length + ' de ' + total + ' incorporadoras'
-    );
+  /* ── Seção 1: Visão Geral ── */
+  html+='<div class="sec-title">Visão Geral</div><div class="kpis-row">';
+
+  html+=kpiCard('Total de Diagnósticos',total,'red','','');
+
+  // Estados
+  const estados=[...new Set(data.map(d=>d.empresa?.estado).filter(Boolean))];
+  html+=kpiCard('Estados Representados',estados.length,'green','','');
+
+  // VGV médio
+  const withVGV=data.filter(d=>d.totalVGV>0);
+  if(withVGV.length){
+    const m=avg(withVGV.map(d=>d.totalVGV));
+    html+=kpiCard('VGV Médio (12m)',fmtBRL(m),'amber','por incorporadora',base(withVGV.length));
   }
 
-  // Imobiliarias Parceiras (media)
-  const imobs = data.filter(d => d.numImobiliarias != null && !isNaN(d.numImobiliarias));
-  if (imobs.length) {
-    const avgImob = (avg(imobs.map(d => Number(d.numImobiliarias)))).toFixed(1);
-    row1 += kpiCard(
-      'Imobiliarias Parceiras (media)',
-      avgImob,
-      'amber',
-      'Base: ' + imobs.length + ' de ' + total + ' incorporadoras'
-    );
+  // Meta VGV média
+  const withGoal=data.filter(d=>d.vgvGoal>0);
+  if(withGoal.length){
+    const m=avg(withGoal.map(d=>d.vgvGoal));
+    html+=kpiCard('Meta de VGV Média',fmtBRL(m),'amber','objetivo médio',base(withGoal.length));
   }
 
-  // Taxa de Engajamento Media
-  const withBrokers = data.filter(d => d.totalBrokers > 0 && d.activeBrokers != null);
-  if (withBrokers.length) {
-    const tes = withBrokers.map(d => (d.activeBrokers / d.totalBrokers) * 100);
-    const avgTE = (tes.reduce((a,b) => a+b, 0) / tes.length).toFixed(1);
-    row1 += kpiCard('Taxa de Engajamento Media', avgTE + '%', 'red', 'Base: ' + withBrokers.length + ' de ' + total + ' incorporadoras');
+  // Ticket médio
+  const withTicket=data.filter(d=>d.avgTicket>0);
+  if(withTicket.length){
+    const m=avg(withTicket.map(d=>d.avgTicket));
+    html+=kpiCard('Ticket Médio',fmtBRL(m),'white','',base(withTicket.length));
   }
 
-  // Ociosidade da Base
-  if (withBrokers.length) {
-    const ocios = withBrokers.map(d => 100 - (d.activeBrokers / d.totalBrokers) * 100);
-    const avgOcio = (ocios.reduce((a,b) => a+b, 0) / ocios.length).toFixed(1);
-    row1 += kpiCard('Base Ociosa (media)', avgOcio + '%', 'red', 'Base: ' + withBrokers.length + ' de ' + total + ' incorporadoras');
+  html+='</div>';
+
+  /* ── Seção 2: Canal de Corretores ── */
+  html+='<div class="sec-title">Canal de Corretores</div><div class="kpis-row">';
+
+  // Distribuição VGV
+  const parcsValid=data.filter(d=>d.shareParcerias!=null&&!isNaN(d.shareParcerias));
+  if(parcsValid.length){
+    const avgH=Math.round(avg(parcsValid.map(d=>Number(d.shareHouse||0))));
+    const avgP=Math.round(avg(parcsValid.map(d=>Number(d.shareParcerias))));
+    html+=kpiCard('VGV: House vs Parcerias',
+      'H '+avgH+'% &middot; P '+avgP+'%','','médias',base(parcsValid.length));
   }
 
-  // Total de Diagnosticos
-  row1 += kpiCard('Total de Diagnosticos', total, 'red', '');
-
-  document.getElementById('kpiRow1').innerHTML = row1;
-
-  /* --- ROW 2 --- */
-
-  // Ferramentas por Incorporadora (media)
-  const withTools = data.filter(d => Array.isArray(d.ferramentasGerais));
-  if (withTools.length) {
-    const avgTools = (avg(withTools.map(d => d.ferramentasGerais.length))).toFixed(1);
-    row2 += kpiCard(
-      'Ferramentas por Incorporadora (media)',
-      avgTools,
-      '',
-      'Base: ' + withTools.length + ' de ' + total + ' incorporadoras'
-    );
+  // Imobiliárias
+  const withImob=data.filter(d=>d.numImobiliarias>0);
+  if(withImob.length){
+    html+=kpiCard('Imobiliárias Parceiras',
+      fmtN(avg(withImob.map(d=>d.numImobiliarias))),'amber','média por incorporadora',base(withImob.length));
   }
 
-  // Executivos de Parceria (media)
-  const execData = data.map(d => {
-    const cargos = d.cargos || [];
-    let sum = 0;
-    cargos.forEach(c => {
-      if (c.existe && c.nome && c.nome.toLowerCase().includes('executivo')) {
-        sum += (c.quantidade && c.quantidade > 0) ? Number(c.quantidade) : 1;
+  // TE
+  const withTE=data.filter(d=>d.totalBrokers>0&&d.activeBrokers!=null);
+  if(withTE.length){
+    const tes=withTE.map(d=>(d.activeBrokers/d.totalBrokers)*100);
+    html+=kpiCard('Taxa de Engajamento Média',
+      pct(tes.reduce((a,b)=>a+b,0)/tes.length),'red','corretores ativos/total',base(withTE.length));
+  }
+
+  // Ociosidade
+  if(withTE.length){
+    const ocios=withTE.map(d=>100-(d.activeBrokers/d.totalBrokers)*100);
+    html+=kpiCard('Base Ociosa Média',
+      pct(ocios.reduce((a,b)=>a+b,0)/ocios.length),'red','corretores sem vender',base(withTE.length));
+  }
+
+  // VGV por corretor ativo
+  const withVGVBrkr=data.filter(d=>d.totalVGV>0&&d.activeBrokers>0);
+  if(withVGVBrkr.length){
+    const m=avg(withVGVBrkr.map(d=>d.totalVGV/d.activeBrokers));
+    html+=kpiCard('VGV / Corretor Ativo',fmtBRL(m),'green','produtividade média',base(withVGVBrkr.length));
+  }
+
+  html+='</div>';
+
+  /* ── Seção 3: Estrutura Comercial ── */
+  html+='<div class="sec-title">Estrutura Comercial</div><div class="kpis-row">';
+
+  // Executivos
+  const withExec=data.filter(d=>(d.cargos||[]).some(c=>c.nome&&c.nome.toLowerCase().includes('executivo')&&c.existe));
+  if(withExec.length){
+    const vals=withExec.map(d=>{let s=0;(d.cargos||[]).forEach(c=>{if(c.existe&&c.nome&&c.nome.toLowerCase().includes('executivo'))s+=(c.quantidade||1)});return s;});
+    html+=kpiCard('Executivos de Parceria',
+      pct(withExec.length/total*100).replace('%','%')+'<span style="font-size:13px;font-weight:400;color:var(--mu)"> têm</span>',
+      'white','média: '+avg(vals).toFixed(1)+' por incorporadora',base(withExec.length));
+  }
+
+  // Gerentes
+  const withGer=data.filter(d=>(d.cargos||[]).some(c=>c.nome&&c.nome.toLowerCase().includes('gerente')&&c.existe));
+  if(withGer.length){
+    const vals=withGer.map(d=>{let s=0;(d.cargos||[]).forEach(c=>{if(c.existe&&c.nome&&c.nome.toLowerCase().includes('gerente'))s+=(c.quantidade||1)});return s;});
+    html+=kpiCard('Gerentes de Parceria',
+      pct(withGer.length/total*100)+'<span style="font-size:13px;font-weight:400;color:var(--mu)"> têm</span>',
+      'white','média: '+avg(vals).toFixed(1)+' por incorporadora',base(withGer.length));
+  }
+
+  // Corretores por executivo
+  const withBothExec=data.filter(d=>{
+    const hasE=(d.cargos||[]).some(c=>c.existe&&c.nome&&c.nome.toLowerCase().includes('executivo'));
+    return hasE&&d.totalBrokers>0;
+  });
+  if(withBothExec.length){
+    const ratios=withBothExec.map(d=>{let e=0;(d.cargos||[]).forEach(c=>{if(c.existe&&c.nome&&c.nome.toLowerCase().includes('executivo'))e+=(c.quantidade||1);});return e>0?d.totalBrokers/e:0;}).filter(r=>r>0);
+    html+=kpiCard('Corretores / Executivo',fmtN(avg(ratios)),'amber','média de carga',base(ratios.length));
+  }
+
+  // Ferramentas por incorp
+  const withTools=data.filter(d=>Array.isArray(d.ferramentasGerais)&&d.ferramentasGerais.length>0);
+  if(withTools.length){
+    html+=kpiCard('Ferramentas por Incorporadora',
+      avg(withTools.map(d=>d.ferramentasGerais.length)).toFixed(1),'white','média de ferramentas',base(withTools.length));
+  }
+
+  html+='</div>';
+
+  /* ── Seção 4: Operação ── */
+  html+='<div class="sec-title">Operação &amp; Funil</div><div class="kpis-row">';
+
+  // Propostas mensais
+  const withProps=data.filter(d=>d.propostasMensais>0);
+  if(withProps.length){
+    html+=kpiCard('Propostas / Mês',
+      fmtN(avg(withProps.map(d=>d.propostasMensais))),'amber','média mensal',base(withProps.length));
+  }
+
+  // Fechamentos mensais
+  const withFech=data.filter(d=>d.fechamentosMensais>0);
+  if(withFech.length){
+    html+=kpiCard('Fechamentos / Mês',
+      fmtN(avg(withFech.map(d=>d.fechamentosMensais))),'green','média mensal',base(withFech.length));
+  }
+
+  // Taxa de conversão
+  const withConv=data.filter(d=>d.propostasMensais>0&&d.fechamentosMensais>0);
+  if(withConv.length){
+    const convs=withConv.map(d=>(d.fechamentosMensais/d.propostasMensais)*100);
+    html+=kpiCard('Taxa de Conversão',pct(avg(convs)),'green','fech/propostas',base(withConv.length));
+  }
+
+  // Imóveis à venda
+  const withStock=data.filter(d=>d.totalImoveisVenda>0);
+  if(withStock.length){
+    html+=kpiCard('Imóveis à Venda',
+      fmtN(avg(withStock.map(d=>d.totalImoveisVenda))),'white','média de unidades',base(withStock.length));
+  }
+
+  // Empreendimentos
+  const withEmp=data.filter(d=>d.numEmpreendimentos>0);
+  if(withEmp.length){
+    html+=kpiCard('Empreendimentos Ativos',
+      fmtN(avg(withEmp.map(d=>d.numEmpreendimentos))),'white','média por incorporadora',base(withEmp.length));
+  }
+
+  html+='</div>';
+
+  /* ── Seção 5: Tecnologia ── */
+  html+='<div class="sec-title">Tecnologia &amp; CRM</div><div class="kpis-row">';
+
+  const withCRM=data.filter(d=>d.temCRM===true);
+  html+=kpiCard('Usam CRM',fmtN(withCRM.length),'green',
+    pct(withCRM.length/total*100)+' do total',base(total));
+
+  const semCRM=data.filter(d=>d.temCRM===false||d.temCRM==null);
+  html+=kpiCard('Sem CRM',fmtN(semCRM.length),'red',
+    pct(semCRM.length/total*100)+' do total',base(total));
+
+  const withTZ=data.filter(d=>d.tabelaZeroParcerias===true);
+  html+=kpiCard('Tabela Zero Ativa',fmtN(withTZ.length),'green',
+    pct(withTZ.length/total*100)+' do total',base(total));
+
+  // Atingiram metas
+  const metaSim=data.filter(d=>d.atingiuMetas==='yes');
+  const metaParcial=data.filter(d=>d.atingiuMetas==='partial');
+  const metaNao=data.filter(d=>d.atingiuMetas==='no');
+  if(metaSim.length||metaParcial.length||metaNao.length){
+    html+=kpiCard('Atingiram Meta',
+      metaSim.length+' sim &middot; '+metaParcial.length+' parcial &middot; '+metaNao.length+' não',
+      'white','','');
+  }
+
+  html+='</div>';
+
+  document.getElementById('kpiSections').innerHTML=html;
+}
+
+/* ══════════════════════════════════════════════
+   CHARTS
+══════════════════════════════════════════════ */
+function destroyCharts(){Object.values(chartInstances).forEach(c=>{if(c&&c.destroy)c.destroy();});chartInstances={};}
+
+const REDS  =['#E8392A','#d63125','#c42b20','#b3251c','#a12018','#901b14','#7e1610','#6d110d','#5c0c09','#4a0706'];
+const AMBERS=['#e0a020','#cca030','#b89830','#a49030','#908830','#7c7830','#686830','#545828'];
+const GREENS=['#3ab87a','#35a870','#309866','#2b885c','#267852','#217848','#1c683e','#175834'];
+const colors=(arr,n)=>Array.from({length:n},(_,i)=>arr[i%arr.length]);
+
+function barH(ctx,labels,values,bgColors,onTooltip){
+  return new Chart(ctx,{
+    type:'bar',
+    data:{labels,datasets:[{data:values,backgroundColor:bgColors,borderRadius:4,barThickness:18}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:onTooltip||function(c){return c.raw;}}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{stepSize:1}},
+        y:{grid:{display:false}}
       }
-    });
-    return sum;
-  });
-  const withExec = data.filter((d, i) => {
-    const cargos = d.cargos || [];
-    return cargos.some(c => c.nome && c.nome.toLowerCase().includes('executivo'));
-  });
-  if (withExec.length) {
-    const execVals = withExec.map(d => {
-      const cargos = d.cargos || [];
-      let sum = 0;
-      cargos.forEach(c => {
-        if (c.existe && c.nome && c.nome.toLowerCase().includes('executivo')) {
-          sum += (c.quantidade && c.quantidade > 0) ? Number(c.quantidade) : 1;
-        }
-      });
-      return sum;
-    });
-    const avgExec = (avg(execVals)).toFixed(1);
-    row2 += kpiCard(
-      'Executivos de Parceria (media)',
-      avgExec,
-      '',
-      'Base: ' + withExec.length + ' de ' + total + ' incorporadoras'
-    );
-  }
-
-  // Gerentes de Parceria (media)
-  const withGerente = data.filter(d => {
-    const cargos = d.cargos || [];
-    return cargos.some(c => c.existe && c.nome && c.nome.toLowerCase().includes('gerente'));
-  });
-  if (withGerente.length) {
-    const gerenteVals = withGerente.map(d => {
-      const cargos = d.cargos || [];
-      let sum = 0;
-      cargos.forEach(c => {
-        if (c.existe && c.nome && c.nome.toLowerCase().includes('gerente')) {
-          sum += (c.quantidade && c.quantidade > 0) ? Number(c.quantidade) : 1;
-        }
-      });
-      return sum;
-    });
-    const avgGerente = (avg(gerenteVals)).toFixed(1);
-    row2 += kpiCard(
-      'Gerentes de Parceria (media)',
-      avgGerente,
-      '',
-      'Base: ' + withGerente.length + ' de ' + total + ' incorporadoras'
-    );
-  }
-
-  // Corretores por Executivo (media)
-  const withBothExec = data.filter(d => {
-    const hasExec = (d.cargos || []).some(c => c.existe && c.nome && c.nome.toLowerCase().includes('executivo'));
-    return hasExec && d.totalBrokers > 0;
-  });
-  if (withBothExec.length) {
-    const ratios = withBothExec.map(d => {
-      let execs = 0;
-      (d.cargos || []).forEach(c => {
-        if (c.existe && c.nome && c.nome.toLowerCase().includes('executivo'))
-          execs += (c.quantidade > 0) ? Number(c.quantidade) : 1;
-      });
-      return execs > 0 ? d.totalBrokers / execs : 0;
-    }).filter(r => r > 0);
-    if (ratios.length) {
-      const avgRatio = Math.round(ratios.reduce((a,b) => a+b, 0) / ratios.length);
-      row2 += kpiCard('Corretores por Executivo (media)', avgRatio, 'amber', 'Base: ' + ratios.length + ' de ' + total + ' incorporadoras');
     }
-  }
-
-  // VGV Medio por Corretor Engajado
-  const withVGVBrokers = data.filter(d => d.totalVGV > 0 && d.activeBrokers > 0);
-  if (withVGVBrokers.length) {
-    const vgvPerBroker = withVGVBrokers.map(d => d.totalVGV / d.activeBrokers);
-    const avgVGV = Math.round(vgvPerBroker.reduce((a,b) => a+b, 0) / vgvPerBroker.length);
-    row2 += kpiCard('VGV Medio por Corretor Engajado', 'R$ ' + avgVGV.toLocaleString('pt-BR'), 'green', 'Base: ' + withVGVBrokers.length + ' de ' + total + ' incorporadoras');
-  }
-
-  // Estados Representados
-  const estados = [...new Set(data.map(d => d.empresa?.estado).filter(Boolean))];
-  row2 += kpiCard('Estados Representados', estados.length, 'green', '');
-
-  document.getElementById('kpiRow2').innerHTML = row2;
+  });
 }
 
-/* ======== Charts ======== */
-function destroyCharts() {
-  Object.values(chartInstances).forEach(c => { if (c && c.destroy) c.destroy(); });
-  chartInstances = {};
+function doughnut(ctx,labels,values,bgColors){
+  return new Chart(ctx,{
+    type:'doughnut',
+    data:{labels,datasets:[{data:values,backgroundColor:bgColors,borderWidth:0,hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right'}}}
+  });
 }
 
-function renderCharts(data) {
+function renderCharts(data){
   destroyCharts();
-  const grid = document.getElementById('chartsGrid');
+  const total=data.length||1;
+  const grid=document.getElementById('chartsGrid');
+  grid.innerHTML='';
 
-  grid.innerHTML = `
-    <div class="chart-card chart-full" id="card_ferramentas">
-      <div class="chart-title">Ferramentas mais utilizadas</div>
-      <div class="chart-count" id="countFerramentas"></div>
-      <div class="chart-wrap"><canvas id="chartFerramentas"></canvas></div>
-    </div>
-    <div class="chart-card" id="card_desafios">
-      <div class="chart-title">Top 5 Principais Desafios</div>
-      <div class="chart-count" id="countDesafios"></div>
-      <div class="chart-wrap"><canvas id="chartDesafios"></canvas></div>
-    </div>
-    <div class="chart-card" id="card_relatorios">
-      <div class="chart-title">Relatorios mais desejados</div>
-      <div class="chart-count" id="countRelatorios"></div>
-      <div class="chart-wrap"><canvas id="chartRelatorios"></canvas></div>
-    </div>
-    <div class="chart-card" id="card_estados">
-      <div class="chart-title">Distribuicao por Estado</div>
-      <div class="chart-count" id="countEstados"></div>
-      <div class="chart-wrap"><canvas id="chartEstados"></canvas></div>
-    </div>
-  `;
+  /* helper: inject a chart card */
+  function addCard(id,title,base,full){
+    const div=document.createElement('div');
+    div.className='chart-card'+(full?' chart-full':'');
+    div.innerHTML=`<div class="chart-title">${title}</div><div class="chart-base">${base}</div><div class="chart-wrap" id="wrap_${id}"><canvas id="${id}"></canvas></div>`;
+    grid.appendChild(div);
+    return div;
+  }
+  function setHeight(id,h){document.getElementById('wrap_'+id).style.height=h+'px';}
+  function showEmpty(id,msg){document.getElementById('wrap_'+id).innerHTML='<div class="chart-empty">'+(msg||'Dados insuficientes')+'</div>';}
 
-  buildChartFerramentas(data);
-  buildChartDesafios(data);
-  buildChartRelatorios(data);
-  buildChartEstados(data);
-}
-
-function redGradient(count) {
-  const base = [
-    '#E8392A','#d63125','#c42b20','#b3251c','#a12018',
-    '#901b14','#7e1610','#6d110d','#5c0c09','#4a0706',
-    '#E8392A','#d63125','#c42b20','#b3251c','#a12018',
-    '#901b14','#7e1610','#6d110d','#5c0c09','#4a0706'
-  ];
-  return base.slice(0, count);
-}
-
-function amberGradient(count) {
-  const base = ['#e0a020','#cca030','#b89830','#a49030','#908830'];
-  return base.slice(0, count);
-}
-
-function greenGradient(count) {
-  const base = ['#3ab87a','#35a870','#309866','#2b885c','#267852','#217848','#1c683e','#175834'];
-  return base.slice(0, count);
-}
-
-/* Chart 1: Ferramentas (full width, horizontal bar) */
-function buildChartFerramentas(data) {
-  const withData = data.filter(d => Array.isArray(d.ferramentasGerais) && d.ferramentasGerais.length > 0);
-  const counts = {};
-  const total = data.length || 1;
-  data.forEach(d => (d.ferramentasGerais || []).forEach(f => { if (f) counts[f] = (counts[f] || 0) + 1; }));
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-
-  document.getElementById('countFerramentas').textContent = 'Base: ' + withData.length + ' incorporadoras';
-
-  if (!sorted.length) {
-    document.getElementById('card_ferramentas').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes — novos diagnosticos vao popular este grafico</div>';
-    return;
+  /* ── 1. Ferramentas mais utilizadas (full) ── */
+  {
+    const withData=data.filter(d=>Array.isArray(d.ferramentasGerais)&&d.ferramentasGerais.length);
+    addCard('cFerramentas','Ferramentas mais utilizadas','Base: '+withData.length+' incorporadoras',true);
+    const counts={};
+    data.forEach(d=>(d.ferramentasGerais||[]).forEach(f=>{if(f)counts[f]=(counts[f]||0)+1;}));
+    const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    if(!sorted.length){showEmpty('cFerramentas');return;}
+    const labels=sorted.map(e=>e[0]);
+    const vals=sorted.map(e=>e[1]);
+    setHeight('cFerramentas',Math.max(200,sorted.length*28+40));
+    chartInstances.ferramentas=barH(document.getElementById('cFerramentas'),labels,vals,colors(REDS,sorted.length),
+      ctx=>vals[ctx.dataIndex]+' ('+Math.round(vals[ctx.dataIndex]/total*100)+'%)'
+    );
   }
 
-  const labels = sorted.map(e => e[0]);
-  const values = sorted.map(e => e[1]);
-  const pcts = sorted.map(e => Math.round(e[1] / total * 100));
+  /* ── 2. Desafios ── */
+  {
+    const withData=data.filter(d=>Array.isArray(d.problemasIdentificados)&&d.problemasIdentificados.length);
+    addCard('cDesafios','Principais Desafios — Top 10','Base: '+withData.length+' incorporadoras',false);
+    const counts={};
+    data.forEach(d=>(d.problemasIdentificados||[]).forEach(p=>{if(p)counts[p]=(counts[p]||0)+1;}));
+    const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    if(!sorted.length){showEmpty('cDesafios');return;}
+    const labels=sorted.map(e=>e[0].length>55?e[0].slice(0,53)+'…':e[0]);
+    const vals=sorted.map(e=>e[1]);
+    setHeight('cDesafios',Math.max(200,sorted.length*28+40));
+    chartInstances.desafios=barH(document.getElementById('cDesafios'),labels,vals,colors(AMBERS,sorted.length));
+  }
 
-  chartInstances.ferramentas = new Chart(document.getElementById('chartFerramentas'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data: values,
-        backgroundColor: redGradient(sorted.length),
-        borderRadius: 4,
-        barThickness: 18
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function(ctx) {
-              return ctx.raw + ' (' + pcts[ctx.dataIndex] + '%)';
-            }
-          }
+  /* ── 3. Relatórios desejados ── */
+  {
+    const withData=data.filter(d=>Array.isArray(d.relatoriosDesejados)&&d.relatoriosDesejados.length);
+    addCard('cRelatorios','Relatórios mais Desejados','Base: '+withData.length+' incorporadoras',false);
+    const RPT_LABELS={corretores_engajados:'Corretores engajados nos produtos',imob_ofertando:'Imobiliárias ofertando o produto',impacto_exec:'Corretores impactados por executivo'};
+    const counts={};
+    data.forEach(d=>(d.relatoriosDesejados||[]).forEach(r=>{if(r){const l=RPT_LABELS[r]||r;counts[l]=(counts[l]||0)+1;}}));
+    const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    if(!sorted.length){showEmpty('cRelatorios','Dados insuficientes — novos diagnósticos vão popular este gráfico');
+    }else{
+      const labels=sorted.map(e=>e[0]);
+      const vals=sorted.map(e=>e[1]);
+      setHeight('cRelatorios',Math.max(120,sorted.length*38+40));
+      chartInstances.relatorios=barH(document.getElementById('cRelatorios'),labels,vals,colors(GREENS,sorted.length));
+    }
+  }
+
+  /* ── 4. Distribuição por Estado ── */
+  {
+    const withData=data.filter(d=>d.empresa?.estado);
+    addCard('cEstados','Distribuição por Estado','Base: '+withData.length+' incorporadoras',false);
+    const counts={};
+    data.forEach(d=>{const s=d.empresa?.estado;if(s)counts[s]=(counts[s]||0)+1;});
+    const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    if(!sorted.length){showEmpty('cEstados');}
+    else{
+      setHeight('cEstados',Math.max(160,sorted.length*28+40));
+      chartInstances.estados=barH(document.getElementById('cEstados'),sorted.map(e=>e[0]),sorted.map(e=>e[1]),colors(REDS,sorted.length));
+    }
+  }
+
+  /* ── 5. Atingiu Metas (doughnut) ── */
+  {
+    const mapped=data.filter(d=>d.atingiuMetas);
+    addCard('cMetas','Atingiu Metas','Base: '+mapped.length+' de '+total+' incorporadoras',false);
+    if(!mapped.length){showEmpty('cMetas','Dados insuficientes');}
+    else{
+      const sim=mapped.filter(d=>d.atingiuMetas==='yes').length;
+      const parcial=mapped.filter(d=>d.atingiuMetas==='partial').length;
+      const nao=mapped.filter(d=>d.atingiuMetas==='no').length;
+      setHeight('cMetas',220);
+      chartInstances.metas=doughnut(
+        document.getElementById('cMetas'),
+        ['Sim ('+sim+')','Parcialmente ('+parcial+')','Não ('+nao+')'],
+        [sim,parcial,nao],
+        ['#3ab87a','#e0a020','#E8392A']
+      );
+    }
+  }
+
+  /* ── 6. Segmentação da base ── */
+  {
+    const SEG_LABELS={nao:'Não segmenta',nao_gostaria:'Não, mas gostaria',sim_parcial:'Sim, parcialmente',sim_total:'Sim, totalmente'};
+    const mapped=data.filter(d=>d.segmentacao);
+    addCard('cSeg','Segmentação da Base de Corretores','Base: '+mapped.length+' de '+total+' incorporadoras',false);
+    if(!mapped.length){showEmpty('cSeg','Dados insuficientes');}
+    else{
+      const counts={};
+      mapped.forEach(d=>{const l=SEG_LABELS[d.segmentacao]||d.segmentacao;counts[l]=(counts[l]||0)+1;});
+      const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+      setHeight('cSeg',220);
+      chartInstances.seg=doughnut(
+        document.getElementById('cSeg'),
+        sorted.map(e=>e[0]+' ('+e[1]+')'),
+        sorted.map(e=>e[1]),
+        ['#3ab87a','#e0a020','#E8392A','#6366f1']
+      );
+    }
+  }
+
+  /* ── 7. Canal: House vs Parcerias ── */
+  {
+    const withData=data.filter(d=>d.shareParcerias>0||d.shareHouse>0);
+    addCard('cCanal','Distribuição de Canal — House vs Parcerias','Base: '+withData.length+' incorporadoras (médias)',false);
+    if(!withData.length){showEmpty('cCanal','Dados insuficientes');}
+    else{
+      // Histograma em faixas
+      const faixas=['0–20%','21–40%','41–60%','61–80%','81–100%'];
+      const parcCount=[0,0,0,0,0];
+      withData.forEach(d=>{
+        const p=Number(d.shareParcerias||0);
+        const i=Math.min(4,Math.floor(p/21));
+        parcCount[i]++;
+      });
+      setHeight('cCanal',180);
+      chartInstances.canal=new Chart(document.getElementById('cCanal'),{
+        type:'bar',
+        data:{
+          labels:faixas,
+          datasets:[{label:'% VGV via Parcerias',data:parcCount,backgroundColor:'#E8392A',borderRadius:4}]
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+' incorporadora'+(c.raw===1?'':'s')}}},
+          scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{stepSize:1}}}
         }
-      },
-      scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { stepSize: 1 } },
-        y: { grid: { display: false } }
-      }
+      });
     }
-  });
-
-  document.getElementById('chartFerramentas').parentElement.style.height = Math.max(200, sorted.length * 28 + 40) + 'px';
-}
-
-/* Chart 2: Top 5 Desafios (horizontal bar, amber) */
-function buildChartDesafios(data) {
-  const withData = data.filter(d => Array.isArray(d.problemasIdentificados) && d.problemasIdentificados.length > 0);
-  const counts = {};
-  data.forEach(d => (d.problemasIdentificados || []).forEach(p => { if (p) counts[p] = (counts[p] || 0) + 1; }));
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
-
-  document.getElementById('countDesafios').textContent = 'Base: ' + withData.length + ' incorporadoras';
-
-  if (!sorted.length) {
-    document.getElementById('card_desafios').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes — novos diagnosticos vao popular este grafico</div>';
-    return;
-  }
-  const labels = sorted.map(e => e[0].length > 50 ? e[0].slice(0, 48) + '...' : e[0]);
-  const fullLabels = sorted.map(e => e[0]);
-
-  chartInstances.desafios = new Chart(document.getElementById('chartDesafios'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data: sorted.map(e => e[1]),
-        backgroundColor: amberGradient(sorted.length),
-        borderRadius: 4,
-        barThickness: 18
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            title: function(items) { return fullLabels[items[0].dataIndex]; }
-          }
-        }
-      },
-      scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { stepSize: 1 } },
-        y: { grid: { display: false } }
-      }
-    }
-  });
-}
-
-/* Chart 3: Relatorios desejados (horizontal bar, green) */
-function buildChartRelatorios(data) {
-  const withData = data.filter(d => Array.isArray(d.relatoriosDesejados) && d.relatoriosDesejados.length > 0);
-  const counts = {};
-  data.forEach(d => (d.relatoriosDesejados || []).forEach(r => { if (r) counts[r] = (counts[r] || 0) + 1; }));
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-
-  document.getElementById('countRelatorios').textContent = 'Base: ' + withData.length + ' incorporadoras';
-
-  if (!sorted.length) {
-    document.getElementById('card_relatorios').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes — novos diagnosticos vao popular este grafico</div>';
-    return;
-  }
-  const labels = sorted.map(e => e[0].length > 50 ? e[0].slice(0, 48) + '...' : e[0]);
-  const fullLabels = sorted.map(e => e[0]);
-
-  chartInstances.relatorios = new Chart(document.getElementById('chartRelatorios'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data: sorted.map(e => e[1]),
-        backgroundColor: greenGradient(sorted.length),
-        borderRadius: 4,
-        barThickness: 18
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            title: function(items) { return fullLabels[items[0].dataIndex]; }
-          }
-        }
-      },
-      scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { stepSize: 1 } },
-        y: { grid: { display: false } }
-      }
-    }
-  });
-}
-
-/* Chart 4: Distribuicao por Estado (horizontal bar) */
-function buildChartEstados(data) {
-  const withData = data.filter(d => d.empresa?.estado);
-  const counts = {};
-  data.forEach(d => { const s = d.empresa?.estado; if (s) counts[s] = (counts[s] || 0) + 1; });
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-
-  document.getElementById('countEstados').textContent = 'Base: ' + withData.length + ' incorporadoras';
-
-  if (!sorted.length) {
-    document.getElementById('card_estados').querySelector('.chart-wrap').innerHTML = '<div class="chart-empty">Dados insuficientes</div>';
-    return;
   }
 
-  chartInstances.estados = new Chart(document.getElementById('chartEstados'), {
-    type: 'bar',
-    data: {
-      labels: sorted.map(e => e[0]),
-      datasets: [{
-        data: sorted.map(e => e[1]),
-        backgroundColor: '#E8392A',
-        borderRadius: 4,
-        barThickness: 18
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { stepSize: 1 } },
-        y: { grid: { display: false } }
-      }
+  /* ── 8. Eventos e Incentivos ── */
+  {
+    const EV_LABELS={'sim_regular':'Eventos regulares','sim_esporadico':'Eventos esporádicos','nao':'Não realiza eventos'};
+    const INC_LABELS={yes:'Tem incentivos',no:'Sem incentivos'};
+    const withEv=data.filter(d=>d.temEventos);
+    const withInc=data.filter(d=>d.temIncentivo);
+    addCard('cEventos','Eventos e Programas de Incentivo','Base: ev='+withEv.length+' | inc='+withInc.length+' incorporadoras',false);
+    if(!withEv.length&&!withInc.length){showEmpty('cEventos','Dados insuficientes');}
+    else{
+      const evCounts={};
+      withEv.forEach(d=>{const l=EV_LABELS[d.temEventos]||d.temEventos;evCounts[l]=(evCounts[l]||0)+1;});
+      const incCounts={};
+      withInc.forEach(d=>{const l=INC_LABELS[d.temIncentivo]||d.temIncentivo;incCounts[l]=(incCounts[l]||0)+1;});
+      const allLabels=[...Object.keys(evCounts),...Object.keys(incCounts)];
+      const allVals=[...Object.values(evCounts),...Object.values(incCounts)];
+      setHeight('cEventos',Math.max(160,allLabels.length*32+40));
+      chartInstances.eventos=barH(document.getElementById('cEventos'),allLabels,allVals,
+        [...colors(GREENS,Object.keys(evCounts).length),...colors(AMBERS,Object.keys(incCounts).length)]);
     }
-  });
+  }
+
+  /* ── 9. VGV Médio por Estado ── */
+  {
+    const withData=data.filter(d=>d.totalVGV>0&&d.empresa?.estado);
+    addCard('cVGVEstado','VGV Médio por Estado (últimos 12m)','Base: '+withData.length+' incorporadoras',false);
+    if(withData.length<2){showEmpty('cVGVEstado','Dados insuficientes');}
+    else{
+      const byState={};
+      withData.forEach(d=>{const s=d.empresa.estado;if(!byState[s])byState[s]=[];byState[s].push(d.totalVGV);});
+      const sorted=Object.entries(byState).map(([s,vals])=>({s,avg:avg(vals),n:vals.length})).sort((a,b)=>b.avg-a.avg);
+      setHeight('cVGVEstado',Math.max(160,sorted.length*32+40));
+      chartInstances.vgvEstado=barH(
+        document.getElementById('cVGVEstado'),
+        sorted.map(e=>e.s+' ('+e.n+')'),
+        sorted.map(e=>Math.round(e.avg)),
+        colors(GREENS,sorted.length),
+        ctx=>{const v=sorted[ctx.dataIndex];return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}).format(v.avg)+' · '+v.n+' incorp.';}
+      );
+    }
+  }
+
+  /* ── 10. Foco de Vendas ── */
+  {
+    const withData=data.filter(d=>d.focoVendas);
+    addCard('cFoco','Foco de Vendas Atual','Base: '+withData.length+' de '+total+' incorporadoras',false);
+    if(!withData.length){showEmpty('cFoco','Dados insuficientes');}
+    else{
+      const counts={};
+      withData.forEach(d=>{const f=d.focoVendas;counts[f]=(counts[f]||0)+1;});
+      const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+      setHeight('cFoco',Math.max(120,sorted.length*36+40));
+      chartInstances.foco=barH(document.getElementById('cFoco'),sorted.map(e=>e[0]),sorted.map(e=>e[1]),colors(AMBERS,sorted.length));
+    }
+  }
 }
 
 init();
