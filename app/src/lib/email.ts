@@ -1,6 +1,7 @@
 const FROM_NAME = "DWV Diagnóstico";
 const FROM_EMAIL = "noreply@mail.dwvapp.com.br";
 const BASE_URL = "https://dwv-diagnostico-comercial.vercel.app";
+const SPARKPOST_ENDPOINT = "https://api.sparkpost.com/api/v1/transmissions";
 
 export async function sendInviteEmail({
   nome,
@@ -80,7 +81,7 @@ export async function sendInviteEmail({
 </body>
 </html>`;
 
-  const res = await fetch("https://api.sparkpost.com/api/v1/transmissions", {
+  const res = await fetch(SPARKPOST_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
