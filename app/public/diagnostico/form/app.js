@@ -517,7 +517,10 @@ function render(){
     <div class="sdesc">${s.desc}</div>
     ${body()}
     <div class="nav">
-      <button class="btn btng ${currentStep===0?'invis':''}" onclick="prev()">← Anterior</button>
+      ${currentStep===0
+        ? `<button class="btn btng" onclick="window.location.href='/diagnostico/dashboard'">← Home</button>`
+        : `<button class="btn btng" onclick="prev()">← Anterior</button>`
+      }
       <button id="nextBtn" class="btn btnp" onclick="next()" ${!canNext()?'disabled':''}>
         ${isLast?'Ver Diagnóstico →':'Avançar →'}
       </button>

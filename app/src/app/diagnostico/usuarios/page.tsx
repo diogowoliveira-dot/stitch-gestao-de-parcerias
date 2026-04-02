@@ -102,6 +102,7 @@ export default function UsuariosPage() {
 
   return (
     <DiagShell
+      showBack
       title="Gestão de Usuários"
       subtitle={`${users.filter((u) => u.status === "ativo").length} ativos`}
       icon="group"

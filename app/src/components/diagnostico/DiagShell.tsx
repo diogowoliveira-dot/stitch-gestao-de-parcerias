@@ -37,7 +37,7 @@ export default function DiagShell({ children, title, subtitle, icon, showBack, a
         <div className="flex items-center justify-between px-5 py-4 max-w-6xl mx-auto">
           <div className="flex items-center gap-3 min-w-0">
             {showBack && (
-              <button onClick={() => router.back()} className="p-1 -ml-1 transition-colors text-slate-400 hover:text-white">
+              <button onClick={() => router.push("/diagnostico/dashboard")} className="p-1 -ml-1 transition-colors text-slate-400 hover:text-white">
                 <span className="material-symbols-outlined" style={{ fontSize: 22 }}>arrow_back</span>
               </button>
             )}
