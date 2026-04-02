@@ -27,10 +27,10 @@ body{background:#080808;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 .sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mu);margin:28px 0 12px;padding-bottom:6px;border-bottom:.5px solid var(--b)}
 
 /* KPI cards */
-.kpis-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:12px}
-.kpi-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:18px 20px}
-.kpi-label{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;line-height:1.4}
-.kpi-value{font-size:26px;font-weight:700;line-height:1.1}
+.kpis-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:12px}
+.kpi-card{background:var(--s);border:.5px solid var(--b);border-radius:14px;padding:18px 16px;min-width:0;overflow:hidden}
+.kpi-label{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;line-height:1.4}
+.kpi-value{font-size:clamp(14px,1.8vw,22px);font-weight:700;line-height:1.2;overflow-wrap:break-word;word-break:break-word}
 .kpi-value.red{color:var(--red)}
 .kpi-value.green{color:var(--gr)}
 .kpi-value.amber{color:var(--am)}
@@ -221,8 +221,12 @@ function renderKPIs(data){
   /* ── Seção 2: Canal de Corretores ── */
   html+='<div class="sec-title">Canal de Corretores</div><div class="kpis-row">';
 
-  // Distribuição VGV
-  const parcsValid=data.filter(d=>d.shareParcerias!=null&&!isNaN(d.shareParcerias));
+  // Distribuição VGV (só considera valores plausíveis: 0–100)
+  const parcsValid=data.filter(d=>{
+    const h=Number(d.shareHouse||0);
+    const p=Number(d.shareParcerias||0);
+    return p!=null&&!isNaN(p)&&h>=0&&h<=100&&p>=0&&p<=100;
+  });
   if(parcsValid.length){
     const avgH=Math.round(avg(parcsValid.map(d=>Number(d.shareHouse||0))));
     const avgP=Math.round(avg(parcsValid.map(d=>Number(d.shareParcerias))));
