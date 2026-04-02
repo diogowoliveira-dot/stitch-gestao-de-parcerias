@@ -443,13 +443,46 @@ function renderCharts(data){
 
   /* ── 2. Desafios ── */
   {
-    const withData=data.filter(d=>Array.isArray(d.problemasIdentificados)&&d.problemasIdentificados.length);
-    addCard('cDesafios','Principais Desafios — Top 10','Base: '+withData.length+' incorporadoras',false);
+    // Usa desafiosKeys (chaves padronizadas) para agrupamento consistente
+    // Fallback: se desafiosKeys vazio, tenta extrair das problemasIdentificados via lookup reverso
+    const CHAL_LABELS_BI={
+      engagement:'Baixo engajamento de corretores',
+      exec_reports:'Relatórios dos executivos de parceria',
+      exec_mgmt:'Falta de gestão dos executivos de parceria',
+      build_team:'Construir e treinar time de parcerias',
+      high_demand:'Alta demanda de solicitações dos corretores',
+      training:'Falta de capacitação dos corretores',
+      competition:'Concorrência com outras incorporadoras',
+      product:'Corretores não conhecem o produto',
+      data_loss:'Histórico perdido quando executivo sai'
+    };
+    const CHAL_REVERSE_BI=Object.fromEntries(Object.entries(CHAL_LABELS_BI).map(([k,v])=>[v.toLowerCase().trim(),k]));
+
+    const withData=data.filter(d=>{
+      const hasKeys=Array.isArray(d.desafiosKeys)&&d.desafiosKeys.length;
+      const hasProbs=Array.isArray(d.problemasIdentificados)&&d.problemasIdentificados.length;
+      return hasKeys||hasProbs;
+    });
+    addCard('cDesafios','Principais Desafios','Base: '+withData.length+' incorporadoras',false);
+
     const counts={};
-    data.forEach(d=>(d.problemasIdentificados||[]).forEach(p=>{if(p)counts[p]=(counts[p]||0)+1;}));
+    withData.forEach(d=>{
+      const keys=new Set();
+      // Fonte primária: desafiosKeys (chaves canônicas)
+      (d.desafiosKeys||[]).forEach(k=>{if(k&&CHAL_LABELS_BI[k])keys.add(k);});
+      // Fallback: problemasIdentificados → lookup reverso para obter chave
+      if(!keys.size){
+        (d.problemasIdentificados||[]).forEach(p=>{
+          const key=CHAL_REVERSE_BI[(p||'').toLowerCase().trim()];
+          if(key) keys.add(key);
+        });
+      }
+      keys.forEach(k=>{counts[k]=(counts[k]||0)+1;});
+    });
+
     const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
     if(!sorted.length){showEmpty('cDesafios');return;}
-    const labels=sorted.map(e=>e[0].length>55?e[0].slice(0,53)+'…':e[0]);
+    const labels=sorted.map(([k])=>CHAL_LABELS_BI[k]||k);
     const vals=sorted.map(e=>e[1]);
     setHeight('cDesafios',Math.max(200,sorted.length*28+40));
     chartInstances.desafios=barH(document.getElementById('cDesafios'),labels,vals,colors(AMBERS,sorted.length));
