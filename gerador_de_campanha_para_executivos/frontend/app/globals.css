@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold: #C9A96E;
+  --dark: #0A0A0A;
+}
+
+body {
+  background: #0A0A0A;
+  color: #fff;
+  font-family: var(--font-syne), sans-serif;
+}
+
+/* Scrollbar fina estilo dark */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #141414; }
+::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.3); border-radius: 2px; }
+
+/* Preview iframe sem borda */
+iframe { border: none; display: block; }

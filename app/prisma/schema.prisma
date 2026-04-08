@@ -16,7 +16,9 @@ model User {
   status       String   @default("ativo")     // ativo | inativo
   avatar       String?
   dataCriacao  DateTime @default(now())
-  ultimoAcesso DateTime?
+  ultimoAcesso     DateTime?
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
 
   diagnosticos Diagnostico[]
 }

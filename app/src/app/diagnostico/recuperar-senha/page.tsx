@@ -1,30 +1,27 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useDiagAuth } from "@/lib/diagnostico-context";
 
 export default function RecuperarSenha() {
   const [email, setEmail] = useState("");
   const [enviado, setEnviado] = useState(false);
-  const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
-  const { users } = useDiagAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErro("");
     setLoading(true);
-
-    await new Promise((r) => setTimeout(r, 800));
-
-    const found = users.find((u) => u.email === email && u.status === "ativo");
-    if (found) {
+    try {
+      await fetch("/api/diagnostico/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      // Sempre mostra sucesso (não revela se o e-mail existe)
       setEnviado(true);
-    } else {
-      setErro("E-mail não encontrado ou conta inativa");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -39,12 +36,8 @@ export default function RecuperarSenha() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-5 bg-[#ec1313]" style={{ boxShadow: "0 8px 32px rgba(236, 19, 19, 0.3)" }}>
             <span className="material-symbols-outlined text-white" style={{ fontSize: 28 }}>lock_reset</span>
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">
-            Recuperar Senha
-          </h1>
-          <p className="text-sm mt-2 text-slate-500">
-            Enviaremos instruções para seu e-mail
-          </p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Recuperar Senha</h1>
+          <p className="text-sm mt-2 text-slate-500">Enviaremos um link para seu e-mail</p>
         </div>
 
         {/* Card */}
@@ -52,14 +45,14 @@ export default function RecuperarSenha() {
           {enviado ? (
             <div className="text-center py-6">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4" style={{ background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 28, color: "#10b981" }}>check_circle</span>
+                <span className="material-symbols-outlined" style={{ fontSize: 28, color: "#10b981" }}>mark_email_read</span>
               </div>
-              <h2 className="text-lg font-bold text-white mb-2">E-mail enviado!</h2>
+              <h2 className="text-lg font-bold text-white mb-2">Verifique seu e-mail</h2>
               <p className="text-sm mb-6 text-slate-500">
-                Se o e-mail <strong className="text-white">{email}</strong> estiver cadastrado, você receberá as instruções de recuperação.
+                Se <strong className="text-white">{email}</strong> estiver cadastrado, você receberá um link para redefinir sua senha em instantes. O link é válido por <strong className="text-white">1 hora</strong>.
               </p>
-              <p className="text-xs mb-6 px-4 py-3 rounded-xl bg-[#ec1313]/[0.08] border border-[#ec1313]/[0.15] text-[#ec1313]">
-                Dica: Para fins de demonstração, as senhas padrão são <strong>admin123</strong> (admin) e <strong>123456</strong> (consultores).
+              <p className="text-xs mb-6 px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-slate-400">
+                Não recebeu? Verifique a pasta de spam ou tente novamente em alguns minutos.
               </p>
               <button
                 onClick={() => router.push("/diagnostico")}
@@ -86,13 +79,6 @@ export default function RecuperarSenha() {
                   />
                 </div>
               </div>
-
-              {erro && (
-                <div className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm bg-[#ec1313]/10 border border-[#ec1313]/20 text-[#ec1313]">
-                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>error</span>
-                  {erro}
-                </div>
-              )}
 
               <button
                 type="submit"
