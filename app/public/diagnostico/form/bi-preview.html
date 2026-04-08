@@ -125,7 +125,7 @@ async function init(){
     document.getElementById('loadingEl').style.display='none';
     document.getElementById('filterBar').style.display='flex';
     document.getElementById('dashboard').style.display='block';
-    render(allData);
+    renderFull(allData);
   }catch(e){showError('Falha ao carregar dados: '+e.message);}
 }
 
@@ -151,6 +151,7 @@ function applyFilters(){
   if(from) filtered=filtered.filter(d=>(d.dataCriacao||'').slice(0,10)>=from);
   if(to) filtered=filtered.filter(d=>(d.dataCriacao||'').slice(0,10)<=to);
   render(filtered);
+  aiCurrentData=filtered;
 }
 
 function clearFilters(){
@@ -158,9 +159,11 @@ function clearFilters(){
   document.getElementById('dateFrom').value='';
   document.getElementById('dateTo').value='';
   render(allData);
+  aiCurrentData=allData;
 }
 
 function render(data){renderKPIs(data);renderCharts(data);}
+function renderFull(data){render(data);if(!document.getElementById('aiSection'))injectAISection(data);else{aiCurrentData=data;}}
 
 /* ── helpers ── */
 const avg=arr=>arr.length?arr.reduce((a,b)=>a+Number(b),0)/arr.length:0;
@@ -221,14 +224,15 @@ function renderKPIs(data){
   /* ── Seção 2: Canal de Corretores ── */
   html+='<div class="sec-title">Canal de Corretores</div><div class="kpis-row">';
 
-  // Distribuição VGV (só considera valores plausíveis: 0–100)
+  // Distribuição VGV — apenas diagnósticos que preencheram AMBOS os campos explicitamente
   const parcsValid=data.filter(d=>{
-    const h=Number(d.shareHouse||0);
-    const p=Number(d.shareParcerias||0);
-    return p!=null&&!isNaN(p)&&h>=0&&h<=100&&p>=0&&p<=100;
+    if(d.shareHouse==null||d.shareParcerias==null) return false;
+    const h=Number(d.shareHouse);
+    const p=Number(d.shareParcerias);
+    return !isNaN(h)&&!isNaN(p)&&h>=0&&h<=100&&p>=0&&p<=100;
   });
   if(parcsValid.length){
-    const avgH=Math.round(avg(parcsValid.map(d=>Number(d.shareHouse||0))));
+    const avgH=Math.round(avg(parcsValid.map(d=>Number(d.shareHouse))));
     const avgP=Math.round(avg(parcsValid.map(d=>Number(d.shareParcerias))));
     html+=kpiCard('VGV: House vs Parcerias',
       'H '+avgH+'% &middot; P '+avgP+'%','','médias',base(parcsValid.length));
@@ -371,6 +375,62 @@ function renderKPIs(data){
   }
 
   html+='</div>';
+
+  /* ── Seção 6: Canais de Venda ── */
+  html+='<div class="sec-title">Canais de Venda</div><div class="kpis-row">';
+
+  // % com canal House ativo
+  const withHouseData=data.filter(d=>d.hasHouse!=null);
+  if(withHouseData.length){
+    const c=withHouseData.filter(d=>d.hasHouse===true).length;
+    html+=kpiCard('Canal House Ativo',pct(c/withHouseData.length*100),'amber',
+      c+' de '+withHouseData.length+' responderam',base(withHouseData.length));
+  }
+
+  // % com canal Parcerias ativo
+  const withParcData=data.filter(d=>d.hasParc!=null);
+  if(withParcData.length){
+    const c=withParcData.filter(d=>d.hasParc===true).length;
+    html+=kpiCard('Canal Parcerias Ativo',pct(c/withParcData.length*100),'green',
+      c+' de '+withParcData.length+' responderam',base(withParcData.length));
+  }
+
+  // % com imobiliárias (hasImob)
+  const withImobData=data.filter(d=>d.hasImob!=null);
+  if(withImobData.length){
+    const c=withImobData.filter(d=>d.hasImob===true).length;
+    html+=kpiCard('Trabalha com Imobiliárias',pct(c/withImobData.length*100),'white',
+      c+' de '+withImobData.length+' responderam',base(withImobData.length));
+  }
+
+  // Exclusividade
+  const withExcl=data.filter(d=>d.exclusividade);
+  if(withExcl.length){
+    const excl=withExcl.filter(d=>d.exclusividade==='exclusive').length;
+    const nonExcl=withExcl.filter(d=>d.exclusividade==='non-exclusive').length;
+    html+=kpiCard('Exclusividade do Canal',excl+' excl &middot; '+nonExcl+' não excl',
+      'white','de '+withExcl.length+' com canal ativo',base(withExcl.length));
+  }
+
+  html+='</div>';
+
+  /* ── Seção 7: Portfólio ── */
+  const withPre=data.filter(d=>d.numPreLancamento>0);
+  const withLanc=data.filter(d=>d.numLancamento>0);
+  const withEst=data.filter(d=>d.numEstoque>0);
+  if(withPre.length||withLanc.length||withEst.length){
+    html+='<div class="sec-title">Portfólio &amp; Inventário</div><div class="kpis-row">';
+    if(withPre.length)
+      html+=kpiCard('Empreend. Pré-lançamento',
+        avg(withPre.map(d=>d.numPreLancamento)).toFixed(1),'amber','média por incorp.',base(withPre.length));
+    if(withLanc.length)
+      html+=kpiCard('Empreend. em Lançamento',
+        avg(withLanc.map(d=>d.numLancamento)).toFixed(1),'green','média por incorp.',base(withLanc.length));
+    if(withEst.length)
+      html+=kpiCard('Empreend. em Estoque',
+        avg(withEst.map(d=>d.numEstoque)).toFixed(1),'white','média por incorp.',base(withEst.length));
+    html+='</div>';
+  }
 
   document.getElementById('kpiSections').innerHTML=html;
 }
@@ -560,8 +620,9 @@ function renderCharts(data){
 
   /* ── 7. Canal: House vs Parcerias ── */
   {
-    const withData=data.filter(d=>d.shareParcerias>0||d.shareHouse>0);
-    addCard('cCanal','Distribuição de Canal — House vs Parcerias','Base: '+withData.length+' incorporadoras (médias)',false);
+    // Apenas diagnósticos que preencheram AMBOS os campos explicitamente
+    const withData=data.filter(d=>d.shareParcerias!=null&&d.shareHouse!=null);
+    addCard('cCanal','Distribuição de Canal — House vs Parcerias','Base: '+withData.length+' incorporadoras que preencheram estes campos',false);
     if(!withData.length){showEmpty('cCanal','Dados insuficientes');}
     else{
       // Histograma em faixas
@@ -642,6 +703,215 @@ function renderCharts(data){
       chartInstances.foco=barH(document.getElementById('cFoco'),sorted.map(e=>e[0]),sorted.map(e=>e[1]),colors(AMBERS,sorted.length));
     }
   }
+
+  /* ── 11. CRMs utilizados ── */
+  {
+    const withData=data.filter(d=>d.temCRM===true&&d.crmNome);
+    addCard('cCRMs','CRMs Mais Utilizados','Base: '+withData.length+' incorporadoras com CRM',false);
+    if(!withData.length){showEmpty('cCRMs','Nenhuma incorporadora com CRM preenchido');}
+    else{
+      const counts={};
+      withData.forEach(d=>{const n=(d.crmNome||'').trim();if(n)counts[n]=(counts[n]||0)+1;});
+      const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+      setHeight('cCRMs',Math.max(120,sorted.length*32+40));
+      chartInstances.crms=barH(document.getElementById('cCRMs'),sorted.map(e=>e[0]),sorted.map(e=>e[1]),colors(GREENS,sorted.length),
+        ctx=>sorted[ctx.dataIndex][1]+' ('+Math.round(sorted[ctx.dataIndex][1]/withData.length*100)+'%)');
+    }
+  }
+
+  /* ── 12. Tabela Zero — quem tem acesso ── */
+  {
+    const withData=data.filter(d=>Array.isArray(d.tabelaZeroAcesso)&&d.tabelaZeroAcesso.length);
+    addCard('cTZ','Acesso à Tabela Zero — por Canal','Base: '+withData.length+' incorporadoras com Tabela Zero',false);
+    const TZ_LABELS={house:'Equipe House',canal_parcerias:'Canal Parcerias',imobiliarias:'Imobiliárias',todos:'Todos os canais'};
+    if(!withData.length){showEmpty('cTZ','Dados insuficientes');}
+    else{
+      const counts={};
+      withData.forEach(d=>(d.tabelaZeroAcesso||[]).forEach(k=>{const l=TZ_LABELS[k]||k;counts[l]=(counts[l]||0)+1;}));
+      const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+      setHeight('cTZ',Math.max(120,sorted.length*36+40));
+      chartInstances.tz=barH(document.getElementById('cTZ'),sorted.map(e=>e[0]),sorted.map(e=>e[1]),colors(AMBERS,sorted.length));
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════
+   AI ANALYSIS SECTION
+══════════════════════════════════════════════ */
+let aiCurrentData=[];
+
+function injectAISection(data){
+  aiCurrentData=data;
+  // Only show if there's actually text data to analyze
+  const hasText=data.some(d=>d.desafiosTexto||d.segmentacaoDescritiva||d.relatoriosDescritivo||
+    d.expectativa12m||d.observacoesGerais||d.concorrente||
+    (d.cargos||[]).some(c=>c.atividadesDescritivas));
+  if(!hasText) return;
+
+  const sec=document.createElement('div');
+  sec.id='aiSection';
+  sec.innerHTML=`
+    <div class="sec-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <span>Análise Qualitativa por IA</span>
+      <button id="btnRunAI" onclick="runAIAnalysis()"
+        style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px">
+        <span>✦</span> Gerar Análise
+      </button>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:16px">
+      Campos de texto dos diagnósticos analisados por IA para extrair padrões e insights estratégicos.
+    </div>
+    <div id="aiLoading" style="display:none;text-align:center;padding:40px 20px;color:rgba(255,255,255,0.45);font-size:13px">
+      <div class="spinner" style="margin:0 auto 14px"></div>
+      Analisando campos de texto com IA...
+    </div>
+    <div id="aiResults" class="charts-grid"></div>
+  `;
+  document.querySelector('.app').appendChild(sec);
+}
+
+async function runAIAnalysis(){
+  const btn=document.getElementById('btnRunAI');
+  const loadingEl=document.getElementById('aiLoading');
+  const resultsEl=document.getElementById('aiResults');
+  btn.disabled=true;btn.textContent='Analisando...';
+  loadingEl.style.display='block';resultsEl.innerHTML='';
+
+  const data=aiCurrentData;
+  const AI='/api/diagnostico/ai-analyze';
+
+  // Collect text payloads
+  const desafiosTextos=data.filter(d=>d.desafiosTexto).map(d=>({empresa:d.empresa?.nome,texto:d.desafiosTexto}));
+  const segmentTextos=data.filter(d=>d.segmentacaoDescritiva).map(d=>({empresa:d.empresa?.nome,texto:d.segmentacaoDescritiva}));
+  const relTextos=data.filter(d=>d.relatoriosDescritivo).map(d=>({empresa:d.empresa?.nome,texto:d.relatoriosDescritivo}));
+  const expTextos=data.filter(d=>d.expectativa12m).map(d=>({empresa:d.empresa?.nome,texto:d.expectativa12m}));
+  const obsTextos=data.filter(d=>d.observacoesGerais).map(d=>({empresa:d.empresa?.nome,texto:d.observacoesGerais}));
+  const concTextos=data.filter(d=>d.concorrente).map(d=>({empresa:d.empresa?.nome,texto:d.concorrente}));
+  const atividadesData=data.flatMap(d=>(d.cargos||[]).filter(c=>c.atividadesDescritivas).map(c=>({cargo:c.nome,texto:c.atividadesDescritivas})));
+  const kpiData=data.flatMap(d=>(d.cargos||[]).filter(c=>c.kpiPrincipal?.length).map(c=>({cargo:c.nome,kpis:c.kpiPrincipal})));
+  const crmData=data.filter(d=>d.temCRM===true&&(d.crmNome||d.crmContratoNome)).map(d=>({empresa:d.empresa?.nome,crm:d.crmNome,contrato:d.crmContratoNome}));
+
+  const calls=[];
+  if(desafiosTextos.length) calls.push({type:'desafios',data:desafiosTextos,title:'Desafios (Texto Livre)',icon:'⚠'});
+  if(segmentTextos.length) calls.push({type:'segmentacao',data:segmentTextos,title:'Segmentação da Base',icon:'🎯'});
+  if(relTextos.length) calls.push({type:'relatorios',data:relTextos,title:'Relatórios Desejados',icon:'📊'});
+  if(expTextos.length) calls.push({type:'expectativa',data:expTextos,title:'Expectativas 12 meses',icon:'🚀'});
+  if(obsTextos.length) calls.push({type:'observacoes',data:obsTextos,title:'Observações dos Consultores',icon:'📝'});
+  if(concTextos.length) calls.push({type:'concorrente',data:concTextos,title:'Análise de Concorrência',icon:'🔍'});
+  if(atividadesData.length) calls.push({type:'atividades',data:atividadesData,title:'Atividades por Cargo',icon:'👤'});
+  if(kpiData.length) calls.push({type:'kpis',data:kpiData,title:'KPIs Cobrados por Cargo',icon:'📈'});
+  if(crmData.length) calls.push({type:'crm',data:crmData,title:'Uso de CRM',icon:'💻'});
+
+  // Run all in parallel
+  const results=await Promise.allSettled(calls.map(c=>
+    fetch(AI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:c.type,data:c.data})}).then(r=>r.json())
+  ));
+
+  loadingEl.style.display='none';
+  btn.disabled=false;btn.innerHTML='<span>↺</span> Reanalisar';
+
+  results.forEach((res,i)=>{
+    const call=calls[i];
+    const card=document.createElement('div');
+    card.className='chart-card';
+    if(res.status==='rejected'||res.value?.error){
+      card.innerHTML=`<div class="chart-title">${call.icon} ${call.title}</div><div class="chart-empty" style="color:var(--red)">Erro ao processar análise</div>`;
+      resultsEl.appendChild(card);return;
+    }
+    const d=res.value;
+    card.innerHTML=`<div class="chart-title">${call.icon} ${call.title}</div><div class="chart-base">Base: ${calls[i].data.length} registros com texto</div>`+renderAIResult(d,call.type);
+    resultsEl.appendChild(card);
+  });
+}
+
+function renderAIResult(d,type){
+  let html='<div style="margin-top:10px">';
+
+  // Render lists/percentuals
+  const renderList=(arr,nameKey,pctKey,extraKey)=>{
+    if(!arr||!arr.length) return '';
+    return '<div style="display:flex;flex-direction:column;gap:6px">'+arr.map(item=>{
+      const name=item[nameKey]||item.nome||'';
+      const pct=item[pctKey]||item.percentual||0;
+      const extra=extraKey&&item[extraKey]?'<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px">'+item[extraKey]+'</div>':'';
+      return `<div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:2px">
+          <span style="font-size:11px;color:rgba(255,255,255,0.75)">${name}</span>
+          <span style="font-size:11px;font-weight:700;color:#E8392A;white-space:nowrap">${pct}%</span>
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px">
+          <div style="height:3px;background:#E8392A;border-radius:2px;width:${Math.min(100,pct)}%"></div>
+        </div>${extra}
+      </div>`;
+    }).join('')+'</div>';
+  };
+
+  const renderInsights=(arr,label,color)=>{
+    if(!arr||!arr.length) return '';
+    return `<div style="margin-top:12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${color||'rgba(255,255,255,0.35)'};margin-bottom:6px">${label}</div>`+
+      arr.map(i=>`<div style="font-size:11px;color:rgba(255,255,255,0.6);padding:4px 0;border-bottom:.5px solid rgba(255,255,255,0.04)">• ${i}</div>`).join('')+'</div>';
+  };
+
+  switch(type){
+    case'desafios':
+      html+=renderList(d.temas,'nome','percentual');
+      html+=renderInsights(d.insights,'Insights Estratégicos','rgba(232,57,42,0.7)');
+      break;
+    case'segmentacao':
+      html+=renderList(d.tipos,'nome','percentual');
+      html+=renderInsights(d.insights,'Insights','rgba(58,184,122,0.7)');
+      break;
+    case'relatorios':
+      html+=renderList(d.relatorios,'nome','percentual');
+      html+=renderInsights(d.insights,'Insights','rgba(58,184,122,0.7)');
+      break;
+    case'expectativa':
+      html+=renderList(d.temas,'nome','percentual');
+      html+=renderInsights(d.oportunidades,'Oportunidades DWV','rgba(224,160,32,0.7)');
+      html+=renderInsights(d.insights,'Insights','rgba(58,184,122,0.7)');
+      break;
+    case'observacoes':
+      html+=renderList(d.padroes,'nome','percentual');
+      html+=renderInsights(d.pontosAtencao,'Pontos de Atenção','rgba(232,57,42,0.7)');
+      html+=renderInsights(d.insights,'Insights','rgba(58,184,122,0.7)');
+      break;
+    case'concorrente':
+      if(d.concorrentes?.length){
+        html+='<div style="display:flex;flex-direction:column;gap:6px">'+d.concorrentes.map(c=>`
+          <div style="background:rgba(255,255,255,0.03);border:.5px solid rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:12px;font-weight:600">${c.nome||''}</span>
+              <span style="font-size:10px;color:rgba(255,255,255,0.4)">${c.mencoes||''} menções</span>
+            </div>
+            ${c.contexto?'<div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px">'+c.contexto+'</div>':''}
+          </div>`).join('')+'</div>';
+      }
+      html+=renderInsights(d.dinamicas,'Dinâmicas de Mercado','rgba(224,160,32,0.7)');
+      html+=renderInsights(d.insights,'Insights','rgba(58,184,122,0.7)');
+      break;
+    case'atividades':
+      html+=renderList(d.categorias,'nome','percentual');
+      html+=renderInsights(d.insights,'Insights','rgba(58,184,122,0.7)');
+      break;
+    case'kpis':
+      html+='<div style="display:flex;flex-direction:column;gap:6px">'+
+        (d.kpis||[]).map(k=>`<div style="font-size:11px;color:rgba(255,255,255,0.7);padding:4px 0;border-bottom:.5px solid rgba(255,255,255,0.04)">
+          <strong style="color:#fff">${k.nome||''}</strong>
+          <span style="color:rgba(255,255,255,0.4);font-size:10px"> — ${k.percentual||0}%</span>
+          ${k.cargos?.length?'<div style="font-size:10px;color:rgba(255,255,255,0.35)">'+k.cargos.join(', ')+'</div>':''}
+        </div>`).join('')+'</div>';
+      html+=renderInsights(d.insights,'Insights','rgba(58,184,122,0.7)');
+      break;
+    case'crm':
+      html+=renderList(d.crms,'nome','percentual');
+      html+=renderInsights(d.problemas,'Problemas identificados','rgba(232,57,42,0.7)');
+      html+=renderInsights(d.insights,'Insights','rgba(58,184,122,0.7)');
+      break;
+    default:
+      html+='<pre style="font-size:10px;color:rgba(255,255,255,0.4);white-space:pre-wrap">'+JSON.stringify(d,null,2)+'</pre>';
+  }
+  html+='</div>';
+  return html;
 }
 
 init();

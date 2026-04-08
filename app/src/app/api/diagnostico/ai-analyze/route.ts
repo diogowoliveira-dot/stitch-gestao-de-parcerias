@@ -78,6 +78,61 @@ Dados:
 ${JSON.stringify(data)}`;
       break;
 
+    case "desafios":
+      prompt = `Analise os textos descritivos sobre desafios de incorporadoras brasileiras no canal de parcerias.
+Agrupe os temas recorrentes e gere insights estratégicos.
+Retorne APENAS um JSON válido:
+{
+  "temas": [{"nome": "Falta de engajamento dos corretores", "percentual": 70, "exemplos": ["exemplo 1"]}, ...],
+  "insights": ["insight estratégico 1", "insight 2"]
+}
+
+Dados (respostas de texto livre dos consultores):
+${JSON.stringify(data)}`;
+      break;
+
+    case "expectativa":
+      prompt = `Analise as expectativas para os próximos 12 meses descritas por incorporadoras brasileiras no canal de parcerias.
+Identifique os temas de crescimento, preocupações e metas recorrentes.
+Retorne APENAS um JSON válido:
+{
+  "temas": [{"nome": "Aumentar base de corretores ativos", "percentual": 60}, ...],
+  "oportunidades": ["oportunidade 1"],
+  "insights": ["insight 1"]
+}
+
+Dados:
+${JSON.stringify(data)}`;
+      break;
+
+    case "observacoes":
+      prompt = `Analise as observações gerais de consultores sobre incorporadoras brasileiras no canal de parcerias.
+Extraia padrões, pontos críticos e recomendações recorrentes.
+Retorne APENAS um JSON válido:
+{
+  "padroes": [{"nome": "Equipe comercial pequena", "percentual": 55}, ...],
+  "pontosAtencao": ["ponto 1"],
+  "insights": ["insight 1"]
+}
+
+Dados:
+${JSON.stringify(data)}`;
+      break;
+
+    case "concorrente":
+      prompt = `Analise as informações sobre concorrência descritas por incorporadoras brasileiras no canal de parcerias.
+Identifique os principais concorrentes mencionados, dinâmicas de mercado e padrões.
+Retorne APENAS um JSON válido:
+{
+  "concorrentes": [{"nome": "Incorporadora X", "mencoes": 5, "contexto": "Briga por corretores ativos"},...],
+  "dinamicas": ["dinâmica de mercado 1"],
+  "insights": ["insight 1"]
+}
+
+Dados:
+${JSON.stringify(data)}`;
+      break;
+
     default:
       return NextResponse.json({ error: "Tipo de análise não suportado" }, { status: 400 });
   }
