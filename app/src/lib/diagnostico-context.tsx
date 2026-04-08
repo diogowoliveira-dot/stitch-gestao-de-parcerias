@@ -40,13 +40,37 @@ const DiagAuthContext = createContext<DiagAuthContextType>({
   loadingUsers: true,
 });
 
-export function DiagAuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<DiagUserSafe | null>(() => {
-    if (typeof window !== 'undefined') {
-      try { return JSON.parse(sessionStorage.getItem('diagUser') || 'null'); } catch { return null; }
+const SESSION_KEY = 'diagUser';
+const SESSION_TTL_MS = 8 * 60 * 60 * 1000; // 8 horas
+
+function readSession(): DiagUserSafe | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    // Verifica expiração
+    if (parsed._expiresAt && Date.now() > parsed._expiresAt) {
+      localStorage.removeItem(SESSION_KEY);
+      return null;
     }
-    return null;
-  });
+    const { _expiresAt: _, ...userData } = parsed;
+    return userData;
+  } catch { return null; }
+}
+
+function writeSession(userData: DiagUserSafe) {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ ...userData, _expiresAt: Date.now() + SESSION_TTL_MS }));
+}
+
+function clearSession() {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(SESSION_KEY);
+}
+
+export function DiagAuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<DiagUserSafe | null>(() => readSession());
   const [users, setUsers] = useState<DiagUserSafe[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [useApi, setUseApi] = useState(true); // false = fallback to mock data
@@ -90,7 +114,7 @@ export function DiagAuthProvider({ children }: { children: ReactNode }) {
         if (res.ok) {
           const userData = await res.json();
           setUser(userData);
-          if (typeof window !== 'undefined') sessionStorage.setItem('diagUser', JSON.stringify(userData));
+          writeSession(userData);
           return true;
         }
         return false;
@@ -106,7 +130,7 @@ export function DiagAuthProvider({ children }: { children: ReactNode }) {
       const { senha: _, ...safe } = found;
       const safeUser = { ...safe, ultimoAcesso: new Date().toISOString().split("T")[0] };
       setUser(safeUser);
-      if (typeof window !== 'undefined') sessionStorage.setItem('diagUser', JSON.stringify(safeUser));
+      writeSession(safeUser);
       return true;
     }
     return false;
@@ -114,7 +138,7 @@ export function DiagAuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    if (typeof window !== 'undefined') sessionStorage.removeItem('diagUser');
+    clearSession();
   };
 
   const addUser = async (data: { nome: string; email: string; senha: string; role: string; status: string }) => {

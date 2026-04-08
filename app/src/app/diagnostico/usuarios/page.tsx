@@ -43,6 +43,11 @@ export default function UsuariosPage() {
   };
 
   const handleResendInvite = async (userId: string) => {
+    const userName = users.find(u => u.id === userId)?.nome || "este usuário";
+    const confirmed = window.confirm(
+      `Reenviar convite para ${userName}?\n\nAtenção: a senha será redefinida para DWV@2024 e um e-mail será enviado com as novas credenciais.`
+    );
+    if (!confirmed) return;
     setResendingInvite(userId);
     try {
       const res = await fetch("/api/diagnostico/users", {
