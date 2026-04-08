@@ -1300,7 +1300,7 @@ async function showDashboard(){
   const records=(await loadDB()).filter(r=>!r.isSim);
   if(records.length===0){
     dash.innerHTML=`
-      <button class="bto" style="margin-bottom:20px" onclick="showStart()">← Voltar</button>
+      <button class="bto" style="margin-bottom:20px" onclick="window.location.href='/diagnostico/dashboard'">← Voltar ao Dashboard</button>
       <div style="font-size:20px;font-weight:500;margin-bottom:20px">Painel Consolidado</div>
       <div class="dash-card"><div class="empty-state">Nenhum diagnóstico real salvo ainda.<br/><span style="font-size:12px">Complete um diagnóstico para vê-lo aqui.</span></div></div>`;
     return;
@@ -1320,7 +1320,7 @@ async function showDashboard(){
   records.filter(r=>r.tabelaZero).forEach(r=>(r.tabelaZeroAccess||[]).forEach(k=>{if(tzAccess[k]!==undefined)tzAccess[k]++;}));
 
   dash.innerHTML=`
-    <button class="bto" style="margin-bottom:20px" onclick="showStart()">← Voltar</button>
+    <button class="bto" style="margin-bottom:20px" onclick="window.location.href='/diagnostico/dashboard'">← Voltar ao Dashboard</button>
     <div style="font-size:20px;font-weight:500;margin-bottom:20px">Painel Consolidado · ${N} Incorporadora${N>1?'s':''}</div>
     <div class="agg-grid">
       <div class="agg-card"><div class="agg-l">TE Média</div><div class="agg-v" style="color:${avgTE<15?'var(--red)':avgTE<30?'var(--am)':'var(--gr)'}">${fmtP(avgTE)}</div></div>
@@ -2015,7 +2015,7 @@ function _backFromTutorial(){
   if(_tutorialFrom==='results'){document.getElementById('results').style.display='block';}
   else if(_tutorialFrom==='form'){document.getElementById('formWrap').style.display='block';}
   else if(_tutorialFrom==='dashboard'){document.getElementById('dashboard').style.display='block';}
-  else{showStart();}
+  else{window.location.href='/diagnostico/dashboard';}
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -2069,7 +2069,6 @@ function offerBackupRestore(){
   const params=new URLSearchParams(window.location.search);
 
   if(params.get('tutorial')==='true'){
-    showStart();
     showTutorial();
     return;
   }
@@ -2116,5 +2115,6 @@ function offerBackupRestore(){
     }catch(e){console.error(e);}
   }
 
-  showStart();
+  // Sem parâmetros = novo diagnóstico real → vai direto para o formulário
+  startDiag(false);
 })();
