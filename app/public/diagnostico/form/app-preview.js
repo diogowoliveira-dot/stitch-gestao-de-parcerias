@@ -866,7 +866,6 @@ async function showResults(){
 
     <div class="acts">
       <button class="bto" onclick="window.location.href='/diagnostico/dashboard'">← Dashboard</button>
-      <button class="bto" onclick="copyPipefy()">Copiar para Pipefy</button>
       <button class="bto" onclick="openAll()">Expandir Tudo</button>
       <button class="btr" onclick="generatePDF()">⬇ Baixar PDF</button>
     </div>`;
@@ -976,16 +975,6 @@ function showDashboard(){
           </div>`).join('')}</div>
       </div>
     </div>`;
-}
-
-// ── COPY ──────────────────────────────────────────────────────
-function copyPipefy(){
-  const r=calc();
-  const chalTxt=D.challenges.map(k=>CHAL_LABELS[k]||k).join(', ')||'Não informado';
-  const rptTxt=D.desiredReports.map(k=>RPT_LABELS[k]||k).join(', ')||'Não informado';
-  const toolTxt=TOOLS_DEF.filter(t=>D[t.k]).map(t=>t.l+(D.toolCosts[t.k]?' (R$'+D.toolCosts[t.k].toLocaleString('pt-BR')+'/mês)':'')).join(', ')||'Nenhuma';
-  const txt=`${isSim?'⚠ SIMULAÇÃO COM DADOS NÃO REAIS\n\n':''}DIAGNÓSTICO COMERCIAL DWV\n${D.companyName} · ${D.location}\nResponsável: ${D.responsibleName} (${D.responsibleRole})\n\n— MÉTRICAS —\nVGV Atual: ${fmt(D.totalVGV)}\nMeta VGV: ${fmt(D.vgvGoal)}\nGap: ${fmt(r.gap)}\nCorretores totais: ${fmtN(D.totalBrokers)}\nCorretores ativos: ${fmtN(D.activeBrokers)}\nTaxa de Engajamento: ${fmtP(r.te)}\nDelta/Milhão: ${r.dc.toFixed(2)}\nVGV por corretor ativo: ${fmt(r.vgvPorCorretor)}\n\n— META DWV —\nCorretores a ativar: ${fmtN(r.corretoresAdicionar)}\nCorretores p/ pagar o plano: ${r.corretoresParaPagarPlano||'—'}\nRetorno se meta atingida: ${fmt(r.retornoTotal)}\n\n— PLANO DWV —\nPlano Operadora: ${fmt(r.planoAnual)}/ano (12x ${fmt(r.planoMensal)}/mês)\n\n— ROTAS —\nRota A (Engajamento): TE de ${fmtP(r.te)} → ${fmtP(r.nteNeeded)}\nRota B (Base): ${fmtN(D.totalBrokers)} → ${fmtN(r.nct)} corretores\nRota C (Produtividade): DC de ${r.dc.toFixed(2)} → ${r.dcNovo.toFixed(2)}/M\n\n— TECNOLOGIA —\nCRM: ${D.hasCRM?D.crmName:'Não'}\nFerramentas (${r.nTools}): ${toolTxt}\nCusto anual ferramentas: ${fmt(r.totalToolCost)}\n\n— DESAFIOS —\n${chalTxt}\n\n— RELATÓRIOS DESEJADOS —\n${rptTxt}\n\nTabela Zero: ${D.tabelaZero?'Sim — '+D.tabelaZeroAccess.map(k=>TZ_LABELS[k]).join(', '):'Não'}${D.observations?'\n\nObservações: '+D.observations:''}`;
-  navigator.clipboard.writeText(txt).then(()=>alert('Copiado! Cole no card do Pipefy.')).catch(()=>alert('Não foi possível copiar automaticamente.'));
 }
 
 // ── PDF ───────────────────────────────────────────────────────

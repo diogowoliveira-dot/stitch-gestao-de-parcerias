@@ -1298,7 +1298,6 @@ async function showResults(viewOnly){
     <div class="acts">
       <button class="bto" onclick="window.location.href='/diagnostico/dashboard'">← Dashboard</button>
       <button class="bto" onclick="openAll()">Expandir Tudo</button>
-      <button class="bto" onclick="copyPipefy()">📋 Copiar para Pipefy</button>
       <button class="btr" onclick="generatePDF()">⬇ Baixar PDF</button>
     </div>`;
 
@@ -1407,98 +1406,6 @@ async function showDashboard(){
           </div>`).join('')}</div>
       </div>
     </div>`;
-}
-
-// ── COPY ──────────────────────────────────────────────────────
-function copyPipefy(){
-  const r=calc();
-  const chalTxt=D.challenges.map(k=>CHAL_LABELS[k]||k).join(', ')||'Não informado';
-  const rptTxt=D.desiredReports.map(k=>RPT_LABELS[k]||k).join(', ')||'Não informado';
-  const toolTxt=TOOLS_DEF.filter(t=>D[t.k]).map(t=>t.l+(D.toolCosts[t.k]?' (R$'+D.toolCosts[t.k].toLocaleString('pt-BR')+'/mês)':'')).join(', ')||'Nenhuma';
-  const cargosTxt=CARGOS_CANAL.filter(c=>D.cargos[c.id]?.existe).map(c=>`${c.nome} (${D.cargos[c.id].qtd}) — KPI: ${D.cargos[c.id].kpi||'N/I'} — Atividades: ${D.cargos[c.id].atividades||'N/I'}`).join('\n');
-  const segTxt={nao:'Não segmenta',nao_gostaria:'Não, mas gostaria',sim_parcial:'Sim, parcialmente',sim_total:'Sim, totalmente'}[D.brokerSegmentation]||'Não informado';
-  const eventosTxt={sim_frequente:'Sim, com frequência',sim_esporadico:'Sim, esporádico',nao:'Não realiza'}[D.hasEventos]||'Não informado';
-  const txt=`${isSim?'⚠ SIMULAÇÃO COM DADOS NÃO REAIS\n\n':''}DIAGNÓSTICO COMERCIAL DWV
-${D.companyName} · ${D.cidade}/${D.estado}
-Responsável: ${D.responsibleName} (${D.responsibleRole})
-
-— MÉTRICAS PRINCIPAIS —
-VGV Atual (12m): ${fmt(D.totalVGV)}
-Meta VGV: ${fmt(D.vgvGoal)}
-Gap: ${fmt(r.gap)}
-Ticket médio: ${fmt(D.avgTicket)}
-Corretores totais: ${fmtN(D.totalBrokers)}
-Corretores ativos (12m): ${fmtN(D.activeBrokers)}
-Taxa de Engajamento: ${fmtP(r.te)}
-Delta/Milhão: ${r.dc.toFixed(2)}
-VGV por corretor ativo: ${fmt(r.vgvPorCorretor)}
-Exclusividade: ${D.brokersExclusivity==='exclusive'?'Exclusivos':D.brokersExclusivity==='non-exclusive'?'Não exclusivos':'Misto'}
-${D.hasHouse?'House: '+D.shareHouse+'% do VGV':''}
-${D.hasParc?'Parcerias: '+D.shareParcerias+'% do VGV':''}
-${D.hasImob?'Imobiliárias parceiras: '+D.numImobiliarias:''}
-
-— EMPREENDIMENTOS —
-Ativos: ${D.numEmpreendimentos||'N/I'}${D.numPreLancamento?' ('+D.numPreLancamento+' pré-lanç, '+D.numLancamento+' lanç, '+D.numEstoque+' estoque)':''}
-Foco de vendas: ${D.focoVendas||'N/I'}
-Imóveis à venda: ${D.totalImoveisVenda?fmtN(D.totalImoveisVenda):'N/I'}
-Propostas/mês: ${D.propostasMensais?fmtN(D.propostasMensais):'N/I'}
-Fechamentos/mês: ${D.fechamentosMensais?fmtN(D.fechamentosMensais):'N/I'}
-${r.taxaConversao!==null?'Taxa de conversão: '+fmtP(r.taxaConversao):''}
-
-— ESTRUTURA DO CANAL —
-${cargosTxt||'Nenhum cargo informado'}
-
-— INDICADORES OPERACIONAIS —
-${r.corretoresPorExec!==null?'Corretores por executivo: '+fmtN(r.corretoresPorExec):''}
-Ociosidade da base: ${fmtP(r.ociosidade)} (${fmtN(r.corretoresOciosos)} inativos)
-${r.custoCorretorAtivo!==null?'Custo por corretor ativo: '+fmt(r.custoCorretorAtivo)+'/ano':''}
-${r.unidadesParaMeta!==null?'Unidades para atingir meta: '+fmtN(r.unidadesParaMeta):''}
-
-— META DWV —
-Corretores a ativar: ${fmtN(r.corretoresAdicionar)}
-Corretores p/ pagar o plano: ${r.corretoresParaPagarPlano||'—'}
-Retorno se meta atingida: ${fmt(r.retornoTotal)}
-
-— ROTAS ESTRATÉGICAS —
-Rota A (Engajamento): TE de ${fmtP(r.te)} → ${fmtP(r.nteNeeded)}
-Rota B (Base): ${fmtN(D.totalBrokers)} → ${fmtN(r.nct)} corretores
-Rota C (Produtividade): DC de ${r.dc.toFixed(2)} → ${r.dcNovo.toFixed(2)}/M
-
-— PLANO DWV —
-Plano Operadora: ${fmt(r.planoAnual)}/ano (12x ${fmt(r.planoMensal)}/mês)
-
-— TECNOLOGIA —
-CRM parceiros: ${D.hasCRM?D.crmName:'Não'}
-${D.crmContratoNome?'CRM contratos: '+D.crmContratoNome:''}
-Ferramentas (${r.nTools}): ${toolTxt}
-Custo anual ferramentas: ${fmt(r.totalToolCost)}
-
-— DESAFIOS —
-${chalTxt}
-${D.challengesText?'Detalhe: '+D.challengesText:''}
-
-— AÇÕES JÁ TESTADAS —
-${D.testedActions?D.testedResults||'Sim, sem detalhes':'Não testou ações'}
-
-— SEGMENTAÇÃO —
-${segTxt}${D.brokerSegDescritivo?' — '+D.brokerSegDescritivo:''}
-
-— RELATÓRIOS DESEJADOS —
-${rptTxt}
-${D.desiredReportsDescritivo?'Obs: '+D.desiredReportsDescritivo:''}
-
-— EVENTOS E INCENTIVOS —
-Eventos/treinamentos: ${eventosTxt}
-Programa de incentivo: ${D.hasIncentivo==='yes'?'Sim':'Não'}
-
-— MERCADO —
-${D.concorrente?'Principal concorrente: '+D.concorrente:''}
-${D.expectativa12m?'Expectativa 12 meses: '+D.expectativa12m:''}
-
-— TABELA ZERO —
-${D.tabelaZero?'Sim — Acesso: '+D.tabelaZeroAccess.map(k=>TZ_LABELS[k]).join(', '):'Não utiliza'}
-${D.tabelaZeroObs?'Obs: '+D.tabelaZeroObs:''}`;
-  navigator.clipboard.writeText(txt).then(()=>alert('Copiado! Cole no card do Pipefy.')).catch(()=>alert('Não foi possível copiar automaticamente.'));
 }
 
 // ── PDF ───────────────────────────────────────────────────────
@@ -1979,18 +1886,13 @@ function showTutorial(){
           <div class="tut-step-desc">Gera documento completo formatado para envio ao cliente. Inclui todas as seções do relatório.</div>
         </div>
         <div class="tut-step">
-          <div class="tut-step-num">Exportação</div>
-          <div class="tut-step-ttl">Copiar para Pipefy</div>
-          <div class="tut-step-desc">Copia todos os dados em texto formatado para colar no card do cliente no CRM interno.</div>
-        </div>
-        <div class="tut-step">
           <div class="tut-step-num">Histórico</div>
           <div class="tut-step-ttl">Dashboard</div>
           <div class="tut-step-desc">Todos os diagnósticos ficam salvos. Reais e simulações separados em colunas.</div>
         </div>
       </div>
       <div class="tut-callout green">
-        <strong>Fluxo recomendado:</strong> 1. Gerar PDF e enviar ao cliente · 2. Copiar para o Pipefy · 3. Usar ROI como base da proposta comercial formal
+        <strong>Fluxo recomendado:</strong> 1. Gerar PDF e enviar ao cliente · 2. Usar ROI como base da proposta comercial formal
       </div>
     </div>
 
@@ -2011,7 +1913,6 @@ function showTutorial(){
         <div class="tut-check-item">Ferramentas selecionadas com custos informados</div>
         <div class="tut-check-item">Desafios e relatórios desejados registrados</div>
         <div class="tut-check-item">PDF gerado e enviado ao cliente</div>
-        <div class="tut-check-item">Dados copiados para o Pipefy</div>
         <div class="tut-check-item">Diagnóstico salvo e visível no Dashboard</div>
       </div>
       <div class="tut-callout red">

@@ -334,42 +334,6 @@ export default function Step5Diagnostico() {
     }
   };
 
-  // ── Copy for Pipefy ──────────────────────────────────────────
-  const handleCopyPipefy = () => {
-    const text = [
-      `DIAGNOSTICO COMERCIAL - ${formState.empresa.nome}`,
-      `Local: ${formState.empresa.cidade}/${formState.empresa.estado}`,
-      ``,
-      `VGV Atual: ${fmt(calcInput.totalVGV)}`,
-      `Meta VGV: ${fmt(calcInput.vgvGoal)}`,
-      `Gap: ${fmt(r.gap)}`,
-      ``,
-      `Corretores: ${fmtN(calcInput.totalBrokers)} cadastrados, ${fmtN(calcInput.activeBrokers)} ativos`,
-      `Taxa de Engajamento: ${fmtP(r.te)} (${teLabel})`,
-      `Corretores a ativar: ${fmtN(r.corretoresAdicionar)}`,
-      ``,
-      `DC: ${r.dc.toFixed(2)} corretores/M`,
-      `NC: ${fmtN(r.nc)} corretores ativos`,
-      `VGV por corretor: ${fmt(r.vgvPorCorretor)}`,
-      ``,
-      `Rota A (Engajamento): TE necessaria ${fmtP(r.nteNeeded)}`,
-      `Rota B (Base): ${fmtN(r.nct)} corretores totais`,
-      `Rota C (Produtividade): DC ${r.dcNovo.toFixed(2)}/M`,
-      ``,
-      `Plano DWV: ${fmt(PLANO_ANUAL)}/ano`,
-      `Corretores p/ pagar plano: ${r.corretoresParaPagarPlano ?? "—"}`,
-      `Retorno total potencial: ${fmt(r.retornoTotal)}`,
-      chalLabels.length > 0 ? `\nDesafios: ${chalLabels.join(", ")}` : "",
-      rptLabels.length > 0 ? `Relatorios: ${rptLabels.join(", ")}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    navigator.clipboard.writeText(text).then(() => {
-      alert("Copiado para a area de transferencia!");
-    });
-  };
-
   // ── PDF download ─────────────────────────────────────────────
   const handleDownloadPDF = () => {
     window.print();
@@ -1142,17 +1106,6 @@ export default function Step5Diagnostico() {
           }}
         >
           &larr; Inicio
-        </button>
-        <button
-          onClick={handleCopyPipefy}
-          className="flex-1 min-w-[120px] py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all"
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            color: "#94a3b8",
-          }}
-        >
-          Copiar para Pipefy
         </button>
         <button
           onClick={handleExpandAll}
