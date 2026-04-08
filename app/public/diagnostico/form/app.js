@@ -50,7 +50,19 @@ const PLANO_ANUAL  = 63096.20;
 const PLANO_MENSAL = 4774.60;
 
 // ── AUTH & SESSION ────────────────────────────────────────────
-function getUser(){try{return JSON.parse(sessionStorage.getItem('diagUser'));}catch{return null;}}
+function getUser(){
+  try{
+    const raw=localStorage.getItem('diagUser');
+    if(!raw) return null;
+    const parsed=JSON.parse(raw);
+    if(parsed._expiresAt && Date.now() > parsed._expiresAt){
+      localStorage.removeItem('diagUser');
+      return null;
+    }
+    const {_expiresAt:_, ...userData}=parsed;
+    return userData;
+  }catch{return null;}
+}
 function checkAuth(){
   const u=getUser();
   if(!u){window.location.href='/diagnostico';return false;}
@@ -140,30 +152,30 @@ function mapV1toAPI(d, user){
     responsavelCargo: d.responsibleRole||null,
 
     // Métricas
-    totalVGV: d.totalVGV||null,
-    vgvGoal: d.vgvGoal||null,
-    avgTicket: d.avgTicket||null,
-    totalBrokers: d.totalBrokers||null,
-    activeBrokers: d.activeBrokers||null,
+    totalVGV: d.totalVGV??null,
+    vgvGoal: d.vgvGoal??null,
+    avgTicket: d.avgTicket??null,
+    totalBrokers: d.totalBrokers??null,
+    activeBrokers: d.activeBrokers??null,
 
     // Canais
-    shareHouse: d.shareHouse||null,
-    shareParcerias: d.shareParcerias||null,
-    numImobiliarias: d.numImobiliarias||null,
+    shareHouse: d.shareHouse??null,
+    shareParcerias: d.shareParcerias??null,
+    numImobiliarias: d.numImobiliarias??null,
     hasHouse: d.hasHouse||false,
     hasParc: d.hasParc||false,
     hasImob: d.hasImob||false,
     exclusividade: d.brokersExclusivity||null,
 
     // Inventário
-    numEmpreendimentos: d.numEmpreendimentos||null,
-    numPreLancamento: d.numPreLancamento||null,
-    numLancamento: d.numLancamento||null,
-    numEstoque: d.numEstoque||null,
+    numEmpreendimentos: d.numEmpreendimentos??null,
+    numPreLancamento: d.numPreLancamento??null,
+    numLancamento: d.numLancamento??null,
+    numEstoque: d.numEstoque??null,
     focoVendas: d.focoVendas||null,
-    totalImoveisVenda: d.totalImoveisVenda||null,
-    propostasMensais: d.propostasMensais||null,
-    fechamentosMensais: d.fechamentosMensais||null,
+    totalImoveisVenda: d.totalImoveisVenda??null,
+    propostasMensais: d.propostasMensais??null,
+    fechamentosMensais: d.fechamentosMensais??null,
 
     // Tecnologia
     temCRM: d.hasCRM||false,
@@ -195,6 +207,9 @@ function mapV1toAPI(d, user){
     tabelaZeroParcerias: d.tabelaZero||false,
     tabelaZeroAcesso: d.tabelaZeroAccess||[],
     tabelaZeroObs: d.tabelaZeroObs||null,
+
+    // Observações gerais
+    observacoesGerais: d.observations||null,
 
     // Cargos e ferramentas gerais (para compatibilidade/relatório)
     cargos: cargosPayload,
@@ -302,6 +317,9 @@ function mapAPItoV1(rec){
     tabelaZero: rec.tabelaZeroParcerias||false,
     tabelaZeroAccess: rec.tabelaZeroAcesso||[],
     tabelaZeroObs: rec.tabelaZeroObs||'',
+
+    // Observações gerais
+    observations: rec.observacoesGerais||'',
   };
 }
 
@@ -467,7 +485,7 @@ function save(){
   }
 }
 
-function isAdmin(){const u=getUser();return u&&u.role==='admin';}
+function isAdmin(){const u=getUser();return u&&(u.role==='admin'||u.role==='master');}
 function canNext(){
   if(isAdmin()) return true;
   if(currentStep===0)return !!(document.getElementById('cN')?.value);
@@ -1280,10 +1298,11 @@ async function showResults(viewOnly){
     <div class="acts">
       <button class="bto" onclick="window.location.href='/diagnostico/dashboard'">← Dashboard</button>
       <button class="bto" onclick="openAll()">Expandir Tudo</button>
+      <button class="bto" onclick="copyPipefy()">📋 Copiar para Pipefy</button>
       <button class="btr" onclick="generatePDF()">⬇ Baixar PDF</button>
     </div>`;
 
-  document.querySelector('#results .dbody').classList.add('open');
+  document.querySelector('#results .dbody')?.classList.add('open');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -2087,6 +2106,7 @@ function offerBackupRestore(){
       const rec=all.find(d=>d.id===id);
       if(rec){
         populateFromAPI(rec);
+        _savedThisSession = false;
         editingId=id;
         currentStep=0;
         document.getElementById('startScreen').style.display='none';

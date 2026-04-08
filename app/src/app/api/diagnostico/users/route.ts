@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { sendInviteEmail } from "@/lib/email";
 
 // GET all users
@@ -97,8 +98,8 @@ export async function PATCH(req: NextRequest) {
   const user = await prisma.user.findUnique({ where: { id } });
   if (!user) return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
 
-  // Reset senha para DWV@2024
-  const tempSenha = "DWV@2024";
+  // Reset senha para senha aleatória temporária
+  const tempSenha = crypto.randomBytes(5).toString('hex').toUpperCase();
   await prisma.user.update({
     where: { id },
     data: { senha: await bcrypt.hash(tempSenha, 10) },
@@ -119,6 +120,11 @@ export async function PATCH(req: NextRequest) {
 // DELETE user
 export async function DELETE(req: NextRequest) {
   const { id } = await req.json();
+
+  const diagCount = await prisma.diagnostico.count({ where: { criadoPorId: id } });
+  if (diagCount > 0) {
+    return NextResponse.json({ error: `Usuário possui ${diagCount} diagnóstico(s). Reatribua-os antes de deletar.` }, { status: 400 });
+  }
 
   await prisma.user.delete({ where: { id } });
 

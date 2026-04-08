@@ -569,7 +569,7 @@ function renderCharts(data){
       const parcCount=[0,0,0,0,0];
       withData.forEach(d=>{
         const p=Number(d.shareParcerias||0);
-        const i=Math.min(4,Math.floor(p/21));
+        const i=Math.min(4,Math.floor(p/20));
         parcCount[i]++;
       });
       setHeight('cCanal',180);
@@ -590,7 +590,7 @@ function renderCharts(data){
 
   /* ── 8. Eventos e Incentivos ── */
   {
-    const EV_LABELS={'sim_regular':'Eventos regulares','sim_esporadico':'Eventos esporádicos','nao':'Não realiza eventos'};
+    const EV_LABELS={'sim_regular':'Eventos regulares','sim_frequente':'Eventos frequentes','sim_esporadico':'Eventos esporádicos','nao':'Não realiza eventos'};
     const INC_LABELS={yes:'Tem incentivos',no:'Sem incentivos'};
     const withEv=data.filter(d=>d.temEventos);
     const withInc=data.filter(d=>d.temIncentivo);

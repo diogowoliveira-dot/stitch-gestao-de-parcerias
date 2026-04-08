@@ -230,7 +230,15 @@ export default function UsuariosPage() {
                     Cancelar
                   </button>
                   <button
-                    onClick={() => { deleteUser(u.id); setConfirmDelete(null); }}
+                    onClick={async () => {
+                      try {
+                        await deleteUser(u.id);
+                        setConfirmDelete(null);
+                      } catch (err) {
+                        setConfirmDelete(null);
+                        alert(err instanceof Error ? err.message : "Erro ao deletar usuário");
+                      }
+                    }}
                     className="px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all"
                     style={{ background: "rgba(220, 38, 38, 0.8)" }}
                   >

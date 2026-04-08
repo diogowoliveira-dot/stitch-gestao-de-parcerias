@@ -112,6 +112,9 @@ export async function GET() {
     tabelaZeroParcerias: d.tabelaZeroParcerias,
     tabelaZeroAcesso: d.tabelaZeroAcesso ? JSON.parse(d.tabelaZeroAcesso) : [],
     tabelaZeroObs: d.tabelaZeroObs,
+
+    // Observações gerais
+    observacoesGerais: d.observacoesGerais,
   }));
 
   return NextResponse.json(result);
@@ -191,6 +194,9 @@ export async function POST(req: NextRequest) {
       tabelaZeroParcerias: data.tabelaZeroParcerias ?? null,
       tabelaZeroAcesso: data.tabelaZeroAcesso?.length ? JSON.stringify(data.tabelaZeroAcesso) : null,
       tabelaZeroObs: data.tabelaZeroObs ?? null,
+
+      // Observações gerais
+      observacoesGerais: data.observacoesGerais ?? null,
     },
   });
 
@@ -237,7 +243,11 @@ export async function PUT(req: NextRequest) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const u: Record<string, any> = {};
   const set = (k: string, v: unknown) => { if (v !== undefined) u[k] = v; };
-  const setj = (k: string, v: unknown) => { if (v !== undefined) u[k] = JSON.stringify(v); };
+  const setj = (k: string, v: unknown) => {
+    if (v === undefined) return;
+    if (Array.isArray(v) && v.length === 0) { u[k] = null; return; }
+    u[k] = JSON.stringify(v);
+  };
 
   set("empresaNome", f.empresa?.nome);
   set("empresaCidade", f.empresa?.cidade);
@@ -285,6 +295,7 @@ export async function PUT(req: NextRequest) {
   set("tabelaZeroParcerias", f.tabelaZeroParcerias);
   setj("tabelaZeroAcesso", f.tabelaZeroAcesso);
   set("tabelaZeroObs", f.tabelaZeroObs);
+  set("observacoesGerais", f.observacoesGerais);
   set("aiAnalysis", f.aiAnalysis);
 
   await prisma.diagnostico.update({ where: { id }, data: u });
@@ -336,22 +347,27 @@ export async function PUT(req: NextRequest) {
 
 // DELETE diagnostico
 export async function DELETE(req: NextRequest) {
-  const { id, userId } = await req.json();
+  try {
+    const { id, userId } = await req.json();
 
-  // Fetch the diagnostico to check isSimulacao
-  const diag = await prisma.diagnostico.findUnique({ where: { id }, select: { isSimulacao: true } });
-  if (!diag) return NextResponse.json({ error: "Não encontrado" }, { status: 404 });
+    // Fetch the diagnostico to check isSimulacao
+    const diag = await prisma.diagnostico.findUnique({ where: { id }, select: { isSimulacao: true } });
+    if (!diag) return NextResponse.json({ error: "Não encontrado" }, { status: 404 });
 
-  if (!diag.isSimulacao) {
-    // Real diagnostico — only master can delete
-    if (!userId) return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
-    const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
-    if (!user || user.role !== "master") {
-      return NextResponse.json({ error: "Apenas o usuário master pode apagar diagnósticos reais" }, { status: 403 });
+    if (!diag.isSimulacao) {
+      // Real diagnostico — only master can delete
+      if (!userId) return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+      const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+      if (!user || user.role !== "master") {
+        return NextResponse.json({ error: "Apenas o usuário master pode apagar diagnósticos reais" }, { status: 403 });
+      }
     }
-  }
-  // Simulations: any authenticated user can delete (userId optional, no role check)
+    // Simulations: any authenticated user can delete (userId optional, no role check)
 
-  await prisma.diagnostico.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+    await prisma.diagnostico.delete({ where: { id } });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("DELETE error:", err);
+    return NextResponse.json({ error: "Erro interno ao deletar" }, { status: 500 });
+  }
 }

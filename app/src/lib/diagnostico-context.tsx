@@ -191,10 +191,12 @@ export function DiagAuthProvider({ children }: { children: ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
-      if (res.ok) {
-        setUsers((prev) => prev.filter((u) => u.id !== id));
-        return;
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "Erro ao deletar usuário");
       }
+      setUsers((prev) => prev.filter((u) => u.id !== id));
+      return;
     }
     // Mock fallback
     setUsers((prev) => prev.filter((u) => u.id !== id));

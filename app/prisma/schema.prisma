@@ -12,7 +12,7 @@ model User {
   nome         String
   email        String   @unique
   senha        String
-  role         String   @default("consultor") // admin | consultor
+  role         String   @default("consultor") // master | admin | consultor
   status       String   @default("ativo")     // ativo | inativo
   avatar       String?
   dataCriacao  DateTime @default(now())
@@ -32,7 +32,7 @@ model Diagnostico {
   dataCriacao  DateTime @default(now())
 
   criadoPorId  String
-  criadoPor    User     @relation(fields: [criadoPorId], references: [id])
+  criadoPor    User     @relation(fields: [criadoPorId], references: [id], onDelete: Restrict)
 
   // Dados comerciais (VGV, corretores)
   totalVGV              Float?   // VGV vendido nos últimos 12 meses
@@ -96,6 +96,8 @@ model Diagnostico {
   // Tabela Zero completa
   tabelaZeroAcesso      String?  // JSON array ('house', 'canal_parcerias', etc.)
   tabelaZeroObs         String?
+
+  observacoesGerais     String?  // Observações gerais do consultor
 
   cargos              Cargo[]
   ferramentasGerais   FerramentaGeral[]
