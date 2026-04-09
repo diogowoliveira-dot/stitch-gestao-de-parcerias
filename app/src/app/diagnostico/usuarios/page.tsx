@@ -14,6 +14,8 @@ export default function UsuariosPage() {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [resendingInvite, setResendingInvite] = useState<string | null>(null);
   const [resendSuccess, setResendSuccess] = useState<string | null>(null);
+  const [senhaModal, setSenhaModal] = useState<{ nome: string; email: string; senha: string; emailEnviado: boolean } | null>(null);
+  const [senhaCopied, setSenhaCopied] = useState(false);
 
   // Form state
   const [formNome, setFormNome] = useState("");
@@ -43,9 +45,10 @@ export default function UsuariosPage() {
   };
 
   const handleResendInvite = async (userId: string) => {
-    const userName = users.find(u => u.id === userId)?.nome || "este usuário";
+    const u = users.find(u => u.id === userId);
+    const userName = u?.nome || "este usuário";
     const confirmed = window.confirm(
-      `Reenviar convite para ${userName}?\n\nAtenção: a senha será redefinida para DWV@2024 e um e-mail será enviado com as novas credenciais.`
+      `Resetar acesso de ${userName}?\n\nUma nova senha temporária será gerada. O sistema tentará enviar por e-mail, mas a senha também será exibida na tela para você copiar.`
     );
     if (!confirmed) return;
     setResendingInvite(userId);
@@ -55,7 +58,16 @@ export default function UsuariosPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: userId }),
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (data.senha) {
+        setSenhaModal({
+          nome: userName,
+          email: u?.email || "",
+          senha: data.senha,
+          emailEnviado: data.emailEnviado === true,
+        });
+        setSenhaCopied(false);
+      } else {
         setResendSuccess(userId);
         setTimeout(() => setResendSuccess(null), 3000);
       }
@@ -250,6 +262,61 @@ export default function UsuariosPage() {
           </div>
         ))}
       </div>
+
+      {/* Modal Senha Temporária */}
+      {senhaModal && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90">
+          <div className="w-full max-w-sm rounded-2xl p-6 bg-[#141414] border border-white/[0.08]">
+            <div className="text-center mb-5">
+              {senhaModal.emailEnviado ? (
+                <>
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-3" style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.25)" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 24, color: "#10b981" }}>mark_email_read</span>
+                  </div>
+                  <h2 className="text-base font-bold text-white">E-mail enviado!</h2>
+                  <p className="text-xs text-slate-500 mt-1">E-mail enviado para <strong className="text-white">{senhaModal.email}</strong></p>
+                </>
+              ) : (
+                <>
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-3" style={{ background: "rgba(232,57,42,0.1)", border: "1px solid rgba(232,57,42,0.25)" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 24, color: "#ec1313" }}>mail_off</span>
+                  </div>
+                  <h2 className="text-base font-bold text-white">E-mail não enviado</h2>
+                  <p className="text-xs text-slate-500 mt-1">Copie a senha abaixo e envie para <strong className="text-white">{senhaModal.nome}</strong> pelo WhatsApp ou outro canal.</p>
+                </>
+              )}
+            </div>
+
+            <div className="rounded-xl p-4 mb-4 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Senha temporária</p>
+              <p className="text-2xl font-bold tracking-widest" style={{ color: "#ec1313", fontFamily: "monospace" }}>{senhaModal.senha}</p>
+              <p className="text-[10px] text-slate-600 mt-2">Login: {senhaModal.email}</p>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `Login: ${senhaModal.email}\nSenha: ${senhaModal.senha}\nAcesse: https://dwv-diagnostico-comercial.vercel.app/diagnostico`
+                  );
+                  setSenhaCopied(true);
+                  setTimeout(() => setSenhaCopied(false), 2000);
+                }}
+                className="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all"
+                style={{ background: senhaCopied ? "rgba(16,185,129,0.2)" : "rgba(255,255,255,0.06)", color: senhaCopied ? "#10b981" : "#fff", border: `1px solid ${senhaCopied ? "rgba(16,185,129,0.3)" : "rgba(255,255,255,0.1)"}` }}
+              >
+                {senhaCopied ? "✓ Copiado!" : "📋 Copiar para WhatsApp"}
+              </button>
+              <button
+                onClick={() => setSenhaModal(null)}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold transition-all hover:bg-white/5 text-slate-400 border border-white/[0.06]"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal Add/Edit */}
       {showModal && (

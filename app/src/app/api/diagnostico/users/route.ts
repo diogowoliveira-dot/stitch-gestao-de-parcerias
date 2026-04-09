@@ -100,23 +100,26 @@ export async function PATCH(req: NextRequest) {
 
   const tempSenha = crypto.randomBytes(5).toString('hex').toUpperCase();
 
-  // IMPORTANT: enviar o e-mail PRIMEIRO — só atualiza a senha se o envio tiver sucesso.
-  // Se a ordem fosse inversa, o usuário ficaria bloqueado com senha desconhecida quando o e-mail falha.
-  try {
-    await sendInviteEmail({ nome: user.nome, email: user.email, senha: tempSenha });
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error("Erro reenvio convite (senha NÃO alterada):", msg);
-    return NextResponse.json({ error: "Falha ao enviar e-mail. A senha do usuário NÃO foi alterada.", detail: msg }, { status: 500 });
-  }
-
-  // Só chegou aqui se o e-mail foi enviado com sucesso
+  // Sempre atualiza a senha — email é best-effort
+  // A senha nova é retornada no response para o admin comunicar ao usuário
+  // caso o e-mail falhe
   await prisma.user.update({
     where: { id },
     data: { senha: await bcrypt.hash(tempSenha, 10) },
   });
 
-  return NextResponse.json({ ok: true });
+  let emailEnviado = false;
+  let emailErro: string | null = null;
+  try {
+    await sendInviteEmail({ nome: user.nome, email: user.email, senha: tempSenha });
+    emailEnviado = true;
+  } catch (err: unknown) {
+    emailErro = err instanceof Error ? err.message : String(err);
+    console.error("Erro reenvio convite:", emailErro);
+  }
+
+  // Retorna a senha temporária para o admin poder copiar e enviar manualmente
+  return NextResponse.json({ ok: true, senha: tempSenha, emailEnviado, emailErro });
 }
 
 // DELETE user
