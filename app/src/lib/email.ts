@@ -4,21 +4,37 @@ const BASE_URL = "https://dwv-diagnostico-comercial.vercel.app";
 const SPARKPOST_ENDPOINT = "https://api.sparkpost.com/api/v1/transmissions";
 
 async function sparkPost(html: string, subject: string, email: string, nome: string) {
+  const apiKey = process.env.SPARKPOST_API_KEY;
+  if (!apiKey) {
+    const msg = "SPARKPOST_API_KEY não está configurada nas variáveis de ambiente. Configure em Vercel → Settings → Environment Variables.";
+    console.error("[email.ts]", msg);
+    throw new Error(msg);
+  }
+
+  const payload = {
+    recipients: [{ address: { email, name: nome } }],
+    content: { from: { name: FROM_NAME, email: FROM_EMAIL }, subject, html },
+  };
+
+  console.log(`[email.ts] Enviando e-mail para ${email} via SparkPost (from: ${FROM_EMAIL})`);
+
   const res = await fetch(SPARKPOST_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: process.env.SPARKPOST_API_KEY!,
+      Authorization: apiKey,
     },
-    body: JSON.stringify({
-      recipients: [{ address: { email, name: nome } }],
-      content: { from: { name: FROM_NAME, email: FROM_EMAIL }, subject, html },
-    }),
+    body: JSON.stringify(payload),
   });
+
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`SparkPost error: ${err}`);
+    console.error(`[email.ts] SparkPost HTTP ${res.status} para ${email}:`, err);
+    throw new Error(`SparkPost HTTP ${res.status}: ${err}`);
   }
+
+  const result = await res.json().catch(() => ({}));
+  console.log(`[email.ts] E-mail enviado com sucesso para ${email}. IDs:`, JSON.stringify(result?.results));
 }
 
 export async function sendInviteEmail({

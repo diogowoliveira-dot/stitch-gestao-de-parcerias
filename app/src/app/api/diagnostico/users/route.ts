@@ -98,21 +98,23 @@ export async function PATCH(req: NextRequest) {
   const user = await prisma.user.findUnique({ where: { id } });
   if (!user) return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
 
-  // Reset senha para senha aleatória temporária
   const tempSenha = crypto.randomBytes(5).toString('hex').toUpperCase();
-  await prisma.user.update({
-    where: { id },
-    data: { senha: await bcrypt.hash(tempSenha, 10) },
-  });
 
-  // Reenviar e-mail de convite
+  // IMPORTANT: enviar o e-mail PRIMEIRO — só atualiza a senha se o envio tiver sucesso.
+  // Se a ordem fosse inversa, o usuário ficaria bloqueado com senha desconhecida quando o e-mail falha.
   try {
     await sendInviteEmail({ nome: user.nome, email: user.email, senha: tempSenha });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("Erro reenvio convite:", msg);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    console.error("Erro reenvio convite (senha NÃO alterada):", msg);
+    return NextResponse.json({ error: "Falha ao enviar e-mail. A senha do usuário NÃO foi alterada.", detail: msg }, { status: 500 });
   }
+
+  // Só chegou aqui se o e-mail foi enviado com sucesso
+  await prisma.user.update({
+    where: { id },
+    data: { senha: await bcrypt.hash(tempSenha, 10) },
+  });
 
   return NextResponse.json({ ok: true });
 }

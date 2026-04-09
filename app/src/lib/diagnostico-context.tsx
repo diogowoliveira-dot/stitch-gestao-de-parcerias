@@ -104,36 +104,27 @@ export function DiagAuthProvider({ children }: { children: ReactNode }) {
   }, [fetchUsers]);
 
   const login = async (email: string, senha: string): Promise<boolean> => {
-    if (useApi) {
-      try {
-        const res = await fetch("/api/diagnostico/auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, senha }),
-        });
-        if (res.ok) {
-          const userData = await res.json();
-          setUser(userData);
-          writeSession(userData);
-          return true;
-        }
-        return false;
-      } catch {
-        // Fall through to mock login
+    // SEMPRE tenta a API real para autenticação — nunca usa credenciais mock.
+    // (O fallback mock era perigoso: se fetchUsers falhasse ao carregar, useApi ficava false
+    //  e nenhum usuário real conseguia logar.)
+    try {
+      const res = await fetch("/api/diagnostico/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, senha }),
+      });
+      if (res.ok) {
+        const userData = await res.json();
+        setUser(userData);
+        writeSession(userData);
+        return true;
       }
+      return false;
+    } catch {
+      // Erro de rede — API indisponível, não há fallback seguro
+      console.error("Erro ao conectar à API de autenticação");
+      return false;
     }
-    // Mock login fallback
-    const found = diagInitialUsers.find(
-      (u) => u.email === email && u.senha === senha && u.status === "ativo"
-    );
-    if (found) {
-      const { senha: _, ...safe } = found;
-      const safeUser = { ...safe, ultimoAcesso: new Date().toISOString().split("T")[0] };
-      setUser(safeUser);
-      writeSession(safeUser);
-      return true;
-    }
-    return false;
   };
 
   const logout = () => {

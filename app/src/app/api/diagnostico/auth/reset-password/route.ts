@@ -28,14 +28,19 @@ export async function POST(req: NextRequest) {
     data: { resetToken: token, resetTokenExpiry: expiry },
   });
 
+  let emailEnviado = false;
   try {
     await sendResetPasswordEmail({ nome: user.nome, email: user.email, token });
+    emailEnviado = true;
   } catch (err) {
-    console.error("Erro ao enviar e-mail de reset:", err);
-    // Não expõe o erro ao cliente
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[reset-password] Erro ao enviar e-mail de reset para", user.email, ":", msg);
+    // Token salvo no banco mas email não saiu — admin pode reenviar manualmente
   }
 
-  return NextResponse.json({ ok: true });
+  // Retorna ok:true por segurança (não revela se o e-mail existe),
+  // mas inclui emailEnviado para depuração em ambiente de desenvolvimento
+  return NextResponse.json({ ok: true, emailEnviado: process.env.NODE_ENV !== "production" ? emailEnviado : undefined });
 }
 
 // PATCH /api/diagnostico/auth/reset-password
