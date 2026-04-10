@@ -327,8 +327,8 @@ function mapAPItoV1(rec){
 const fmt=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:0,maximumFractionDigits:0}).format(v||0);
 const fmtN=v=>new Intl.NumberFormat('pt-BR').format(Math.round(v||0));
 const fmtP=v=>(v||0).toFixed(1)+'%';
-const parseCur=s=>Number(String(s).replace(/\D/g,''))||0;
-const fmtCI=v=>{const n=String(v).replace(/\D/g,'');return n?parseInt(n).toLocaleString('pt-BR'):'';}
+const parseCur=s=>{const b=String(s).split(',')[0];return Number(b.replace(/\D/g,''))||0;}
+const fmtCI=v=>{const b=String(v).split(',')[0];const n=b.replace(/\D/g,'');return n?parseInt(n).toLocaleString('pt-BR')+',00':'';}
 
 // ── STATE ──────────────────────────────────────────────────────
 let D={};
@@ -770,9 +770,9 @@ function restore(){
   const sca=(name,arr)=>(arr||[]).forEach(v=>{const e=document.querySelector(`input[name=${name}][value="${v}"]`);if(e)e.checked=true;});
   if(currentStep===0){s('cN',D.companyName);s('rN',D.responsibleName);s('rR',D.responsibleRole);s('cidadeField',D.cidade);s('estadoField',D.estado);}
   else if(currentStep===1){
-    s('tVGV',D.totalVGV?D.totalVGV.toLocaleString('pt-BR'):'');
-    s('vGoal',D.vgvGoal?D.vgvGoal.toLocaleString('pt-BR'):'');
-    s('avgT',D.avgTicket?D.avgTicket.toLocaleString('pt-BR'):'');
+    s('tVGV',D.totalVGV?D.totalVGV.toLocaleString('pt-BR')+',00':'');
+    s('vGoal',D.vgvGoal?D.vgvGoal.toLocaleString('pt-BR')+',00':'');
+    s('avgT',D.avgTicket?D.avgTicket.toLocaleString('pt-BR')+',00':'');
     s('numEmpreendimentos',D.numEmpreendimentos||'');
     s('numPreLanc',D.numPreLancamento||'');s('numLanc',D.numLancamento||'');s('numEstoque',D.numEstoque||'');
     s('focoVendas',D.focoVendas||'');
@@ -791,7 +791,7 @@ function restore(){
   }
   else if(currentStep===3){
     sr('hasCRM',D.hasCRM?'yes':'no');s('crmName',D.crmName);s('which_toolsOfficialCRM',D.crmContratoNome||'');
-    TOOLS_DEF.forEach(t=>{sc(t.k,D[t.k]);if(D.toolCosts[t.k])s('cost_'+t.k,D.toolCosts[t.k].toLocaleString('pt-BR'));});
+    TOOLS_DEF.forEach(t=>{sc(t.k,D[t.k]);if(D.toolCosts[t.k])s('cost_'+t.k,D.toolCosts[t.k].toLocaleString('pt-BR')+',00');});
   }
   else if(currentStep===4){
     sr('mGoals',D.meetingGoals);sca('chal',D.challenges);s('chalText',D.challengesText);
