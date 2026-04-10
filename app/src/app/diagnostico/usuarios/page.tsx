@@ -133,6 +133,16 @@ export default function UsuariosPage() {
         </button>
       }
     >
+      {/* Add User Button */}
+      <button
+        onClick={openAdd}
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white mb-5 transition-all"
+        style={{ background: "linear-gradient(135deg,#ec1313,#b00000)" }}
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: 20 }}>person_add</span>
+        Adicionar Usuário
+      </button>
+
       {/* Search */}
       <div className="relative mb-6">
         <span className="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-500" style={{ fontSize: 20 }}>search</span>
