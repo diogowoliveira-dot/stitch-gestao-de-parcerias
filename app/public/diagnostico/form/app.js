@@ -327,8 +327,10 @@ function mapAPItoV1(rec){
 const fmt=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:0,maximumFractionDigits:0}).format(v||0);
 const fmtN=v=>new Intl.NumberFormat('pt-BR').format(Math.round(v||0));
 const fmtP=v=>(v||0).toFixed(1)+'%';
-const parseCur=s=>{const b=String(s).split(',')[0];return Number(b.replace(/\D/g,''))||0;}
-const fmtCI=v=>{const b=String(v).split(',')[0];const n=b.replace(/\D/g,'');return n?parseInt(n).toLocaleString('pt-BR')+',00':'';}
+const parseCur=s=>{const b=String(s).replace(/,\d*$/,'');return Number(b.replace(/\D/g,''))||0;}
+const fmtCI=v=>{const n=String(v).replace(/\D/g,'');return n?parseInt(n).toLocaleString('pt-BR'):'';}
+const fmtCIBlur=v=>{const n=parseCur(v);return n?n.toLocaleString('pt-BR')+',00':'';}
+const fmtCIFocus=v=>String(v).replace(/,\d{0,2}$/,'');
 
 // ── STATE ──────────────────────────────────────────────────────
 let D={};
@@ -585,12 +587,12 @@ function body(){
 
   if(currentStep===1)return`
     <div class="field"><label>VGV vendido nos últimos 12 meses (R$) <span class="req">*</span></label>
-      <input type="text" id="tVGV" placeholder="0" oninput="this.value=fmtCI(this.value)"/>
+      <input type="text" id="tVGV" placeholder="0" oninput="this.value=fmtCI(this.value)" onblur="this.value=fmtCIBlur(this.value)" onfocus="this.value=fmtCIFocus(this.value)"/>
       <div class="hint">Total de vendas pelo canal de parcerias nos últimos 12 meses.</div></div>
     <div class="field"><label>Meta de VGV (R$) <span class="req">*</span></label>
-      <input type="text" id="vGoal" placeholder="0" oninput="this.value=fmtCI(this.value)"/></div>
+      <input type="text" id="vGoal" placeholder="0" oninput="this.value=fmtCI(this.value)" onblur="this.value=fmtCIBlur(this.value)" onfocus="this.value=fmtCIFocus(this.value)"/></div>
     <div class="field"><label>Ticket médio por unidade (R$)</label>
-      <input type="text" id="avgT" placeholder="0" oninput="this.value=fmtCI(this.value)"/>
+      <input type="text" id="avgT" placeholder="0" oninput="this.value=fmtCI(this.value)" onblur="this.value=fmtCIBlur(this.value)" onfocus="this.value=fmtCIFocus(this.value)"/>
       <div class="hint">Valor médio por unidade — usado para estimar volume necessário.</div></div>
     <div class="field"><label>Quantos empreendimentos ativos para venda?</label>
       <input type="number" id="numEmpreendimentos" placeholder="0" min="0"/></div>
@@ -682,7 +684,7 @@ function body(){
           </label>
           <div id="costrow_${t.k}" style="display:none;align-items:center;gap:8px">
             <div class="tool-cost-pfx"><span>R$</span>
-              <input type="text" id="cost_${t.k}" placeholder="0/mês" oninput="this.value=fmtCI(this.value)" style="width:120px;font-size:13px;padding:7px 10px 7px 28px"/>
+              <input type="text" id="cost_${t.k}" placeholder="0/mês" oninput="this.value=fmtCI(this.value)" onblur="this.value=fmtCIBlur(this.value)" onfocus="this.value=fmtCIFocus(this.value)" style="width:120px;font-size:13px;padding:7px 10px 7px 28px"/>
             </div>
             ${t.askWhich?`<input type="text" id="which_${t.k}" placeholder="Qual CRM?" style="width:180px;font-size:13px;padding:7px 10px"/>`:''}
           </div>
