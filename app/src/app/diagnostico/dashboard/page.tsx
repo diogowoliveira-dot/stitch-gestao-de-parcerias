@@ -1,12 +1,12 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import DiagShell from "@/components/diagnostico/DiagShell";
 import { useDiagAuth, useDiagData } from "@/lib/diagnostico-context";
 
 export default function DiagDashboard() {
-  const router = useRouter();
   const { users, isAdmin, isMaster, user } = useDiagAuth();
   const { diagnosticos, deleteDiagnostico } = useDiagData();
+  const [search, setSearch] = useState("");
 
   const handleDelete = async (e: React.MouseEvent, id: string, nome: string) => {
     e.stopPropagation();
@@ -70,10 +70,41 @@ export default function DiagDashboard() {
         </button>
       </div>
 
+      {/* Search */}
+      <div className="relative mb-6">
+        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-500" style={{ fontSize: 20 }}>search</span>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Buscar construtora, cidade, estado ou consultor..."
+          className="w-full pl-11 pr-10 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none transition-all bg-[#121212] border border-white/[0.06] focus:border-white/[0.2]"
+        />
+        {search && (
+          <button
+            onClick={() => setSearch("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
+          </button>
+        )}
+      </div>
+
       {/* Diagnósticos List — duas colunas */}
       {(() => {
-        const reais = diagnosticos.filter((d) => !d.isSimulacao);
-        const simulacoes = diagnosticos.filter((d) => d.isSimulacao);
+        const q = search.toLowerCase().trim();
+        const match = (d: typeof diagnosticos[0]) => {
+          if (!q) return true;
+          const criador = users.find((u) => u.id === d.criadoPor)?.nome ?? "";
+          return (
+            d.empresa.nome.toLowerCase().includes(q) ||
+            (d.empresa.cidade ?? "").toLowerCase().includes(q) ||
+            (d.empresa.estado ?? "").toLowerCase().includes(q) ||
+            criador.toLowerCase().includes(q)
+          );
+        };
+        const reais = diagnosticos.filter((d) => !d.isSimulacao && match(d));
+        const simulacoes = diagnosticos.filter((d) => d.isSimulacao && match(d));
 
         const renderCard = (diag: typeof diagnosticos[0]) => {
           const criador = users.find((u) => u.id === diag.criadoPor);
@@ -137,12 +168,12 @@ export default function DiagDashboard() {
             <div>
               <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined" style={{ fontSize: 16, color: "#10b981" }}>verified</span>
-                Diagnósticos Reais ({reais.length})
+                Diagnósticos Reais ({reais.length}{q ? ` de ${diagnosticos.filter(d => !d.isSimulacao).length}` : ""})
               </h2>
               {reais.length === 0 ? (
                 <div className="text-center py-10 rounded-2xl bg-[#121212] border border-white/[0.06]">
-                  <span className="material-symbols-outlined text-slate-700 mb-2 block" style={{ fontSize: 36 }}>assignment</span>
-                  <p className="text-xs text-slate-500">Nenhum diagnóstico real ainda</p>
+                  <span className="material-symbols-outlined text-slate-700 mb-2 block" style={{ fontSize: 36 }}>{q ? "search_off" : "assignment"}</span>
+                  <p className="text-xs text-slate-500">{q ? `Nenhum resultado para "${search}"` : "Nenhum diagnóstico real ainda"}</p>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
@@ -155,12 +186,12 @@ export default function DiagDashboard() {
             <div>
               <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined" style={{ fontSize: 16, color: "#8b5cf6" }}>science</span>
-                Simulações ({simulacoes.length})
+                Simulações ({simulacoes.length}{q ? ` de ${diagnosticos.filter(d => d.isSimulacao).length}` : ""})
               </h2>
               {simulacoes.length === 0 ? (
                 <div className="text-center py-10 rounded-2xl bg-[#121212] border border-white/[0.06]">
-                  <span className="material-symbols-outlined text-slate-700 mb-2 block" style={{ fontSize: 36 }}>science</span>
-                  <p className="text-xs text-slate-500">Nenhuma simulação ainda</p>
+                  <span className="material-symbols-outlined text-slate-700 mb-2 block" style={{ fontSize: 36 }}>{q ? "search_off" : "science"}</span>
+                  <p className="text-xs text-slate-500">{q ? `Nenhum resultado para "${search}"` : "Nenhuma simulação ainda"}</p>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
