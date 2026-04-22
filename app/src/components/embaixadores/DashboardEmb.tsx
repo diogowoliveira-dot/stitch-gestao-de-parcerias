@@ -122,24 +122,19 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete }: Props)
   const fromStr = monthKey(fromDate)
   const toStr   = monthKey(toDate)
 
-  // ── No data ───────────────────────────────────────────
-  if (!last) {
-    return (
-      <div style={{ padding: '48px 24px', textAlign: 'center', color: 'rgba(255,255,255,.35)' }}>
-        <p style={{ fontSize: 14, marginBottom: 8 }}>Nenhuma métrica disponível para este período.</p>
-        <p style={{ fontSize: 12 }}>Ajuste o intervalo de datas ou aguarde a sincronização com o Grafana.</p>
-        <div style={{ marginTop: 24, display: 'flex', gap: 8, justifyContent: 'center' }}>
-          {/* Diagnósticos count mesmo sem métricas */}
-          {(emb.diagnosticosCount ?? 0) > 0 && (
-            <div style={{ background:'#0e0e0e', border:'1px solid rgba(255,255,255,.06)', borderRadius:11, padding:'16px 24px', textAlign:'center' }}>
-              <div style={{ fontSize:28, fontWeight:700, color:'#E8392A' }}>{emb.diagnosticosCount}</div>
-              <div style={{ fontSize:10, color:'rgba(255,255,255,.35)', marginTop:4, textTransform:'uppercase', letterSpacing:'.8px' }}>Diagnósticos realizados</div>
-            </div>
-          )}
-        </div>
-      </div>
-    )
+  // Objeto zero para usar quando não há métricas
+  const zeroMetric: EmbaixadorMetrica = {
+    id: '', embaixadorId: emb.id, competencia: new Date().toISOString(),
+    corretoresTotal: 0, corretoresNovos: 0,
+    imobCadastradas: 0, imobCadastradasNovas: 0,
+    imobIntegradas: 0, imobIntegradasNovas: 0,
+    incorporadoras: 0, incorporadorasNovas: 0,
+    acessosTotais: 0, createdAt: new Date().toISOString(),
   }
+  const displayLast      = last ?? zeroMetric
+  const displayLabels    = labels.length > 0 ? labels : ['—']
+  const displayRange     = rangeMetrics.length > 0 ? rangeMetrics : [zeroMetric]
+  const hasMetrics       = rangeMetrics.length > 0
 
   // ─────────────────────────────────────────────────────
   return (
@@ -265,42 +260,51 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete }: Props)
 
       <div style={{ fontSize:10, color:'rgba(255,255,255,.26)', textTransform:'uppercase', letterSpacing:'.8px', display:'flex', alignItems:'center', gap:7, marginBottom:13 }}>
         <span style={{ width:16, height:1, background:'#E8392A', display:'block', flexShrink:0 }} />
-        {labels[0]} – {labels[labels.length - 1]} · {rangeMetrics.length} {rangeMetrics.length === 1 ? 'mês' : 'meses'}
+        {hasMetrics
+          ? `${displayLabels[0]} – ${displayLabels[displayLabels.length - 1]} · ${rangeMetrics.length} ${rangeMetrics.length === 1 ? 'mês' : 'meses'}`
+          : 'Sem métricas — aguardando dados do Grafana'
+        }
       </div>
 
       {/* 3 SECTIONS */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:11, marginBottom:11 }}>
-        <Section title="Corretores" badge={`${fmt(last.corretoresTotal)} total`} badgeRed>
-          <StatRow label="Total no estado"        value={fmt(last.corretoresTotal)}  chip="acumulado" />
-          <StatRow label="Adicionados no período"  value={fmt(sumNew.cn)}             chip={pct(sumNew.cn, last.corretoresTotal)} chipUp />
+        <Section title="Corretores" badge={`${fmt(displayLast.corretoresTotal)} total`} badgeRed>
+          <StatRow label="Total no estado"        value={fmt(displayLast.corretoresTotal)}  chip="acumulado" />
+          <StatRow label="Adicionados no período"  value={fmt(sumNew.cn)}             chip={pct(sumNew.cn, displayLast.corretoresTotal)} chipUp />
           <div style={{ padding:'11px 13px 9px', borderTop:'1px solid rgba(255,255,255,.06)', background:'#060606', marginTop:'auto' }}>
             <div style={{ fontSize:9, color:'rgba(255,255,255,.28)', textTransform:'uppercase', letterSpacing:'.8px', marginBottom:8 }}>Evolução mensal</div>
             <div style={{ height:96 }}>
-              <ChartLine data={rangeMetrics.map(m => m.corretoresTotal)} labels={labels} color="#E8392A" />
+              {hasMetrics
+                ? <ChartLine data={displayRange.map(m => m.corretoresTotal)} labels={displayLabels} color="#E8392A" />
+                : <EmptyChart />}
             </div>
           </div>
         </Section>
 
-        <Section title="Imobiliárias" badge={`${fmt(last.imobCadastradas)} cadastradas`}>
-          <StatRow label="Cadastradas (total)"    value={fmt(last.imobCadastradas)}     chip="acumulado" />
-          <StatRow label="Novas no período"        value={fmt(sumNew.icn)}               chip={pct(sumNew.icn, last.imobCadastradas)} chipUp />
-          <StatRow label="Integradas (total)"      value={fmt(last.imobIntegradas)}      chip="acumulado" />
-          <StatRow label="Integrações no período"  value={fmt(sumNew.iin)}               chip={pct(sumNew.iin, last.imobIntegradas)} chipUp />
+        <Section title="Imobiliárias" badge={`${fmt(displayLast.imobCadastradas)} cadastradas`}>
+          <StatRow label="Cadastradas (total)"    value={fmt(displayLast.imobCadastradas)}     chip="acumulado" />
+          <StatRow label="Novas no período"        value={fmt(sumNew.icn)}               chip={pct(sumNew.icn, displayLast.imobCadastradas)} chipUp />
+          <StatRow label="Integradas (total)"      value={fmt(displayLast.imobIntegradas)}      chip="acumulado" />
+          <StatRow label="Integrações no período"  value={fmt(sumNew.iin)}               chip={pct(sumNew.iin, displayLast.imobIntegradas)} chipUp />
           <div style={{ padding:'11px 13px 9px', borderTop:'1px solid rgba(255,255,255,.06)', background:'#060606', marginTop:'auto' }}>
             <div style={{ fontSize:9, color:'rgba(255,255,255,.28)', textTransform:'uppercase', letterSpacing:'.8px', marginBottom:8 }}>Evolução mensal</div>
             <div style={{ height:96 }}>
-              <ChartLine data={rangeMetrics.map(m => m.imobCadastradas)} labels={labels} color="#ffffff" />
+              {hasMetrics
+                ? <ChartLine data={displayRange.map(m => m.imobCadastradas)} labels={displayLabels} color="#ffffff" />
+                : <EmptyChart />}
             </div>
           </div>
         </Section>
 
-        <Section title="Incorporadoras" badge={`${fmt(last.incorporadoras)} total`}>
-          <StatRow label="Total no estado"  value={fmt(last.incorporadoras)}   chip="acumulado" />
+        <Section title="Incorporadoras" badge={`${fmt(displayLast.incorporadoras)} total`}>
+          <StatRow label="Total no estado"  value={fmt(displayLast.incorporadoras)}   chip="acumulado" />
           <StatRow label="Novas no período" value={fmt(sumNew.incn)}           chip={`+${sumNew.incn}`} chipUp />
           <div style={{ padding:'11px 13px 9px', borderTop:'1px solid rgba(255,255,255,.06)', background:'#060606', marginTop:'auto' }}>
             <div style={{ fontSize:9, color:'rgba(255,255,255,.28)', textTransform:'uppercase', letterSpacing:'.8px', marginBottom:8 }}>Evolução mensal</div>
             <div style={{ height:96 }}>
-              <ChartLine data={rangeMetrics.map(m => m.incorporadoras)} labels={labels} color="#9ca3af" />
+              {hasMetrics
+                ? <ChartLine data={displayRange.map(m => m.incorporadoras)} labels={displayLabels} color="#9ca3af" />
+                : <EmptyChart />}
             </div>
           </div>
         </Section>
@@ -316,11 +320,13 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete }: Props)
           </div>
           <div style={{ padding:'13px 15px', display:'flex', alignItems:'flex-end', gap:18 }}>
             <div>
-              <div style={{ fontSize:24, fontWeight:700, letterSpacing:'-.8px', color:'#E8392A', lineHeight:1 }}>{fmt(last.acessosTotais)}</div>
+              <div style={{ fontSize:24, fontWeight:700, letterSpacing:'-.8px', color:'#E8392A', lineHeight:1 }}>{fmt(displayLast.acessosTotais)}</div>
               <div style={{ fontSize:10, color:'rgba(255,255,255,.3)', marginTop:4 }}>acessos registrados</div>
             </div>
             <div style={{ flex:1, height:50 }}>
-              <ChartBar data={rangeMetrics.map(m => m.acessosTotais)} labels={labels} color="#E8392A" />
+              {hasMetrics
+                ? <ChartBar data={displayRange.map(m => m.acessosTotais)} labels={displayLabels} color="#E8392A" />
+                : <EmptyChart />}
             </div>
           </div>
         </div>
@@ -329,7 +335,7 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete }: Props)
         <div style={{ background:'#0e0e0e', border:'1px solid rgba(255,255,255,.06)', borderRadius:11, padding:'13px 15px' }}>
           <div style={{ fontSize:9, fontWeight:600, letterSpacing:'1.1px', textTransform:'uppercase', color:'rgba(255,255,255,.26)', paddingBottom:9, borderBottom:'1px solid rgba(255,255,255,.06)', marginBottom:9 }}>Resumo do período</div>
           {[
-            { k: 'Período',        v: `${rangeMetrics.length}m`,   red: false },
+            { k: 'Período',        v: hasMetrics ? `${rangeMetrics.length}m` : '—', red: false },
             { k: 'Diagnósticos',   v: `${emb.diagnosticosCount ?? 0}`, red: true  },
             { k: 'Corretores',     v: `+${fmt(sumNew.cn)}`,         red: true  },
             { k: 'Imobiliárias',   v: `+${fmt(sumNew.icn)}`,        red: true  },
@@ -341,6 +347,11 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete }: Props)
               <span style={{ fontSize:12, fontWeight:600, color: r.red ? '#E8392A' : '#fff' }}>{r.v}</span>
             </div>
           ))}
+          {!hasMetrics && (
+            <div style={{ marginTop:8, paddingTop:8, borderTop:'1px solid rgba(255,255,255,.05)', fontSize:10, color:'rgba(255,255,255,.25)', lineHeight:1.5 }}>
+              Métricas Grafana ainda não sincronizadas
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -370,6 +381,14 @@ function StatRow({ label, value, chip, chipUp }: {
       <span style={{ flex:1, fontSize:11, color:'rgba(255,255,255,.52)' }}>{label}</span>
       <span style={{ fontSize:12, fontWeight:600, letterSpacing:'-.2px', marginRight:8 }}>{value}</span>
       <span style={{ fontSize:9, fontWeight:700, padding:'2px 7px', borderRadius:20, background: chipUp ? 'rgba(52,211,153,.12)' : 'rgba(255,255,255,.08)', color: chipUp ? '#34d399' : 'rgba(255,255,255,.3)' }}>{chip}</span>
+    </div>
+  )
+}
+
+function EmptyChart() {
+  return (
+    <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center' }}>
+      <span style={{ fontSize:10, color:'rgba(255,255,255,.15)' }}>sem dados</span>
     </div>
   )
 }

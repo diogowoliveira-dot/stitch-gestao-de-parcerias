@@ -16,6 +16,7 @@ export interface Embaixador {
   photoUrl: string | null
   grafanaUid: string | null
   ativo: boolean
+  userId: string | null
   createdAt: string
   updatedAt: string
   diagnosticosCount?: number
