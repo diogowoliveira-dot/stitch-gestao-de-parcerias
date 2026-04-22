@@ -34,6 +34,9 @@ model Diagnostico {
   criadoPorId  String
   criadoPor    User     @relation(fields: [criadoPorId], references: [id], onDelete: Restrict)
 
+  embaixadorId String?
+  embaixador   Embaixador? @relation("DiagnosticoEmbaixador", fields: [embaixadorId], references: [id], onDelete: SetNull)
+
   // Dados comerciais (VGV, corretores)
   totalVGV              Float?   // VGV vendido nos últimos 12 meses
   vgvGoal               Float?   // Meta de VGV
@@ -168,4 +171,43 @@ model ProblemaIdentificado {
   descricao       String
   diagnosticoId   String
   diagnostico     Diagnostico @relation(fields: [diagnosticoId], references: [id], onDelete: Cascade)
+}
+
+// ── Módulo Embaixadores ──────────────────────────────────────────────────────
+
+model Embaixador {
+  id          String   @id @default(cuid())
+  nome        String
+  email       String   @unique
+  uf          String
+  meta        String   @default("R$13k/mês")
+  periodo     String   @default("0 meses")
+  photoUrl    String?
+  grafanaUid  String?
+  ativo       Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  metricas     EmbaixadorMetrica[]
+  diagnosticos Diagnostico[]       @relation("DiagnosticoEmbaixador")
+}
+
+model EmbaixadorMetrica {
+  id                    String   @id @default(cuid())
+  embaixadorId          String
+  competencia           DateTime // primeiro dia do mês
+  corretoresTotal       Int      @default(0)
+  corretoresNovos       Int      @default(0)
+  imobCadastradas       Int      @default(0)
+  imobCadastradasNovas  Int      @default(0)
+  imobIntegradas        Int      @default(0)
+  imobIntegradasNovas   Int      @default(0)
+  incorporadoras        Int      @default(0)
+  incorporadorasNovas   Int      @default(0)
+  acessosTotais         Int      @default(0)
+  createdAt             DateTime @default(now())
+
+  embaixador  Embaixador @relation(fields: [embaixadorId], references: [id], onDelete: Cascade)
+
+  @@unique([embaixadorId, competencia])
 }

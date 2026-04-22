@@ -79,6 +79,15 @@ export default function DiagDashboard() {
             Relatório de Atividade
           </button>
         )}
+        {isMaster && (
+          <button
+            onClick={() => router.push("/diagnostico/embaixadores")}
+            className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-slate-400 transition-all hover:bg-white/5 border border-white/[0.06]"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>map</span>
+            Embaixadores
+          </button>
+        )}
       </div>
 
       {/* Search */}
