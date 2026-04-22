@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import DiagShell from "@/components/diagnostico/DiagShell";
 import { useDiagAuth, useDiagData } from "@/lib/diagnostico-context";
 
 export default function DiagDashboard() {
+  const router = useRouter();
   const { users, isAdmin, isMaster, user } = useDiagAuth();
   const { diagnosticos, deleteDiagnostico } = useDiagData();
   const [search, setSearch] = useState("");
@@ -68,6 +70,15 @@ export default function DiagDashboard() {
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>help</span>
           Tutorial
         </button>
+        {isMaster && (
+          <button
+            onClick={() => router.push("/diagnostico/relatorio")}
+            className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-slate-400 transition-all hover:bg-white/5 border border-white/[0.06]"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>bar_chart</span>
+            Relatório de Atividade
+          </button>
+        )}
       </div>
 
       {/* Search */}
