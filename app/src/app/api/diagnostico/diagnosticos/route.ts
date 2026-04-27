@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 // GET all diagnosticos
 export async function GET() {
+  try {
   const diagnosticos = await prisma.diagnostico.findMany({
     include: {
       criadoPor: { select: { id: true, nome: true } },
@@ -118,11 +119,40 @@ export async function GET() {
   }));
 
   return NextResponse.json(result);
+  } catch (err) {
+    console.error("GET /diagnosticos error:", err);
+    return NextResponse.json({ error: "Erro ao buscar diagnósticos" }, { status: 500 });
+  }
+}
+
+// ── Validação de consistência dos dados métricos ──────────────────────────────
+function validateMetrics(data: Record<string, unknown>): string | null {
+  const total  = data.totalBrokers  != null ? Number(data.totalBrokers)  : null;
+  const active = data.activeBrokers != null ? Number(data.activeBrokers) : null;
+  const props  = data.propostasMensais   != null ? Number(data.propostasMensais)   : null;
+  const fechs  = data.fechamentosMensais != null ? Number(data.fechamentosMensais) : null;
+
+  if (total !== null && total <= 0)
+    return 'totalBrokers deve ser maior que zero';
+  if (active !== null && active < 0)
+    return 'activeBrokers não pode ser negativo';
+  if (total !== null && active !== null && active > total)
+    return `activeBrokers (${active}) não pode ser maior que totalBrokers (${total})`;
+  if (props !== null && props <= 0)
+    return 'propostasMensais deve ser maior que zero';
+  if (fechs !== null && props !== null && fechs > props)
+    return `fechamentosMensais (${fechs}) não pode ser maior que propostasMensais (${props})`;
+  return null;
 }
 
 // POST create diagnostico
 export async function POST(req: NextRequest) {
   const data = await req.json();
+
+  const metricError = validateMetrics(data);
+  if (metricError) {
+    return NextResponse.json({ error: metricError }, { status: 422 });
+  }
 
   const diag = await prisma.diagnostico.create({
     data: {
@@ -239,6 +269,29 @@ export async function PUT(req: NextRequest) {
   const data = await req.json();
   const { id, ...f } = data;
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+
+  // Para validar totalBrokers/activeBrokers no PUT precisamos conhecer os valores
+  // actuais se só um dos dois campos for enviado
+  const needsBrokerCheck = f.totalBrokers !== undefined || f.activeBrokers !== undefined;
+  if (needsBrokerCheck) {
+    let checkTotal  = f.totalBrokers;
+    let checkActive = f.activeBrokers;
+    if (checkTotal === undefined || checkActive === undefined) {
+      // Busca o valor atual do outro campo
+      const cur = await prisma.diagnostico.findUnique({
+        where: { id }, select: { totalBrokers: true, activeBrokers: true }
+      });
+      if (cur) {
+        if (checkTotal  === undefined) checkTotal  = cur.totalBrokers;
+        if (checkActive === undefined) checkActive = cur.activeBrokers;
+      }
+    }
+    const metricError = validateMetrics({ totalBrokers: checkTotal, activeBrokers: checkActive,
+      propostasMensais: f.propostasMensais, fechamentosMensais: f.fechamentosMensais });
+    if (metricError) {
+      return NextResponse.json({ error: metricError }, { status: 422 });
+    }
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const u: Record<string, any> = {};

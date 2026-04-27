@@ -245,12 +245,18 @@ function renderKPIs(data){
       fmtN(avg(withImob.map(d=>d.numImobiliarias))),'amber','média por incorporadora',base(withImob.length));
   }
 
-  // TE
-  const withTE=data.filter(d=>d.totalBrokers>0&&d.activeBrokers!=null);
+  // TE — só inclui registros onde ativos ≤ total (descarta erros de digitação)
+  const withTERaw=data.filter(d=>d.totalBrokers>0&&d.activeBrokers!=null);
+  const withTE=withTERaw.filter(d=>d.activeBrokers<=d.totalBrokers);
+  const teInvalid=withTERaw.length-withTE.length;
   if(withTE.length){
     const tes=withTE.map(d=>(d.activeBrokers/d.totalBrokers)*100);
+    const teAvg=tes.reduce((a,b)=>a+b,0)/tes.length;
+    const teMedian=[...tes].sort((a,b)=>a-b)[Math.floor(tes.length/2)];
     html+=kpiCard('Taxa de Engajamento Média',
-      pct(tes.reduce((a,b)=>a+b,0)/tes.length),'red','corretores ativos/total',base(withTE.length));
+      pct(teAvg),'red',
+      'mediana: '+pct(teMedian)+(teInvalid?' · <span style="color:var(--am)">'+teInvalid+' reg. inválido(s) excluído(s)</span>':''),
+      base(withTE.length));
   }
 
   // Ociosidade
@@ -260,8 +266,8 @@ function renderKPIs(data){
       pct(ocios.reduce((a,b)=>a+b,0)/ocios.length),'red','corretores sem vender',base(withTE.length));
   }
 
-  // VGV por corretor ativo
-  const withVGVBrkr=data.filter(d=>d.totalVGV>0&&d.activeBrokers>0);
+  // VGV por corretor ativo — também filtra ativo<=total
+  const withVGVBrkr=data.filter(d=>d.totalVGV>0&&d.activeBrokers>0&&d.activeBrokers<=d.totalBrokers);
   if(withVGVBrkr.length){
     const m=avg(withVGVBrkr.map(d=>d.totalVGV/d.activeBrokers));
     html+=kpiCard('VGV / Corretor Ativo',fmtBRL(m),'green','produtividade média',base(withVGVBrkr.length));
