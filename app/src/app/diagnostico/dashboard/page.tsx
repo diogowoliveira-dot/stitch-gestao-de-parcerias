@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import DiagShell from "@/components/diagnostico/DiagShell";
 import { useDiagAuth, useDiagData } from "@/lib/diagnostico-context";
@@ -9,6 +9,19 @@ export default function DiagDashboard() {
   const { users, isAdmin, isMaster, user } = useDiagAuth();
   const { diagnosticos, deleteDiagnostico } = useDiagData();
   const [search, setSearch] = useState("");
+  // ID do embaixador vinculado ao usuário atual (para consultores)
+  const [myEmbaixadorId, setMyEmbaixadorId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user || isAdmin) return; // admin já tem botão da lista completa
+    fetch('/api/diagnostico/embaixadores')
+      .then(r => r.ok ? r.json() : [])
+      .then((data: Array<{ id: string; userId: string | null }>) => {
+        const mine = data.find(e => e.userId === user.id);
+        if (mine) setMyEmbaixadorId(mine.id);
+      })
+      .catch(() => {/* silencioso */});
+  }, [user, isAdmin]);
 
   const handleDelete = async (e: React.MouseEvent, id: string, nome: string) => {
     e.stopPropagation();
@@ -79,13 +92,22 @@ export default function DiagDashboard() {
             Relatório de Atividade
           </button>
         )}
-        {isMaster && (
+        {isAdmin && (
           <button
             onClick={() => router.push("/diagnostico/embaixadores")}
             className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-slate-400 transition-all hover:bg-white/5 border border-white/[0.06]"
           >
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>map</span>
             Embaixadores
+          </button>
+        )}
+        {!isAdmin && myEmbaixadorId && (
+          <button
+            onClick={() => router.push(`/diagnostico/embaixadores/${myEmbaixadorId}`)}
+            className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-slate-400 transition-all hover:bg-white/5 border border-white/[0.06]"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>leaderboard</span>
+            Meu Painel
           </button>
         )}
       </div>

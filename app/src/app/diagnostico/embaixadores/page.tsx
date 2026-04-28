@@ -1,5 +1,5 @@
 'use client'
-// /diagnostico/embaixadores — lista de embaixadores (master only para CRUD)
+// /diagnostico/embaixadores — lista completa (admin/master) ou redirect para próprio painel (consultor)
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useDiagAuth } from '@/lib/diagnostico-context'
@@ -7,7 +7,7 @@ import EmbaixadoresClient from '@/components/embaixadores/EmbaixadoresClient'
 import { Embaixador } from '@/types/embaixadores'
 
 export default function EmbaixadoresPage() {
-  const { user, isMaster } = useDiagAuth()
+  const { user, isMaster, isAdmin } = useDiagAuth()
   const router = useRouter()
   const [embs, setEmbs]   = useState<Embaixador[]>([])
   const [loading, setLoading] = useState(true)
@@ -15,22 +15,32 @@ export default function EmbaixadoresPage() {
 
   // Redireciona se não logado
   useEffect(() => {
-    if (!user) {
-      router.replace('/diagnostico')
-    }
+    if (!user) router.replace('/diagnostico')
   }, [user, router])
 
   useEffect(() => {
     if (!user) return
     fetch('/api/diagnostico/embaixadores')
       .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) setEmbs(data)
-        else setError('Erro ao carregar embaixadores')
+      .then((data: Embaixador[]) => {
+        if (!Array.isArray(data)) { setError('Erro ao carregar'); return }
+
+        // Consultor: redireciona para o próprio painel ou volta ao dashboard
+        if (!isAdmin) {
+          const mine = data.find(e => e.userId === user.id)
+          if (mine) {
+            router.replace(`/diagnostico/embaixadores/${mine.id}`)
+          } else {
+            router.replace('/diagnostico/dashboard')
+          }
+          return
+        }
+
+        setEmbs(data)
       })
       .catch(() => setError('Erro de conexão'))
       .finally(() => setLoading(false))
-  }, [user])
+  }, [user, isAdmin, router])
 
   if (!user) return null
 

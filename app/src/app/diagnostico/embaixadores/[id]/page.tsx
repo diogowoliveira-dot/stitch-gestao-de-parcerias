@@ -1,5 +1,6 @@
 'use client'
 // /diagnostico/embaixadores/[id] — dashboard de performance individual
+// Acesso: master (edita tudo) | admin (visualiza todos) | consultor vinculado (visualiza só o próprio)
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { useDiagAuth } from '@/lib/diagnostico-context'
@@ -7,7 +8,7 @@ import DashboardEmb from '@/components/embaixadores/DashboardEmb'
 import { EmbaixadorComMetricas } from '@/types/embaixadores'
 
 export default function EmbaixadorDashboardPage() {
-  const { user, isMaster } = useDiagAuth()
+  const { user, isMaster, isAdmin } = useDiagAuth()
   const router = useRouter()
   const params = useParams()
   const id     = params.id as string
@@ -29,10 +30,17 @@ export default function EmbaixadorDashboardPage() {
         if (!r.ok) throw new Error('Não encontrado')
         return r.json()
       })
-      .then(data => setEmb(data))
+      .then((data: EmbaixadorComMetricas) => {
+        // Consultor só pode ver o próprio painel
+        if (!isAdmin && data.userId !== user.id) {
+          router.replace('/diagnostico/dashboard')
+          return
+        }
+        setEmb(data)
+      })
       .catch(e => setError(e.message || 'Erro ao carregar'))
       .finally(() => setLoading(false))
-  }, [user, id])
+  }, [user, id, isAdmin, router])
 
   useEffect(() => { fetchEmb() }, [fetchEmb])
 
@@ -56,15 +64,20 @@ export default function EmbaixadorDashboardPage() {
 
   if (!user) return null
 
+  // Consultor vendo seu próprio painel (backlink vai para o dashboard, não para a lista)
+  const isOwnPanel = !isAdmin && emb?.userId === user.id
+  const backHref   = isOwnPanel ? '/diagnostico/dashboard' : '/diagnostico/embaixadores'
+  const backLabel  = isOwnPanel ? '← Dashboard' : '← Embaixadores'
+
   return (
     <div style={{ minHeight:'100vh', background:'#060606', color:'#fff', fontFamily:'system-ui, -apple-system, sans-serif' }}>
       {/* Nav */}
       <div style={{ borderBottom:'1px solid rgba(255,255,255,.07)', padding:'0 24px' }}>
         <div style={{ maxWidth:1100, margin:'0 auto', display:'flex', alignItems:'center', height:52, gap:16 }}>
           <button
-            onClick={() => router.push('/diagnostico/embaixadores')}
+            onClick={() => router.push(backHref)}
             style={{ background:'transparent', border:'none', color:'rgba(255,255,255,.4)', fontSize:11, cursor:'pointer', display:'flex', alignItems:'center', gap:6, padding:0 }}>
-            ← Embaixadores
+            {backLabel}
           </button>
           {emb && (
             <>
