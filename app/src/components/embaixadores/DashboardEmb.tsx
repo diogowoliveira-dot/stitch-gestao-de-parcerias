@@ -73,13 +73,14 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete, onSync }
   // Últimas métricas disponíveis (totais acumulados)
   const last = rangeMetrics[rangeMetrics.length - 1]
 
-  // Soma de "novos" no período
+  // Soma de "novos" e acessos no período
   const sumNew = useMemo(() => rangeMetrics.reduce((acc, m) => ({
     cn:   acc.cn   + m.corretoresNovos,
     icn:  acc.icn  + m.imobCadastradasNovas,
     iin:  acc.iin  + m.imobIntegradasNovas,
     incn: acc.incn + m.incorporadorasNovas,
-  }), { cn:0, icn:0, iin:0, incn:0 }), [rangeMetrics])
+    aces: acc.aces + m.acessosTotais,
+  }), { cn:0, icn:0, iin:0, incn:0, aces:0 }), [rangeMetrics])
 
   // ── Foto ─────────────────────────────────────────────
   const [photoUrl, setPhotoUrl] = useState(emb.photoUrl || '')
@@ -364,12 +365,12 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete, onSync }
         <div style={{ background:'#0e0e0e', border:'1px solid rgba(255,255,255,.06)', borderRadius:11, overflow:'hidden' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'11px 15px', borderBottom:'1px solid rgba(255,255,255,.06)' }}>
             <span style={{ fontSize:10, fontWeight:600, letterSpacing:'1.2px', textTransform:'uppercase', color:'rgba(255,255,255,.52)' }}>Acessos gerados no estado</span>
-            <span style={{ fontSize:9, padding:'2px 8px', borderRadius:20, background:'rgba(232,57,42,.1)', color:'rgba(232,57,42,.65)', border:'1px solid rgba(232,57,42,.25)' }}>acumulado total</span>
+            <span style={{ fontSize:9, padding:'2px 8px', borderRadius:20, background:'rgba(232,57,42,.1)', color:'rgba(232,57,42,.65)', border:'1px solid rgba(232,57,42,.25)' }}>soma do período</span>
           </div>
           <div style={{ padding:'13px 15px', display:'flex', alignItems:'flex-end', gap:18 }}>
             <div>
-              <div style={{ fontSize:24, fontWeight:700, letterSpacing:'-.8px', color:'#E8392A', lineHeight:1 }}>{fmt(displayLast.acessosTotais)}</div>
-              <div style={{ fontSize:10, color:'rgba(255,255,255,.3)', marginTop:4 }}>acessos registrados</div>
+              <div style={{ fontSize:24, fontWeight:700, letterSpacing:'-.8px', color:'#E8392A', lineHeight:1 }}>{fmt(sumNew.aces)}</div>
+              <div style={{ fontSize:10, color:'rgba(255,255,255,.3)', marginTop:4 }}>acessos no período</div>
             </div>
             <div style={{ flex:1, height:50 }}>
               {hasMetrics
