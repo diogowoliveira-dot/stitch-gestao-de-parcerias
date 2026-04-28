@@ -7,7 +7,7 @@ import { Embaixador, EmbaixadorFormData, UF } from '@/types/embaixadores'
 const UFS: UF[] = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']
 
 function ini(name: string) {
-  return name.trim().split(/\s+/).slice(0,2).map(w => w[0].toUpperCase()).join('')
+  return name.trim().split(/\s+/).slice(0,2).map(w => w?.[0]?.toUpperCase() ?? '').join('')
 }
 function fmtDate(ts: string) {
   return new Date(ts).toLocaleDateString('pt-BR')
@@ -63,14 +63,19 @@ export default function EmbaixadoresClient({ embaixadores: initial, userRole }: 
     if (!editing) return
     if (!confirm(`Remover ${editing.nome}?`)) return
     setBusy(true)
-    const res = await fetch(`/api/diagnostico/embaixadores/${editing.id}`, { method:'DELETE' })
-    if (res.ok) {
-      setEmbs(prev => prev.filter(e => e.id !== editing.id))
-      close()
-    } else {
-      setErr('Erro ao remover')
+    try {
+      const res = await fetch(`/api/diagnostico/embaixadores/${editing.id}`, { method:'DELETE' })
+      if (res.ok) {
+        setEmbs(prev => prev.filter(e => e.id !== editing.id))
+        close()
+      } else {
+        setErr('Erro ao remover')
+      }
+    } catch {
+      setErr('Erro de rede')
+    } finally {
+      setBusy(false)
     }
-    setBusy(false)
   }
 
   const S = styles

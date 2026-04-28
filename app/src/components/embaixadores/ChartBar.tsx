@@ -1,6 +1,7 @@
 'use client'
 // src/components/embaixadores/ChartBar.tsx
 import { useEffect, useRef } from 'react'
+import { Chart } from './chart-setup'
 
 interface Props { data: number[]; labels: string[]; color: string }
 
@@ -11,9 +12,8 @@ export default function ChartBar({ data, labels, color }: Props) {
   useEffect(() => {
     if (!ref.current) return
     let mounted = true
-    import('chart.js').then(({ Chart, registerables }) => {
+    ;(async () => {
       if (!mounted || !ref.current) return
-      Chart.register(...registerables)
       if (ch.current) ch.current.destroy()
       ch.current = new Chart(ref.current.getContext('2d')!, {
         type: 'bar',
@@ -30,8 +30,14 @@ export default function ChartBar({ data, labels, color }: Props) {
           },
         },
       })
-    })
-    return () => { mounted = false; if (ch.current) { ch.current.destroy(); ch.current = null } }
+    })()
+    return () => {
+      mounted = false
+      if (ch.current) {
+        ch.current.destroy()
+        ch.current = null
+      }
+    }
   }, [data, labels, color])
 
   return <canvas ref={ref} style={{ width:'100%', height:'100%' }} />

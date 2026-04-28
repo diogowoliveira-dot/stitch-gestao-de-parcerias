@@ -11,16 +11,23 @@ const MONTHS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov
 const UFS    = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']
 
 function ini(name: string) {
-  return name.trim().split(/\s+/).slice(0,2).map(w => w[0].toUpperCase()).join('')
+  return name.trim().split(/\s+/).slice(0,2).map(w => w?.[0]?.toUpperCase() ?? '').join('')
 }
 function fmt(v: number) {
   return v.toLocaleString('pt-BR')
 }
 function pct(n: number, t: number) {
-  if (!n || !t || t === n) return '+0%'
-  const d = t - n
-  if (d <= 0) return '+0%'
-  return '+' + Math.round((n / d) * 100) + '%'
+  if (!t || !n || isNaN(n) || isNaN(t)) return '+0%'
+  return '+' + Math.round((n / t) * 100) + '%'
+}
+
+const ZERO_METRIC: EmbaixadorMetrica = {
+  id: '', embaixadorId: '', competencia: new Date(0).toISOString(),
+  corretoresTotal: 0, corretoresNovos: 0,
+  imobCadastradas: 0, imobCadastradasNovas: 0,
+  imobIntegradas: 0, imobIntegradasNovas: 0,
+  incorporadoras: 0, incorporadorasNovas: 0,
+  acessosTotais: 0, createdAt: new Date(0).toISOString(),
 }
 function monthKey(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`
@@ -81,6 +88,9 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete, onSync }
     incn: acc.incn + m.incorporadorasNovas,
     aces: acc.aces + m.acessosTotais,
   }), { cn:0, icn:0, iin:0, incn:0, aces:0 }), [rangeMetrics])
+
+  // ── Style injection (keyframes, once per mount) ───────
+  const spinStyleInjected = useRef(false)
 
   // ── Foto ─────────────────────────────────────────────
   const [photoUrl, setPhotoUrl] = useState(emb.photoUrl || '')
@@ -146,23 +156,17 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete, onSync }
   const fromStr = monthKey(fromDate)
   const toStr   = monthKey(toDate)
 
-  // Objeto zero para usar quando não há métricas
-  const zeroMetric: EmbaixadorMetrica = {
-    id: '', embaixadorId: emb.id, competencia: new Date().toISOString(),
-    corretoresTotal: 0, corretoresNovos: 0,
-    imobCadastradas: 0, imobCadastradasNovas: 0,
-    imobIntegradas: 0, imobIntegradasNovas: 0,
-    incorporadoras: 0, incorporadorasNovas: 0,
-    acessosTotais: 0, createdAt: new Date().toISOString(),
-  }
-  const displayLast      = last ?? zeroMetric
-  const displayLabels    = labels.length > 0 ? labels : ['—']
-  const displayRange     = rangeMetrics.length > 0 ? rangeMetrics : [zeroMetric]
-  const hasMetrics       = rangeMetrics.length > 0
+  const displayLast   = last ?? ZERO_METRIC
+  const displayLabels = labels.length > 0 ? labels : ['—']
+  const displayRange  = rangeMetrics.length > 0 ? rangeMetrics : [ZERO_METRIC]
+  const hasMetrics    = rangeMetrics.length > 0
 
   // ─────────────────────────────────────────────────────
   return (
     <div>
+      {!spinStyleInjected.current && (spinStyleInjected.current = true) && (
+        <style>{`@keyframes dwv-spin{to{transform:rotate(360deg)}}`}</style>
+      )}
       {/* PROFILE ROW */}
       <div style={{ display:'flex', alignItems:'center', gap:18, padding:'15px 0 18px', borderBottom:'1px solid rgba(255,255,255,.07)', marginBottom:18 }}>
         <div style={{ position:'relative', flexShrink:0, cursor: isMaster ? 'pointer' : 'default' }}
@@ -449,7 +453,6 @@ function SyncIcon({ spinning }: { spinning?: boolean }) {
       strokeLinecap="round" strokeLinejoin="round"
       style={{ flexShrink:0, animation: spinning ? 'dwv-spin .7s linear infinite' : undefined }}
     >
-      <style>{`@keyframes dwv-spin{to{transform:rotate(360deg)}}`}</style>
       <path d="M13.5 8A5.5 5.5 0 1 1 8 2.5c1.8 0 3.4.87 4.4 2.2" />
       <polyline points="11 2 13.5 4.7 16 2" transform="translate(-2.5 0)" />
     </svg>

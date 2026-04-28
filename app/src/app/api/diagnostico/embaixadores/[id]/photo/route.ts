@@ -15,6 +15,14 @@ export async function POST(
       return NextResponse.json({ error: 'Arquivo não enviado' }, { status: 400 })
     }
 
+    const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!ALLOWED_MIME.includes(file.type)) {
+      return NextResponse.json(
+        { error: 'Tipo de arquivo inválido. Use JPEG, PNG, WebP ou GIF.' },
+        { status: 400 }
+      )
+    }
+
     // Limita a 2MB para não estourar o banco
     if (file.size > 2 * 1024 * 1024) {
       return NextResponse.json({ error: 'Imagem deve ter menos de 2MB' }, { status: 400 })
@@ -32,6 +40,10 @@ export async function POST(
     return NextResponse.json({ url: dataUrl })
   } catch (err) {
     console.error('POST /embaixadores/[id]/photo error:', err)
+    // P2025 = record not found
+    if (typeof err === 'object' && err !== null && (err as { code?: string }).code === 'P2025') {
+      return NextResponse.json({ error: 'Embaixador não encontrado' }, { status: 404 })
+    }
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
   }
 }

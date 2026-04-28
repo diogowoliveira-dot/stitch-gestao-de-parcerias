@@ -13,15 +13,17 @@ export default function DiagDashboard() {
   const [myEmbaixadorId, setMyEmbaixadorId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user || isAdmin) return; // admin já tem botão da lista completa
-    fetch('/api/diagnostico/embaixadores')
+    if (!user?.id || isAdmin) return; // admin já tem botão da lista completa
+    const controller = new AbortController()
+    fetch('/api/diagnostico/embaixadores', { signal: controller.signal })
       .then(r => r.ok ? r.json() : [])
       .then((data: Array<{ id: string; userId: string | null }>) => {
         const mine = data.find(e => e.userId === user.id);
         if (mine) setMyEmbaixadorId(mine.id);
       })
-      .catch(() => {/* silencioso */});
-  }, [user, isAdmin]);
+      .catch(err => { if (err.name !== 'AbortError') console.warn('embaixador fetch failed', err) });
+    return () => controller.abort()
+  }, [user?.id, isAdmin]);
 
   const handleDelete = async (e: React.MouseEvent, id: string, nome: string) => {
     e.stopPropagation();

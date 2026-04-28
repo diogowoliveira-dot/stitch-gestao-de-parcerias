@@ -278,6 +278,11 @@ export async function POST(
       return NextResponse.json({ error: `UF "${uf}" não tem DDDs mapeados` }, { status: 400 })
     }
 
+    // NEW: strict validation — uf must be a known key (no SQL injection possible)
+    if (!Object.prototype.hasOwnProperty.call(UF_DDD, uf) || !/^[A-Z]{2}$/.test(uf)) {
+      return NextResponse.json({ error: `UF inválida: "${uf}"` }, { status: 400 })
+    }
+
     // 2. Run all 5 Grafana queries in parallel
     const [
       corretoresRows,

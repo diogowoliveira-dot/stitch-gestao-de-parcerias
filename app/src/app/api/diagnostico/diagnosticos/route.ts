@@ -154,114 +154,123 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: metricError }, { status: 422 });
   }
 
-  const diag = await prisma.diagnostico.create({
-    data: {
-      // Empresa
-      empresaNome: data.empresa.nome,
-      empresaCidade: data.empresa.cidade,
-      empresaEstado: data.empresa.estado,
-      status: data.status || "completo",
-      criadoPorId: data.criadoPor,
-      isSimulacao: data.isSimulacao ?? false,
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      const diag = await tx.diagnostico.create({
+        data: {
+          // Empresa
+          empresaNome: data.empresa.nome,
+          empresaCidade: data.empresa.cidade,
+          empresaEstado: data.empresa.estado,
+          status: data.status || "completo",
+          criadoPorId: data.criadoPor,
+          isSimulacao: data.isSimulacao ?? false,
 
-      // Responsável
-      responsavelNome: data.responsavelNome ?? null,
-      responsavelCargo: data.responsavelCargo ?? null,
+          // Responsável
+          responsavelNome: data.responsavelNome ?? null,
+          responsavelCargo: data.responsavelCargo ?? null,
 
-      // Métricas
-      totalVGV: data.totalVGV ?? null,
-      vgvGoal: data.vgvGoal ?? null,
-      avgTicket: data.avgTicket ?? null,
-      totalBrokers: data.totalBrokers ?? null,
-      activeBrokers: data.activeBrokers ?? null,
+          // Métricas
+          totalVGV: data.totalVGV ?? null,
+          vgvGoal: data.vgvGoal ?? null,
+          avgTicket: data.avgTicket ?? null,
+          totalBrokers: data.totalBrokers ?? null,
+          activeBrokers: data.activeBrokers ?? null,
 
-      // Canais
-      shareHouse: data.shareHouse ?? null,
-      shareParcerias: data.shareParcerias ?? null,
-      numImobiliarias: data.numImobiliarias ?? null,
-      hasHouse: data.hasHouse ?? null,
-      hasParc: data.hasParc ?? null,
-      hasImob: data.hasImob ?? null,
-      exclusividade: data.exclusividade ?? null,
+          // Canais
+          shareHouse: data.shareHouse ?? null,
+          shareParcerias: data.shareParcerias ?? null,
+          numImobiliarias: data.numImobiliarias ?? null,
+          hasHouse: data.hasHouse ?? null,
+          hasParc: data.hasParc ?? null,
+          hasImob: data.hasImob ?? null,
+          exclusividade: data.exclusividade ?? null,
 
-      // Inventário
-      numEmpreendimentos: data.numEmpreendimentos ?? null,
-      numPreLancamento: data.numPreLancamento ?? null,
-      numLancamento: data.numLancamento ?? null,
-      numEstoque: data.numEstoque ?? null,
-      focoVendas: data.focoVendas ?? null,
-      totalImoveisVenda: data.totalImoveisVenda ?? null,
-      propostasMensais: data.propostasMensais ?? null,
-      fechamentosMensais: data.fechamentosMensais ?? null,
+          // Inventário
+          numEmpreendimentos: data.numEmpreendimentos ?? null,
+          numPreLancamento: data.numPreLancamento ?? null,
+          numLancamento: data.numLancamento ?? null,
+          numEstoque: data.numEstoque ?? null,
+          focoVendas: data.focoVendas ?? null,
+          totalImoveisVenda: data.totalImoveisVenda ?? null,
+          propostasMensais: data.propostasMensais ?? null,
+          fechamentosMensais: data.fechamentosMensais ?? null,
 
-      // Tecnologia
-      temCRM: data.temCRM ?? null,
-      crmNome: data.crmNome ?? null,
-      crmContratoNome: data.crmContratoNome ?? null,
-      ferramentasAtivas: data.ferramentasAtivas?.length ? JSON.stringify(data.ferramentasAtivas) : null,
-      custosFerramentas: data.custosFerramentas && Object.keys(data.custosFerramentas).length ? JSON.stringify(data.custosFerramentas) : null,
+          // Tecnologia
+          temCRM: data.temCRM ?? null,
+          crmNome: data.crmNome ?? null,
+          crmContratoNome: data.crmContratoNome ?? null,
+          ferramentasAtivas: data.ferramentasAtivas?.length ? JSON.stringify(data.ferramentasAtivas) : null,
+          custosFerramentas: data.custosFerramentas && Object.keys(data.custosFerramentas).length ? JSON.stringify(data.custosFerramentas) : null,
 
-      // Segmentação e relatórios
-      segmentacao: data.segmentacao ?? null,
-      segmentacaoDescritiva: data.segmentacaoDescritiva ?? null,
-      relatoriosDesejados: data.relatoriosDesejados?.length ? JSON.stringify(data.relatoriosDesejados) : null,
-      relatoriosDescritivo: data.relatoriosDescritivo ?? null,
+          // Segmentação e relatórios
+          segmentacao: data.segmentacao ?? null,
+          segmentacaoDescritiva: data.segmentacaoDescritiva ?? null,
+          relatoriosDesejados: data.relatoriosDesejados?.length ? JSON.stringify(data.relatoriosDesejados) : null,
+          relatoriosDescritivo: data.relatoriosDescritivo ?? null,
 
-      // Dores
-      atingiuMetas: data.atingiuMetas ?? null,
-      desafiosKeys: data.desafiosKeys?.length ? JSON.stringify(data.desafiosKeys) : null,
-      desafiosTexto: data.desafiosTexto ?? null,
-      acoesTestadas: data.acoesTestadas ?? null,
-      resultadosTestados: data.resultadosTestados ?? null,
+          // Dores
+          atingiuMetas: data.atingiuMetas ?? null,
+          desafiosKeys: data.desafiosKeys?.length ? JSON.stringify(data.desafiosKeys) : null,
+          desafiosTexto: data.desafiosTexto ?? null,
+          acoesTestadas: data.acoesTestadas ?? null,
+          resultadosTestados: data.resultadosTestados ?? null,
 
-      // Contexto
-      temEventos: data.temEventos ?? null,
-      temIncentivo: data.temIncentivo ?? null,
-      concorrente: data.concorrente ?? null,
-      expectativa12m: data.expectativa12m ?? null,
+          // Contexto
+          temEventos: data.temEventos ?? null,
+          temIncentivo: data.temIncentivo ?? null,
+          concorrente: data.concorrente ?? null,
+          expectativa12m: data.expectativa12m ?? null,
 
-      // Tabela Zero
-      tabelaZeroParcerias: data.tabelaZeroParcerias ?? null,
-      tabelaZeroAcesso: data.tabelaZeroAcesso?.length ? JSON.stringify(data.tabelaZeroAcesso) : null,
-      tabelaZeroObs: data.tabelaZeroObs ?? null,
+          // Tabela Zero
+          tabelaZeroParcerias: data.tabelaZeroParcerias ?? null,
+          tabelaZeroAcesso: data.tabelaZeroAcesso?.length ? JSON.stringify(data.tabelaZeroAcesso) : null,
+          tabelaZeroObs: data.tabelaZeroObs ?? null,
 
-      // Observações gerais
-      observacoesGerais: data.observacoesGerais ?? null,
-    },
-  });
+          // Observações gerais
+          observacoesGerais: data.observacoesGerais ?? null,
+        },
+      });
 
-  // Cargos com nested relations
-  for (const cargo of (data.cargos || [])) {
-    await prisma.cargo.create({
-      data: {
-        cargoKey: cargo.id,
-        nome: cargo.nome,
-        existe: cargo.existe,
-        acumulaFuncao: cargo.acumulaFuncao || null,
-        personalizado: cargo.personalizado || false,
-        subordinadosDe: cargo.subordinadosDe || null,
-        quantidade: cargo.quantidade || 1,
-        kpiPrincipal: cargo.kpiPrincipal?.length ? JSON.stringify(cargo.kpiPrincipal) : null,
-        atividadesDescritivas: cargo.atividadesDescritivas || null,
-        crmNome: cargo.crmNome || null,
-        diagnosticoId: diag.id,
-        tarefas: { create: (cargo.tarefas || []).map((t: string) => ({ nome: t })) },
-        metricas: { create: (cargo.metricas || []).map((m: string) => ({ nome: m })) },
-        ferramentas: { create: (cargo.ferramentas || []).map((f: string) => ({ nome: f })) },
-        subordinados: { create: (cargo.subordinados || []).map((s: string) => ({ cargoKey: s })) },
-      },
+      // Cargos com nested relations
+      for (const cargo of (data.cargos || [])) {
+        await tx.cargo.create({
+          data: {
+            cargoKey: cargo.id,
+            nome: cargo.nome,
+            existe: cargo.existe,
+            acumulaFuncao: cargo.acumulaFuncao || null,
+            personalizado: cargo.personalizado || false,
+            subordinadosDe: cargo.subordinadosDe || null,
+            quantidade: cargo.quantidade || 1,
+            kpiPrincipal: cargo.kpiPrincipal?.length ? JSON.stringify(cargo.kpiPrincipal) : null,
+            atividadesDescritivas: cargo.atividadesDescritivas || null,
+            crmNome: cargo.crmNome || null,
+            diagnosticoId: diag.id,
+            tarefas: { create: (cargo.tarefas || []).map((t: string) => ({ nome: t })) },
+            metricas: { create: (cargo.metricas || []).map((m: string) => ({ nome: m })) },
+            ferramentas: { create: (cargo.ferramentas || []).map((f: string) => ({ nome: f })) },
+            subordinados: { create: (cargo.subordinados || []).map((s: string) => ({ cargoKey: s })) },
+          },
+        });
+      }
+
+      for (const f of (data.ferramentasGerais || [])) {
+        await tx.ferramentaGeral.create({ data: { nome: f, diagnosticoId: diag.id } });
+      }
+
+      for (const p of (data.problemasIdentificados || [])) {
+        await tx.problemaIdentificado.create({ data: { descricao: p, diagnosticoId: diag.id } });
+      }
+
+      return { id: diag.id };
     });
-  }
 
-  for (const f of (data.ferramentasGerais || [])) {
-    await prisma.ferramentaGeral.create({ data: { nome: f, diagnosticoId: diag.id } });
+    return NextResponse.json(result, { status: 201 });
+  } catch (err) {
+    console.error('POST /diagnosticos error:', err);
+    return NextResponse.json({ error: 'Erro interno ao criar diagnóstico' }, { status: 500 });
   }
-
-  for (const p of (data.problemasIdentificados || [])) {
-    await prisma.problemaIdentificado.create({ data: { descricao: p, diagnosticoId: diag.id } });
-  }
-
-  return NextResponse.json({ id: diag.id });
 }
 
 // PUT update diagnostico (completo)
@@ -351,51 +360,58 @@ export async function PUT(req: NextRequest) {
   set("observacoesGerais", f.observacoesGerais);
   set("aiAnalysis", f.aiAnalysis);
 
-  await prisma.diagnostico.update({ where: { id }, data: u });
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.diagnostico.update({ where: { id }, data: u });
 
-  // Recriar cargos se fornecidos
-  if (f.cargos !== undefined) {
-    await prisma.cargo.deleteMany({ where: { diagnosticoId: id } });
-    for (const cargo of (f.cargos || [])) {
-      await prisma.cargo.create({
-        data: {
-          cargoKey: cargo.id,
-          nome: cargo.nome,
-          existe: cargo.existe,
-          acumulaFuncao: cargo.acumulaFuncao || null,
-          personalizado: cargo.personalizado || false,
-          subordinadosDe: cargo.subordinadosDe || null,
-          quantidade: cargo.quantidade || 1,
-          kpiPrincipal: cargo.kpiPrincipal?.length ? JSON.stringify(cargo.kpiPrincipal) : null,
-          atividadesDescritivas: cargo.atividadesDescritivas || null,
-          crmNome: cargo.crmNome || null,
-          diagnosticoId: id,
-          tarefas: { create: (cargo.tarefas || []).map((t: string) => ({ nome: t })) },
-          metricas: { create: (cargo.metricas || []).map((m: string) => ({ nome: m })) },
-          ferramentas: { create: (cargo.ferramentas || []).map((fv: string) => ({ nome: fv })) },
-          subordinados: { create: (cargo.subordinados || []).map((s: string) => ({ cargoKey: s })) },
-        },
-      });
-    }
+      // Recriar cargos se fornecidos
+      if (f.cargos !== undefined) {
+        await tx.cargo.deleteMany({ where: { diagnosticoId: id } });
+        for (const cargo of (f.cargos || [])) {
+          await tx.cargo.create({
+            data: {
+              cargoKey: cargo.id,
+              nome: cargo.nome,
+              existe: cargo.existe,
+              acumulaFuncao: cargo.acumulaFuncao || null,
+              personalizado: cargo.personalizado || false,
+              subordinadosDe: cargo.subordinadosDe || null,
+              quantidade: cargo.quantidade || 1,
+              kpiPrincipal: cargo.kpiPrincipal?.length ? JSON.stringify(cargo.kpiPrincipal) : null,
+              atividadesDescritivas: cargo.atividadesDescritivas || null,
+              crmNome: cargo.crmNome || null,
+              diagnosticoId: id,
+              tarefas: { create: (cargo.tarefas || []).map((t: string) => ({ nome: t })) },
+              metricas: { create: (cargo.metricas || []).map((m: string) => ({ nome: m })) },
+              ferramentas: { create: (cargo.ferramentas || []).map((fv: string) => ({ nome: fv })) },
+              subordinados: { create: (cargo.subordinados || []).map((s: string) => ({ cargoKey: s })) },
+            },
+          });
+        }
+      }
+
+      // Recriar problemas identificados se fornecidos
+      if (f.problemasIdentificados !== undefined) {
+        await tx.problemaIdentificado.deleteMany({ where: { diagnosticoId: id } });
+        for (const p of (f.problemasIdentificados || [])) {
+          await tx.problemaIdentificado.create({ data: { descricao: p, diagnosticoId: id } });
+        }
+      }
+
+      // Recriar ferramentas gerais se fornecidas
+      if (f.ferramentasGerais !== undefined) {
+        await tx.ferramentaGeral.deleteMany({ where: { diagnosticoId: id } });
+        for (const fv of (f.ferramentasGerais || [])) {
+          await tx.ferramentaGeral.create({ data: { nome: fv, diagnosticoId: id } });
+        }
+      }
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error('PUT /diagnosticos error:', err);
+    return NextResponse.json({ error: 'Erro interno ao atualizar diagnóstico' }, { status: 500 });
   }
-
-  // Recriar problemas identificados se fornecidos
-  if (f.problemasIdentificados !== undefined) {
-    await prisma.problemaIdentificado.deleteMany({ where: { diagnosticoId: id } });
-    for (const p of (f.problemasIdentificados || [])) {
-      await prisma.problemaIdentificado.create({ data: { descricao: p, diagnosticoId: id } });
-    }
-  }
-
-  // Recriar ferramentas gerais se fornecidas
-  if (f.ferramentasGerais !== undefined) {
-    await prisma.ferramentaGeral.deleteMany({ where: { diagnosticoId: id } });
-    for (const fv of (f.ferramentasGerais || [])) {
-      await prisma.ferramentaGeral.create({ data: { nome: fv, diagnosticoId: id } });
-    }
-  }
-
-  return NextResponse.json({ ok: true });
 }
 
 // DELETE diagnostico

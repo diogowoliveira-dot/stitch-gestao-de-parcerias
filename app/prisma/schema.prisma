@@ -106,6 +106,9 @@ model Diagnostico {
   cargos              Cargo[]
   ferramentasGerais   FerramentaGeral[]
   problemasIdentificados ProblemaIdentificado[]
+
+  @@index([criadoPorId])
+  @@index([embaixadorId])
 }
 
 model Cargo {
