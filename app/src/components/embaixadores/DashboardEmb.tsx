@@ -2,7 +2,7 @@
 // src/components/embaixadores/DashboardEmb.tsx
 // Dashboard de performance de um embaixador (dados via Prisma/Neon, camelCase).
 
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState, useTransition } from 'react'
 import { EmbaixadorComMetricas, EmbaixadorMetrica } from '@/types/embaixadores'
 import ChartLine from './ChartLine'
 import ChartBar  from './ChartBar'
@@ -40,9 +40,10 @@ interface Props {
   isMaster:  boolean
   onSave?:   (data: Partial<EmbaixadorComMetricas>) => Promise<void>
   onDelete?: () => Promise<void>
+  onSync?:   () => Promise<void>   // called after a successful sync to refresh parent data
 }
 
-export default function DashboardEmb({ emb, isMaster, onSave, onDelete }: Props) {
+export default function DashboardEmb({ emb, isMaster, onSave, onDelete, onSync }: Props) {
   // ── Período ─────────────────────────────────────────
   const now        = new Date()
   const def12From  = new Date(now.getFullYear(), now.getMonth() - 11, 1)
@@ -101,6 +102,28 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete }: Props)
   const [editing,  setEditing]  = useState(false)
   const [saving,   setSaving]   = useState(false)
   const [formData, setFormData] = useState({ nome: emb.nome, email: emb.email, uf: emb.uf, meta: emb.meta, periodo: emb.periodo })
+
+  // ── Sincronização Grafana (master) ────────────────────
+  const [isSyncing,  startSync] = useTransition()
+  const [syncMsg,    setSyncMsg] = useState<{ ok: boolean; text: string } | null>(null)
+
+  const handleSync = useCallback(() => {
+    startSync(async () => {
+      setSyncMsg(null)
+      try {
+        const res = await fetch(`/api/diagnostico/embaixadores/${emb.id}/sync`, { method: 'POST' })
+        const json = await res.json()
+        if (!res.ok) {
+          setSyncMsg({ ok: false, text: json.error ?? 'Erro ao sincronizar' })
+        } else {
+          setSyncMsg({ ok: true, text: `${json.monthsSynced} ${json.monthsSynced === 1 ? 'mês sincronizado' : 'meses sincronizados'} · ${json.uf}` })
+          await onSync?.()
+        }
+      } catch (e) {
+        setSyncMsg({ ok: false, text: e instanceof Error ? e.message : 'Erro de rede' })
+      }
+    })
+  }, [emb.id, onSync])
 
   const handleSave = async () => {
     if (!onSave) return
@@ -208,10 +231,19 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete }: Props)
           <div style={{ fontSize:26, fontWeight:900, color:'rgba(232,57,42,.18)', letterSpacing:-2, lineHeight:1 }}>{emb.uf}</div>
 
           {isMaster && !editing && (
-            <button onClick={() => setEditing(true)}
-              style={{ background:'transparent', border:'1px solid rgba(255,255,255,.11)', color:'rgba(255,255,255,.5)', padding:'5px 12px', borderRadius:7, fontSize:11, cursor:'pointer' }}>
-              Editar
-            </button>
+            <div style={{ display:'flex', gap:7 }}>
+              <button onClick={handleSync} disabled={isSyncing}
+                style={{ background: isSyncing ? 'rgba(232,57,42,.05)' : 'rgba(232,57,42,.1)', border:'1px solid rgba(232,57,42,.25)', color: isSyncing ? 'rgba(232,57,42,.4)' : 'rgba(232,57,42,.8)', padding:'5px 12px', borderRadius:7, fontSize:11, cursor: isSyncing ? 'default' : 'pointer', transition:'all .15s', display:'flex', alignItems:'center', gap:5 }}>
+                {isSyncing
+                  ? <><SyncIcon spinning /> Sincronizando…</>
+                  : <><SyncIcon /> Sincronizar dados</>
+                }
+              </button>
+              <button onClick={() => setEditing(true)}
+                style={{ background:'transparent', border:'1px solid rgba(255,255,255,.11)', color:'rgba(255,255,255,.5)', padding:'5px 12px', borderRadius:7, fontSize:11, cursor:'pointer' }}>
+                Editar
+              </button>
+            </div>
           )}
           {isMaster && editing && (
             <div style={{ display:'flex', gap:7 }}>
@@ -257,6 +289,22 @@ export default function DashboardEmb({ emb, isMaster, onSave, onDelete }: Props)
           {monthOpts.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
       </div>
+
+      {/* Sync result message */}
+      {syncMsg && (
+        <div style={{
+          display:'flex', alignItems:'center', gap:8, padding:'7px 12px',
+          background: syncMsg.ok ? 'rgba(52,211,153,.07)' : 'rgba(239,68,68,.07)',
+          border: `1px solid ${syncMsg.ok ? 'rgba(52,211,153,.2)' : 'rgba(239,68,68,.2)'}`,
+          borderRadius:8, marginBottom:12, fontSize:11,
+          color: syncMsg.ok ? '#34d399' : '#f87171',
+        }}>
+          <span>{syncMsg.ok ? '✓' : '✗'}</span>
+          <span>{syncMsg.text}</span>
+          <button onClick={() => setSyncMsg(null)}
+            style={{ marginLeft:'auto', background:'none', border:'none', color:'inherit', cursor:'pointer', fontSize:13, opacity:.6, padding:0 }}>×</button>
+        </div>
+      )}
 
       <div style={{ fontSize:10, color:'rgba(255,255,255,.26)', textTransform:'uppercase', letterSpacing:'.8px', display:'flex', alignItems:'center', gap:7, marginBottom:13 }}>
         <span style={{ width:16, height:1, background:'#E8392A', display:'block', flexShrink:0 }} />
@@ -390,5 +438,19 @@ function EmptyChart() {
     <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center' }}>
       <span style={{ fontSize:10, color:'rgba(255,255,255,.15)' }}>sem dados</span>
     </div>
+  )
+}
+
+function SyncIcon({ spinning }: { spinning?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 16 16" width={11} height={11} fill="none" stroke="currentColor" strokeWidth="1.5"
+      strokeLinecap="round" strokeLinejoin="round"
+      style={{ flexShrink:0, animation: spinning ? 'dwv-spin .7s linear infinite' : undefined }}
+    >
+      <style>{`@keyframes dwv-spin{to{transform:rotate(360deg)}}`}</style>
+      <path d="M13.5 8A5.5 5.5 0 1 1 8 2.5c1.8 0 3.4.87 4.4 2.2" />
+      <polyline points="11 2 13.5 4.7 16 2" transform="translate(-2.5 0)" />
+    </svg>
   )
 }

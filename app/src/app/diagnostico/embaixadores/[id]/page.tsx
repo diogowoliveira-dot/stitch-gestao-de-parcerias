@@ -94,6 +94,7 @@ export default function EmbaixadorDashboardPage() {
             isMaster={isMaster}
             onSave={isMaster ? handleSave : undefined}
             onDelete={isMaster ? handleDelete : undefined}
+            onSync={isMaster ? async () => { fetchEmb() } : undefined}
           />
         )}
       </div>
