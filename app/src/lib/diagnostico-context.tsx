@@ -367,21 +367,20 @@ export function DiagDataProvider({ children }: { children: ReactNode }) {
 
   const addDiagnostico = useCallback(async (d: DiagnosticoData) => {
     if (useApi) {
-      try {
-        const res = await fetch("/api/diagnostico/diagnosticos", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(d),
-        });
-        if (res.ok) {
-          await fetchDiagnosticos();
-          return;
-        }
-      } catch {
-        // fallback
+      const res = await fetch("/api/diagnostico/diagnosticos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(d),
+      });
+      if (!res.ok) {
+        // Nunca silenciar falha de API — lança para que o UI possa informar o usuário
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Erro ${res.status} ao salvar diagnóstico`);
       }
+      await fetchDiagnosticos();
+      return;
     }
-    // Mock fallback
+    // Mock fallback (apenas quando API não está disponível)
     setDiagnosticos((prev) => [...prev, d]);
   }, [useApi, fetchDiagnosticos]);
 

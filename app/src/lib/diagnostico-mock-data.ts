@@ -46,16 +46,72 @@ export interface DiagnosticoData {
   dataCriacao: string;
   criadoPor: string;
   status: 'rascunho' | 'completo';
+  isSimulacao?: boolean;
+  aiAnalysis?: string;
+
+  // Responsável
+  responsavelNome?: string;
+  responsavelCargo?: string;
+
+  // Métricas VGV / corretores
+  totalVGV?: number;
+  vgvGoal?: number;
+  avgTicket?: number;
+  totalBrokers?: number;
+  activeBrokers?: number;
+  propostasMensais?: number;
+  fechamentosMensais?: number;
+
+  // Canais
   shareHouse?: number;
   shareParcerias?: number;
   numImobiliarias?: number;
+  hasHouse?: boolean;
+  hasParc?: boolean;
+  hasImob?: boolean;
+  exclusividade?: string;
+
+  // Inventário
+  numEmpreendimentos?: number;
+  numPreLancamento?: number;
+  numLancamento?: number;
+  numEstoque?: number;
+  focoVendas?: string;
+  totalImoveisVenda?: number;
+
+  // Tecnologia
+  temCRM?: boolean;
+  crmNome?: string;
+  crmContratoNome?: string;
+  ferramentasAtivas?: string[];
+  custosFerramentas?: Record<string, number>;
+
+  // Segmentação e relatórios
   segmentacao?: string;
   segmentacaoDescritiva?: string;
   relatoriosDesejados?: string[];
   relatoriosDescritivo?: string;
+
+  // Tabela Zero
   tabelaZeroParcerias?: boolean;
-  aiAnalysis?: string;
-  isSimulacao?: boolean;
+  tabelaZeroAcesso?: string[];
+  tabelaZeroObs?: string;
+
+  // Dores e desafios
+  atingiuMetas?: string;
+  desafiosKeys?: string[];
+  desafiosTexto?: string;
+  acoesTestadas?: boolean;
+  resultadosTestados?: string;
+
+  // Contexto estratégico
+  temEventos?: string;
+  temIncentivo?: string;
+  concorrente?: string;
+  expectativa12m?: string;
+
+  // Observações gerais
+  observacoesGerais?: string;
 }
 
 // ============================================
