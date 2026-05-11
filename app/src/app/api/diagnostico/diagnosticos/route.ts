@@ -232,39 +232,41 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Cargos com nested relations
-      for (const cargo of (data.cargos || [])) {
-        await tx.cargo.create({
+      // Cargos em paralelo (evita timeout por loop sequencial)
+      await Promise.all((data.cargos || []).map((cargo: Record<string, unknown>) =>
+        tx.cargo.create({
           data: {
-            cargoKey: cargo.id,
-            nome: cargo.nome,
-            existe: cargo.existe,
-            acumulaFuncao: cargo.acumulaFuncao || null,
-            personalizado: cargo.personalizado || false,
-            subordinadosDe: cargo.subordinadosDe || null,
-            quantidade: cargo.quantidade || 1,
-            kpiPrincipal: cargo.kpiPrincipal?.length ? JSON.stringify(cargo.kpiPrincipal) : null,
-            atividadesDescritivas: cargo.atividadesDescritivas || null,
-            crmNome: cargo.crmNome || null,
+            cargoKey: cargo.id as string,
+            nome: cargo.nome as string,
+            existe: cargo.existe as boolean,
+            acumulaFuncao: (cargo.acumulaFuncao as string) || null,
+            personalizado: (cargo.personalizado as boolean) || false,
+            subordinadosDe: (cargo.subordinadosDe as string) || null,
+            quantidade: (cargo.quantidade as number) || 1,
+            kpiPrincipal: (cargo.kpiPrincipal as string[])?.length ? JSON.stringify(cargo.kpiPrincipal) : null,
+            atividadesDescritivas: (cargo.atividadesDescritivas as string) || null,
+            crmNome: (cargo.crmNome as string) || null,
             diagnosticoId: diag.id,
-            tarefas: { create: (cargo.tarefas || []).map((t: string) => ({ nome: t })) },
-            metricas: { create: (cargo.metricas || []).map((m: string) => ({ nome: m })) },
-            ferramentas: { create: (cargo.ferramentas || []).map((f: string) => ({ nome: f })) },
-            subordinados: { create: (cargo.subordinados || []).map((s: string) => ({ cargoKey: s })) },
+            tarefas: { create: ((cargo.tarefas as string[]) || []).map((t: string) => ({ nome: t })) },
+            metricas: { create: ((cargo.metricas as string[]) || []).map((m: string) => ({ nome: m })) },
+            ferramentas: { create: ((cargo.ferramentas as string[]) || []).map((fv: string) => ({ nome: fv })) },
+            subordinados: { create: ((cargo.subordinados as string[]) || []).map((s: string) => ({ cargoKey: s })) },
           },
-        });
-      }
+        })
+      ));
 
-      for (const f of (data.ferramentasGerais || [])) {
-        await tx.ferramentaGeral.create({ data: { nome: f, diagnosticoId: diag.id } });
-      }
-
-      for (const p of (data.problemasIdentificados || [])) {
-        await tx.problemaIdentificado.create({ data: { descricao: p, diagnosticoId: diag.id } });
-      }
+      // Ferramentas gerais e problemas em paralelo
+      await Promise.all([
+        ...(data.ferramentasGerais || []).map((f: string) =>
+          tx.ferramentaGeral.create({ data: { nome: f, diagnosticoId: diag.id } })
+        ),
+        ...(data.problemasIdentificados || []).map((p: string) =>
+          tx.problemaIdentificado.create({ data: { descricao: p, diagnosticoId: diag.id } })
+        ),
+      ]);
 
       return { id: diag.id };
-    });
+    }, { timeout: 30000 }); // 30s — evita timeout padrão de 5s em cold start Neon
 
     return NextResponse.json(result, { status: 201 });
   } catch (err) {
@@ -364,48 +366,48 @@ export async function PUT(req: NextRequest) {
     await prisma.$transaction(async (tx) => {
       await tx.diagnostico.update({ where: { id }, data: u });
 
-      // Recriar cargos se fornecidos
+      // Recriar cargos em paralelo se fornecidos
       if (f.cargos !== undefined) {
         await tx.cargo.deleteMany({ where: { diagnosticoId: id } });
-        for (const cargo of (f.cargos || [])) {
-          await tx.cargo.create({
+        await Promise.all((f.cargos || []).map((cargo: Record<string, unknown>) =>
+          tx.cargo.create({
             data: {
-              cargoKey: cargo.id,
-              nome: cargo.nome,
-              existe: cargo.existe,
-              acumulaFuncao: cargo.acumulaFuncao || null,
-              personalizado: cargo.personalizado || false,
-              subordinadosDe: cargo.subordinadosDe || null,
-              quantidade: cargo.quantidade || 1,
-              kpiPrincipal: cargo.kpiPrincipal?.length ? JSON.stringify(cargo.kpiPrincipal) : null,
-              atividadesDescritivas: cargo.atividadesDescritivas || null,
-              crmNome: cargo.crmNome || null,
+              cargoKey: cargo.id as string,
+              nome: cargo.nome as string,
+              existe: cargo.existe as boolean,
+              acumulaFuncao: (cargo.acumulaFuncao as string) || null,
+              personalizado: (cargo.personalizado as boolean) || false,
+              subordinadosDe: (cargo.subordinadosDe as string) || null,
+              quantidade: (cargo.quantidade as number) || 1,
+              kpiPrincipal: (cargo.kpiPrincipal as string[])?.length ? JSON.stringify(cargo.kpiPrincipal) : null,
+              atividadesDescritivas: (cargo.atividadesDescritivas as string) || null,
+              crmNome: (cargo.crmNome as string) || null,
               diagnosticoId: id,
-              tarefas: { create: (cargo.tarefas || []).map((t: string) => ({ nome: t })) },
-              metricas: { create: (cargo.metricas || []).map((m: string) => ({ nome: m })) },
-              ferramentas: { create: (cargo.ferramentas || []).map((fv: string) => ({ nome: fv })) },
-              subordinados: { create: (cargo.subordinados || []).map((s: string) => ({ cargoKey: s })) },
+              tarefas: { create: ((cargo.tarefas as string[]) || []).map((t: string) => ({ nome: t })) },
+              metricas: { create: ((cargo.metricas as string[]) || []).map((m: string) => ({ nome: m })) },
+              ferramentas: { create: ((cargo.ferramentas as string[]) || []).map((fv: string) => ({ nome: fv })) },
+              subordinados: { create: ((cargo.subordinados as string[]) || []).map((s: string) => ({ cargoKey: s })) },
             },
-          });
-        }
+          })
+        ));
       }
 
-      // Recriar problemas identificados se fornecidos
+      // Recriar problemas identificados em paralelo se fornecidos
       if (f.problemasIdentificados !== undefined) {
         await tx.problemaIdentificado.deleteMany({ where: { diagnosticoId: id } });
-        for (const p of (f.problemasIdentificados || [])) {
-          await tx.problemaIdentificado.create({ data: { descricao: p, diagnosticoId: id } });
-        }
+        await Promise.all((f.problemasIdentificados || []).map((p: string) =>
+          tx.problemaIdentificado.create({ data: { descricao: p, diagnosticoId: id } })
+        ));
       }
 
-      // Recriar ferramentas gerais se fornecidas
+      // Recriar ferramentas gerais em paralelo se fornecidas
       if (f.ferramentasGerais !== undefined) {
         await tx.ferramentaGeral.deleteMany({ where: { diagnosticoId: id } });
-        for (const fv of (f.ferramentasGerais || [])) {
-          await tx.ferramentaGeral.create({ data: { nome: fv, diagnosticoId: id } });
-        }
+        await Promise.all((f.ferramentasGerais || []).map((fv: string) =>
+          tx.ferramentaGeral.create({ data: { nome: fv, diagnosticoId: id } })
+        ));
       }
-    });
+    }, { timeout: 30000 }); // 30s — evita timeout padrão de 5s em cold start Neon
 
     return NextResponse.json({ ok: true });
   } catch (err) {
