@@ -106,6 +106,20 @@ function NovoDiagnostico() {
 
       // Save diagnostic to DB — inclui TODOS os campos coletados no formulário
       if (!verId && user) {
+        // Derivar flags de canal a partir dos cargos mapeados
+        const cargosExistentesNomes = cargosExistentes.map((c) => ({ id: c.id, nome: c.nome.toLowerCase() }));
+        const derivedHasHouse = cargosExistentesNomes.some((c) => c.nome.includes("house") || c.id === "cargo_house");
+        const derivedHasParc = cargosExistentesNomes.some((c) =>
+          c.nome.includes("parceria") || c.nome.includes("parcerias") || c.id.includes("parc")
+        );
+        const derivedHasImob = cargosExistentesNomes.some((c) =>
+          c.nome.includes("imobiliária") || c.nome.includes("imobiliaria") || c.id.includes("imob")
+        );
+        // Derivar CRM a partir do cargo que usa CRM
+        const crmCargo = cargosExistentes.find((c) => c.crmNome && c.crmNome.length > 0);
+        const derivedTemCRM = !!crmCargo;
+        const derivedCrmNome = crmCargo?.crmNome ?? undefined;
+
         const newDiag: DiagnosticoData = {
           id: `diag_${Date.now()}`,
           empresa: formState.empresa,
@@ -137,6 +151,13 @@ function NovoDiagnostico() {
           relatoriosDesejados: formState.relatoriosDesejados,
           relatoriosDescritivo: formState.relatoriosDescritivo,
           tabelaZeroParcerias: formState.tabelaZeroParcerias,
+
+          // Derivados dos cargos (não coletados como campo direto no form)
+          hasHouse: derivedHasHouse || undefined,
+          hasParc: derivedHasParc || undefined,
+          hasImob: derivedHasImob || undefined,
+          temCRM: derivedTemCRM || undefined,
+          crmNome: derivedCrmNome,
         };
 
         setSalvando(true);
