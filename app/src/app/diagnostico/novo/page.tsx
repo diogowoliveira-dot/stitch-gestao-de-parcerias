@@ -24,13 +24,15 @@ function NovoDiagnostico() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const verId = searchParams.get("ver");
+  const versaoDe = searchParams.get("versaoDe"); // Nova versão de um diagnóstico existente
   const isSimulacao = searchParams.get("simulacao") === "true";
   const { user } = useDiagAuth();
   const { formState, dispatch, diagnosticos, addDiagnostico } = useDiagData();
   const [salvando, setSalvando] = useState(false);
   const [erroSalvar, setErroSalvar] = useState<string | null>(null);
+  const [versaoDeNome, setVersaoDeNome] = useState<string | null>(null);
 
-  // Load existing diagnostic if viewing
+  // Load existing diagnostic if viewing (modo leitura)
   useEffect(() => {
     if (verId) {
       const diag = diagnosticos.find((d) => d.id === verId);
@@ -57,6 +59,42 @@ function NovoDiagnostico() {
       }
     }
   }, [verId, diagnosticos, dispatch]);
+
+  // Pre-preenche o formulário com dados do diagnóstico pai (modo nova versão)
+  useEffect(() => {
+    if (versaoDe) {
+      const pai = diagnosticos.find((d) => d.id === versaoDe);
+      if (pai) {
+        setVersaoDeNome(pai.empresa.nome);
+        dispatch({
+          type: "LOAD",
+          data: {
+            etapaAtual: 1,
+            empresa: pai.empresa,
+            cargos: pai.cargos,
+            cargoAtualIndex: 0,
+            problemas: [],
+            outputGerado: false,
+            responsibleName: pai.responsavelNome,
+            responsibleRole: pai.responsavelCargo,
+            totalVGV: pai.totalVGV,
+            vgvGoal: pai.vgvGoal,
+            avgTicket: pai.avgTicket,
+            totalBrokers: pai.totalBrokers,
+            activeBrokers: pai.activeBrokers,
+            shareHouse: pai.shareHouse,
+            shareParcerias: pai.shareParcerias,
+            numImobiliarias: pai.numImobiliarias,
+            segmentacao: pai.segmentacao,
+            segmentacaoDescritiva: pai.segmentacaoDescritiva,
+            relatoriosDesejados: pai.relatoriosDesejados,
+            relatoriosDescritivo: pai.relatoriosDescritivo,
+            tabelaZeroParcerias: pai.tabelaZeroParcerias,
+          },
+        });
+      }
+    }
+  }, [versaoDe, diagnosticos, dispatch]);
 
   const { etapaAtual } = formState;
   const cargosExistentes = formState.cargos.filter((c) => c.existe);
@@ -130,6 +168,8 @@ function NovoDiagnostico() {
           criadoPor: user.id,
           status: "completo",
           isSimulacao,
+          // Versioning
+          parentId: versaoDe ?? undefined,
 
           // Responsável
           responsavelNome: formState.responsibleName,
@@ -191,12 +231,22 @@ function NovoDiagnostico() {
 
   return (
     <DiagShell
-      title={verId ? "Ver Diagnóstico" : "Novo Diagnóstico"}
+      title={verId ? "Ver Diagnóstico" : versaoDe ? "Nova Versão" : "Novo Diagnóstico"}
       subtitle={formState.empresa.nome || "Preencha os dados"}
       icon="assignment"
       showBack
     >
       <div className="max-w-2xl mx-auto">
+        {/* Nova Versão Banner */}
+        {versaoDe && (
+          <div className="mb-6 flex items-center gap-2 px-4 py-3 rounded-xl text-sm bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>history</span>
+            <span className="font-medium">Nova versão</span>
+            {versaoDeNome && (
+              <span className="text-xs text-emerald-400/60">de {versaoDeNome} — dados pré-preenchidos, ajuste o necessário</span>
+            )}
+          </div>
+        )}
         {/* Simulação Banner */}
         {isSimulacao && (
           <div className="mb-6 flex items-center gap-2 px-4 py-3 rounded-xl text-sm bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 text-[#8b5cf6]">

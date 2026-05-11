@@ -49,6 +49,12 @@ export interface DiagnosticoData {
   isSimulacao?: boolean;
   aiAnalysis?: string;
 
+  // Versionamento
+  versao?: number;
+  isLatestVersion?: boolean;
+  grupoId?: string;
+  parentId?: string;
+
   // Responsável
   responsavelNome?: string;
   responsavelCargo?: string;

@@ -38,6 +38,12 @@ model Diagnostico {
   embaixadorId String?
   embaixador   Embaixador? @relation("DiagnosticoEmbaixador", fields: [embaixadorId], references: [id], onDelete: SetNull)
 
+  // Versionamento — cada diagnóstico pode ter versões V1, V2, V3...
+  versao          Int     @default(1)           // número da versão
+  isLatestVersion Boolean @default(true)        // false = versão histórica, true = versão ativa no BI
+  grupoId         String?                       // UUID compartilhado entre todas as versões da mesma empresa
+  parentId        String?                       // ID do diagnóstico predecessor (null = V1)
+
   // Dados comerciais (VGV, corretores)
   totalVGV              Float?   // VGV vendido nos últimos 12 meses
   vgvGoal               Float?   // Meta de VGV
@@ -109,6 +115,8 @@ model Diagnostico {
 
   @@index([criadoPorId])
   @@index([embaixadorId])
+  @@index([grupoId])
+  @@index([parentId])
 }
 
 model Cargo {

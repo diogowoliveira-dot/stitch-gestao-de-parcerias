@@ -119,7 +119,8 @@ async function init(){
     if(!res.ok) throw new Error('Erro '+res.status);
     const json=await res.json();
     const list=Array.isArray(json)?json:(json.data||json.diagnosticos||[]);
-    allData=list.filter(d=>!d.isSimulacao&&d.status==='completo');
+    // Filtra: real + completo + versão mais recente do grupo (evita dupla contagem em V1/V2/V3)
+    allData=list.filter(d=>!d.isSimulacao&&d.status==='completo'&&d.isLatestVersion!==false);
     if(!allData.length){showError('Nenhum diagnóstico real encontrado.');return;}
     populateStateFilter();
     document.getElementById('loadingEl').style.display='none';

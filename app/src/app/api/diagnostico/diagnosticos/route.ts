@@ -51,6 +51,11 @@ export async function GET() {
     criadoPorNome: d.criadoPor.nome,
     status: d.status,
     isSimulacao: d.isSimulacao,
+    // Versionamento
+    versao: d.versao,
+    isLatestVersion: d.isLatestVersion,
+    grupoId: d.grupoId,
+    parentId: d.parentId,
     aiAnalysis: d.aiAnalysis,
 
     // Responsável
@@ -145,7 +150,7 @@ function validateMetrics(data: Record<string, unknown>): string | null {
   return null;
 }
 
-// POST create diagnostico
+// POST create diagnostico (ou nova versão se parentId fornecido)
 export async function POST(req: NextRequest) {
   const data = await req.json();
 
@@ -154,8 +159,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: metricError }, { status: 422 });
   }
 
+  // Resolver versionamento: nova versão ou V1?
+  let novaVersao = 1;
+  let grupoId: string | null = null;
+  const parentId: string | null = data.parentId ?? null;
+
+  if (parentId) {
+    const pai = await prisma.diagnostico.findUnique({
+      where: { id: parentId },
+      select: { versao: true, grupoId: true, isLatestVersion: true },
+    });
+    if (!pai) return NextResponse.json({ error: "Diagnóstico pai não encontrado" }, { status: 404 });
+    novaVersao = pai.versao + 1;
+    grupoId = pai.grupoId;
+  }
+  // grupoId será preenchido após criar o registro (V1 usa o próprio id)
+
   try {
     const result = await prisma.$transaction(async (tx) => {
+      // Se nova versão: desmarcar isLatestVersion do pai dentro da transação
+      if (parentId) {
+        await tx.diagnostico.update({
+          where: { id: parentId },
+          data: { isLatestVersion: false },
+        });
+      }
+
       const diag = await tx.diagnostico.create({
         data: {
           // Empresa
@@ -165,6 +194,11 @@ export async function POST(req: NextRequest) {
           status: data.status || "completo",
           criadoPorId: data.criadoPor,
           isSimulacao: data.isSimulacao ?? false,
+          // Versionamento
+          versao: novaVersao,
+          isLatestVersion: true,
+          grupoId: grupoId, // null temporariamente para V1 (será o próprio id)
+          parentId: parentId,
 
           // Responsável
           responsavelNome: data.responsavelNome ?? null,
@@ -265,7 +299,15 @@ export async function POST(req: NextRequest) {
         ),
       ]);
 
-      return { id: diag.id };
+      // V1: grupoId = próprio id (auto-referência)
+      if (!parentId) {
+        await tx.diagnostico.update({
+          where: { id: diag.id },
+          data: { grupoId: diag.id },
+        });
+      }
+
+      return { id: diag.id, versao: novaVersao };
     }, { timeout: 30000 }); // 30s — evita timeout padrão de 5s em cold start Neon
 
     return NextResponse.json(result, { status: 201 });
@@ -316,6 +358,8 @@ export async function PUT(req: NextRequest) {
   set("empresaNome", f.empresa?.nome);
   set("empresaCidade", f.empresa?.cidade);
   set("empresaEstado", f.empresa?.estado);
+  set("status", f.status);
+  set("isLatestVersion", f.isLatestVersion); // permite ajuste manual se necessário
   set("responsavelNome", f.responsavelNome);
   set("responsavelCargo", f.responsavelCargo);
   set("totalVGV", f.totalVGV);

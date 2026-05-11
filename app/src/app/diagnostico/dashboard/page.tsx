@@ -152,18 +152,35 @@ export default function DiagDashboard() {
 
         const renderCard = (diag: typeof diagnosticos[0]) => {
           const criador = users.find((u) => u.id === diag.criadoPor);
+          const versao = diag.versao ?? 1;
+          const isLatest = diag.isLatestVersion !== false;
           return (
             <div
               key={diag.id}
-              className="rounded-2xl p-4 bg-[#121212] border border-white/[0.06] transition-all hover:border-white/[0.15] cursor-pointer group"
+              className={`rounded-2xl p-4 bg-[#121212] border transition-all cursor-pointer group ${
+                isLatest
+                  ? "border-white/[0.06] hover:border-white/[0.15]"
+                  : "border-white/[0.03] opacity-55 hover:opacity-75 hover:border-white/[0.10]"
+              }`}
               onClick={() => window.location.href = `/diagnostico/form/index.html?ver=${diag.id}`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                     <h3 className="text-sm font-bold text-white truncate">{diag.empresa.nome}</h3>
+                    {/* Version badge */}
                     <span
-                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                      className="text-[10px] font-bold px-1.5 py-0.5 rounded-md shrink-0"
+                      style={{
+                        background: isLatest ? "rgba(236, 19, 19, 0.15)" : "rgba(100, 116, 139, 0.15)",
+                        color: isLatest ? "#ec1313" : "#64748b",
+                        border: `1px solid ${isLatest ? "rgba(236, 19, 19, 0.25)" : "rgba(100, 116, 139, 0.2)"}`,
+                      }}
+                    >
+                      V{versao}
+                    </span>
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0"
                       style={{
                         background: diag.status === "completo" ? "rgba(16, 185, 129, 0.1)" : "rgba(245, 158, 11, 0.1)",
                         color: diag.status === "completo" ? "#10b981" : "#f59e0b",
@@ -181,6 +198,16 @@ export default function DiagDashboard() {
                   </p>
                 </div>
                 <div className="flex items-center gap-1">
+                  {/* Nova Versão — admin/master, somente na versão mais recente e completa */}
+                  {isAdmin && isLatest && diag.status === "completo" && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); router.push(`/diagnostico/novo?versaoDe=${diag.id}`); }}
+                      className="p-1.5 rounded-lg hover:bg-emerald-500/10 transition-colors"
+                      title="Criar nova versão deste diagnóstico"
+                    >
+                      <span className="material-symbols-outlined text-slate-500 hover:text-emerald-400" style={{ fontSize: 16 }}>add_circle</span>
+                    </button>
+                  )}
                   {isAdmin && (
                     <button
                       onClick={(e) => { e.stopPropagation(); window.location.href = `/diagnostico/form/index.html?editar=${diag.id}`; }}
