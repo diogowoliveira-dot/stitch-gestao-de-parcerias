@@ -154,15 +154,26 @@ export default function DiagDashboard() {
           const criador = users.find((u) => u.id === diag.criadoPor);
           const versao = diag.versao ?? 1;
           const isLatest = diag.isLatestVersion !== false;
+          const isRascunho = diag.status === "rascunho";
+          // Rascunhos: clique retoma o preenchimento; diagnósticos completos: abre leitura
+          const handleCardClick = () => {
+            if (isRascunho) {
+              router.push(`/diagnostico/novo?continuar=${diag.id}`);
+            } else {
+              window.location.href = `/diagnostico/form/index.html?ver=${diag.id}`;
+            }
+          };
           return (
             <div
               key={diag.id}
               className={`rounded-2xl p-4 bg-[#121212] border transition-all cursor-pointer group ${
                 isLatest
-                  ? "border-white/[0.06] hover:border-white/[0.15]"
+                  ? isRascunho
+                    ? "border-amber-500/20 hover:border-amber-500/40"
+                    : "border-white/[0.06] hover:border-white/[0.15]"
                   : "border-white/[0.03] opacity-55 hover:opacity-75 hover:border-white/[0.10]"
               }`}
-              onClick={() => window.location.href = `/diagnostico/form/index.html?ver=${diag.id}`}
+              onClick={handleCardClick}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
@@ -191,11 +202,18 @@ export default function DiagDashboard() {
                     </span>
                   </div>
                   <p className="text-xs text-slate-500">
-                    {diag.empresa.cidade}/{diag.empresa.estado} &middot; {diag.cargos.filter((c) => c.existe).length} cargos &middot; {diag.problemasIdentificados.length} problemas
+                    {diag.empresa.cidade}/{diag.empresa.estado} &middot; {diag.cargos.filter((c) => c.existe).length} cargos
+                    {!isRascunho && <> &middot; {diag.problemasIdentificados.length} problemas</>}
                   </p>
                   <p className="text-[10px] mt-1 text-slate-600">
                     {criador?.nome || "—"} &middot; {new Date(diag.dataCriacao).toLocaleDateString("pt-BR")}
                   </p>
+                  {isRascunho && (
+                    <p className="text-[10px] mt-1.5 text-amber-500/80 flex items-center gap-1">
+                      <span className="material-symbols-outlined" style={{ fontSize: 11 }}>edit_note</span>
+                      Clique para continuar o preenchimento
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center gap-1">
                   {/* Nova Versão — admin/master, somente na versão mais recente e completa */}

@@ -321,6 +321,7 @@ interface DiagDataContextType {
   diagnosticos: DiagnosticoData[];
   addDiagnostico: (d: DiagnosticoData) => Promise<void>;
   deleteDiagnostico: (id: string, userId?: string) => Promise<void>;
+  refreshDiagnosticos: () => Promise<void>;
   formState: DiagFormState;
   dispatch: React.Dispatch<DiagAction>;
   loadingDiagnosticos: boolean;
@@ -330,6 +331,7 @@ const DiagDataContext = createContext<DiagDataContextType>({
   diagnosticos: [],
   addDiagnostico: async () => {},
   deleteDiagnostico: async () => {},
+  refreshDiagnosticos: async () => {},
   formState: initialFormState,
   dispatch: () => {},
   loadingDiagnosticos: true,
@@ -411,7 +413,7 @@ export function DiagDataProvider({ children }: { children: ReactNode }) {
 
   return (
     <DiagDataContext.Provider
-      value={{ diagnosticos, addDiagnostico, deleteDiagnostico, formState, dispatch, loadingDiagnosticos }}
+      value={{ diagnosticos, addDiagnostico, deleteDiagnostico, refreshDiagnosticos: fetchDiagnosticos, formState, dispatch, loadingDiagnosticos }}
     >
       {children}
     </DiagDataContext.Provider>

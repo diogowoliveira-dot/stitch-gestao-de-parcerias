@@ -177,8 +177,9 @@ export async function POST(req: NextRequest) {
 
   try {
     const result = await prisma.$transaction(async (tx) => {
-      // Se nova versão: desmarcar isLatestVersion do pai dentro da transação
-      if (parentId) {
+      // Se nova versão FINALIZADA: desmarcar isLatestVersion do pai.
+      // Para rascunhos, o pai permanece como latest até a nova versão ser concluída.
+      if (parentId && (data.status || "completo") !== "rascunho") {
         await tx.diagnostico.update({
           where: { id: parentId },
           data: { isLatestVersion: false },
@@ -408,6 +409,21 @@ export async function PUT(req: NextRequest) {
 
   try {
     await prisma.$transaction(async (tx) => {
+      // Quando um rascunho de nova versão é finalizado (rascunho → completo),
+      // marca o pai como não-latest (operação que foi adiada na criação do rascunho).
+      if (f.status === "completo") {
+        const current = await tx.diagnostico.findUnique({
+          where: { id },
+          select: { status: true, parentId: true },
+        });
+        if (current?.status === "rascunho" && current?.parentId) {
+          await tx.diagnostico.update({
+            where: { id: current.parentId },
+            data: { isLatestVersion: false },
+          });
+        }
+      }
+
       await tx.diagnostico.update({ where: { id }, data: u });
 
       // Recriar cargos em paralelo se fornecidos
