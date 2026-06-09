@@ -118,7 +118,8 @@ function NovoDiagnostico() {
   // ── Retomar rascunho (continuar=) ───────────────────────────────────────────
   useEffect(() => {
     if (continuar) {
-      const diag = diagnosticos.find((d) => d.id === continuar);
+      // Só aceita IDs de rascunhos — evita que uma URL forjada sobrescreva diagnósticos completos
+      const diag = diagnosticos.find((d) => d.id === continuar && d.status === "rascunho");
       if (diag) {
         setContinuarNome(diag.empresa.nome);
         setDraftId(continuar);
@@ -289,6 +290,18 @@ function NovoDiagnostico() {
     }
 
     if (etapaAtual === 5) {
+      // Aguarda qualquer auto-save pendente (etapa 4→5) para garantir que
+      // rascunhoIdRef.current esteja atualizado antes de decidir POST vs PUT.
+      if (isSavingDraftRef.current) {
+        await new Promise<void>((resolve) => {
+          const check = () => {
+            if (!isSavingDraftRef.current) { resolve(); return; }
+            setTimeout(check, 30);
+          };
+          check();
+        });
+      }
+
       dispatch({ type: "GERAR_PROBLEMAS" });
       dispatch({ type: "GERAR_OUTPUT" });
 
