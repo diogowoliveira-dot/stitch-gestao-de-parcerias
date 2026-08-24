@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/visitas/lembretes?tipo=diario",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/visitas/lembretes?tipo=semanal",
+      "schedule": "30 10 * * 1"
+    }
+  ]
+}

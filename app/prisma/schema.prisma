@@ -227,3 +227,20 @@ model EmbaixadorMetrica {
 
   @@unique([embaixadorId, competencia])
 }
+
+// ============================================
+// REGISTRO DE VISITAS — espelho da agenda
+// Usado pelos Cron Jobs em /api/visitas/lembretes para enviar
+// o resumo diário (7h) e o semanal (segunda, 7h30).
+// ============================================
+model VisitaAgendaSnapshot {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  nome            String   @default("")
+  lembreteDiario  Boolean  @default(true)
+  lembreteSemanal Boolean  @default(true)
+  avisoDoisDias   Boolean  @default(true)
+  payload         Json
+  criadoEm        DateTime @default(now())
+  atualizadoEm    DateTime @updatedAt
+}
