@@ -19,10 +19,13 @@ export function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/diagnostico", req.url));
     }
 
-    // Allow diagnostic routes, API routes, and static assets
+    // Allow diagnostic routes, API routes, and static assets.
+    // Registro de Visitas também roda neste domínio; as demais rotas do CRM não.
     const isAllowed =
       path.startsWith("/diagnostico") ||
       path.startsWith("/api/diagnostico") ||
+      path.startsWith("/visitas") ||
+      path.startsWith("/api/visitas") ||
       path.startsWith("/_next") ||
       path.startsWith("/favicon") ||
       path === "/globals.css";
